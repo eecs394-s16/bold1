@@ -67,7 +67,8 @@
         android:layout_alignEnd="@+id/heart_rate"
         android:layout_alignLeft="@+id/heart_rate"
         android:layout_alignStart="@+id/heart_rate"
-        android:onClick="savePressureNumbers"/>
+        android:onClick="savePressureNumbers"
+        android:clickable="true" />
 
 
 </RelativeLayout>

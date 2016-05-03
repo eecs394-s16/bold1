@@ -1,5 +1,10 @@
 package com.collinbarnwell.bold1;
 
+import com.collinbarnwell.bold1.DatabaseHelper;
+
+import android.content.ContentValues;
+import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -26,6 +31,19 @@ public class AddDataPoint extends AppCompatActivity {
         final EditText heart_rate_field = (EditText) findViewById(R.id.heart_rate);
         int heart_rate = Integer.parseInt(heart_rate_field.getText().toString());
 
+        DatabaseHelper mDbHelper = new DatabaseHelper(getBaseContext());
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put(DatabaseContract.DATAEntry.ID, 1);
+        values.put(DatabaseContract.DATAEntry.DIASTOLIC_PRESSURE, dia_press);
+        values.put(DatabaseContract.DATAEntry.SYSTOLIC_PRESSURE, sys_press);
+        values.put(DatabaseContract.DATAEntry.MEAN_ARTERIAL_PRESSURE, mean_art_pres);
+        values.put(DatabaseContract.DATAEntry.HEART_RATE, heart_rate);
+
+        long newRowId;
+        newRowId = db.insert(DatabaseContract.DataPoint.TABLE_NAME, null, values);
     }
 
 
