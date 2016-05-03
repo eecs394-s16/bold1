@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -9,5 +11,63 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="com.collinbarnwell.bold1.AddDataPoint">
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:hint="Systolic Pressure"
+        android:ems="10"
+        android:id="@+id/sys_press"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="52dp" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:hint="Diastolic Pressure"
+        android:ems="10"
+        android:id="@+id/dia_press"
+        android:layout_below="@+id/sys_press"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="36dp" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:hint="Mean arterial pressure"
+        android:ems="10"
+        android:id="@+id/art_press"
+        android:layout_below="@+id/dia_press"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="36dp" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:hint="Heart rate"
+        android:ems="10"
+        android:id="@+id/heart_rate"
+        android:layout_below="@+id/art_press"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="36dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Next"
+        android:id="@+id/button"
+        android:layout_below="@+id/heart_rate"
+        android:layout_marginTop="36dp"
+        android:layout_alignRight="@+id/heart_rate"
+        android:layout_alignEnd="@+id/heart_rate"
+        android:layout_alignLeft="@+id/heart_rate"
+        android:layout_alignStart="@+id/heart_rate"
+        android:onClick="savePressureNumbers"/>
+
 
 </RelativeLayout>
