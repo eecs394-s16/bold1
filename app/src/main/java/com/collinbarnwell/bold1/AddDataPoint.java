@@ -26,7 +26,6 @@ public class AddDataPoint extends AppCompatActivity {
         final EditText heart_rate_field = (EditText) findViewById(R.id.heart_rate);
         int heart_rate = Integer.parseInt(heart_rate_field.getText().toString());
 
-
     }
 
 
