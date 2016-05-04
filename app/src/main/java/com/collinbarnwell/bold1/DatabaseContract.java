@@ -37,12 +37,12 @@ public final class DatabaseContract {
         public static final String DIASTOLIC_PRESSURE = "diastolic_pressure";
         public static final String HEART_RATE = "heart_rate";
         public static final String MEAN_ARTERIAL_PRESSURE = "mean_arterial_pressure";
+        public static final String TIMESTAMP = "timestamp";
         public static final String MOOD = "mood";
         public static final String EXCERCISE = "excercise";
         public static final String TOBACCO = "tobacco";
         public static final String COFFEINE = "coffeine";
         public static final String FOOD = "food";
-        public static final String TIMESTAMP = "timestamp";
     }
 
     /* Inner class that defines the table contents */
@@ -60,6 +60,7 @@ public final class DatabaseContract {
                         DATAEntry.DIASTOLIC_PRESSURE + REAL_TYPE + COMMA_SEP +
                         DATAEntry.MEAN_ARTERIAL_PRESSURE + REAL_TYPE + COMMA_SEP +
                         DATAEntry.HEART_RATE + INTEGER_TYPE +
+                        DATAEntry.TIMESTAMP + "TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
 //                        + COMMA_SEP +
 //                        DATAEntry.TIMESTAMP + NUMERIC_TYPE + COMMA_SEP +
 //                        DATAEntry.MOOD + TEXT_TYPE + COMMA_SEP +
