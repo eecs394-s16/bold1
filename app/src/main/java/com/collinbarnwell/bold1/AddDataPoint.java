@@ -8,9 +8,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.EditText;
+import android.widget.ViewFlipper;
 
 public class AddDataPoint extends AppCompatActivity {
+
+    private int currentDataPointId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +40,7 @@ public class AddDataPoint extends AppCompatActivity {
 
         ContentValues values = new ContentValues();
 
+        currentDataPointId = 4;
         values.put(DatabaseContract.DATAEntry.ID, 4);
         values.put(DatabaseContract.DATAEntry.DIASTOLIC_PRESSURE, dia_press);
         values.put(DatabaseContract.DATAEntry.SYSTOLIC_PRESSURE, sys_press);
@@ -44,6 +49,18 @@ public class AddDataPoint extends AppCompatActivity {
 
         long newRowId;
         newRowId = db.insert(DatabaseContract.DataPoint.TABLE_NAME, null, values);
+
+        // Flip to next form page
+        flipper = (ViewFlipper) findViewById(R.id.);
+        flipper.addView(myView,myViewIndex);
+
+        flipper.setInAnimation(AnimationUtils.loadAnimation(this, R.anim.left_in));
+        flipper.setOutAnimation(AnimationUtils.loadAnimation(this, R.anim.left_out));
+    }
+
+    public void saveDataPointDetails (View button) {
+
+
     }
 
 
