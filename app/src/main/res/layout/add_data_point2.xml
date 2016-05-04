@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.example.shrivantbhartia.mockupsforbold2.MainActivity">
+
+   <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:id="@+id/textView"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Mood"
+        android:id="@+id/textView2"
+        android:layout_marginTop="20dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:textSize="30dp" />
+
+    <RadioButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Good"
+        android:id="@+id/radioButtonGoodMood"
+        android:checked="false"
+        android:layout_below="@+id/textView2"
+        android:layout_marginTop="14dp"
+        android:textSize="20dp" />
+
+    <RadioButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Average"
+        android:id="@+id/radioButtonAveraegMood"
+        android:checked="false"
+        android:layout_below="@+id/textView2"
+        android:layout_marginTop="14dp"
+        android:layout_marginLeft="135dp"
+        android:textSize="20dp" />
+
+    <RadioButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Bad"
+        android:id="@+id/radioButtonBadMood"
+        android:checked="false"
+        android:layout_below="@+id/textView2"
+        android:layout_marginTop="14dp"
+        android:layout_marginLeft="280dp"
+        android:textSize="20dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Check the appropriate boxes"
+        android:layout_marginTop="140dp"
+        android:layout_marginLeft="5dp"
+        android:textSize="20dp"
+        android:id="@+id/textView3" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="I've eaten food in the past hour"
+        android:id="@+id/checkBox1"
+        android:textSize="20dp"
+        android:layout_marginTop="180dp" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="I've exercised in the past hour"
+        android:id="@+id/checkBox2"
+        android:textSize="20dp"
+        android:layout_marginTop="220dp" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="I've had caffeine in the past hour"
+        android:id="@+id/checkBox3"
+        android:textSize="20dp"
+        android:layout_marginTop="260dp" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="I've used tobacco in the past hour"
+        android:id="@+id/checkBox4"
+        android:textSize="20dp"
+        android:layout_marginTop="300dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save"
+        android:layout_marginTop="370dp"
+        android:layout_alignRight="@+id/checkBox2"
+        android:layout_alignEnd="@+id/checkBox2"
+        android:layout_toRightOf="@+id/radioButtonGoodMood"
+        android:layout_toEndOf="@+id/radioButtonGoodMood" />
+
+    <ProgressBar
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar"
+        android:layout_alignTop="@+id/checkBox2"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="71dp"
+        android:layout_marginStart="71dp" />
+
+</RelativeLayout>
