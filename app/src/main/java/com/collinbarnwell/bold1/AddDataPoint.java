@@ -36,7 +36,7 @@ public class AddDataPoint extends AppCompatActivity {
 
         ContentValues values = new ContentValues();
 
-        values.put(DatabaseContract.DATAEntry.ID, 1);
+        values.put(DatabaseContract.DATAEntry.ID, 4);
         values.put(DatabaseContract.DATAEntry.DIASTOLIC_PRESSURE, dia_press);
         values.put(DatabaseContract.DATAEntry.SYSTOLIC_PRESSURE, sys_press);
         values.put(DatabaseContract.DATAEntry.MEAN_ARTERIAL_PRESSURE, mean_art_pres);
