@@ -40,6 +40,7 @@ public class AddDataPoint extends AppCompatActivity {
 
         ContentValues values = new ContentValues();
 
+
         currentDataPointId = 4;
         values.put(DatabaseContract.DATAEntry.ID, 4);
         values.put(DatabaseContract.DATAEntry.DIASTOLIC_PRESSURE, dia_press);
@@ -51,11 +52,7 @@ public class AddDataPoint extends AppCompatActivity {
         newRowId = db.insert(DatabaseContract.DataPoint.TABLE_NAME, null, values);
 
         // Flip to next form page
-        flipper = (ViewFlipper) findViewById(R.id.);
-        flipper.addView(myView,myViewIndex);
 
-        flipper.setInAnimation(AnimationUtils.loadAnimation(this, R.anim.left_in));
-        flipper.setOutAnimation(AnimationUtils.loadAnimation(this, R.anim.left_out));
     }
 
     public void saveDataPointDetails (View button) {
