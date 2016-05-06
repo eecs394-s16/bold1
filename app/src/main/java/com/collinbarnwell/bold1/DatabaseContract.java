@@ -20,7 +20,7 @@ public final class DatabaseContract {
     public static final String SCHEME = "content://";
     public static final String SLASH = "/";
     public static final String DATABASE_NAME = "bold1.db";
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 5;
     private static final String TEXT_TYPE          = " TEXT";
     private static final String INTEGER_TYPE       = " INTEGER";
     private static final String NUMERIC_TYPE       = " NUMERIC";
@@ -41,8 +41,13 @@ public final class DatabaseContract {
         public static final String MOOD = "mood";
         public static final String EXCERCISE = "excercise";
         public static final String TOBACCO = "tobacco";
-        public static final String COFFEINE = "coffeine";
-        public static final String FOOD = "food";
+        public static final String WAKE_UP = "wake_up";
+        public static final String FOOD_INTAKE = "food_intake";
+        public static final String NON_CAFFEINE_FLUID_INTAKE = "non_caffeine_fluid_intake";
+        public static final String ABOUT_TO_SLEEP = "about_to_sleep";
+        public static final String DAILY_ACTIVITY = "daily_activity";
+        public static final String OTHER = "other";
+
     }
 
     /* Inner class that defines the table contents */
@@ -60,28 +65,20 @@ public final class DatabaseContract {
                         DATAEntry.DIASTOLIC_PRESSURE + REAL_TYPE + COMMA_SEP +
                         DATAEntry.MEAN_ARTERIAL_PRESSURE + REAL_TYPE + COMMA_SEP +
                         DATAEntry.HEART_RATE + INTEGER_TYPE +
-                        DATAEntry.TIMESTAMP + "TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
-//                        + COMMA_SEP +
-//                        DATAEntry.TIMESTAMP + NUMERIC_TYPE + COMMA_SEP +
-//                        DATAEntry.MOOD + TEXT_TYPE + COMMA_SEP +
-//                        DATAEntry.EXCERCISE + NUMERIC_TYPE + COMMA_SEP +
-//                        DATAEntry.TOBACCO + NUMERIC_TYPE + COMMA_SEP +
-//                        DATAEntry.COFFEINE + NUMERIC_TYPE + COMMA_SEP +
-//                        DATAEntry.FOOD + NUMERIC_TYPE + COMMA_SEP +
+                        DATAEntry.TIMESTAMP + "TIMESTAMP DEFAULT CURRENT_TIMESTAMP" + COMMA_SEP +
+                        DATAEntry.TIMESTAMP + NUMERIC_TYPE + COMMA_SEP +
+                        DATAEntry.MOOD + TEXT_TYPE + COMMA_SEP +
+                        DATAEntry.EXCERCISE + NUMERIC_TYPE + COMMA_SEP +
+                        DATAEntry.TOBACCO + NUMERIC_TYPE + COMMA_SEP +
+                        DATAEntry.WAKE_UP + NUMERIC_TYPE + COMMA_SEP +
+                        DATAEntry.FOOD_INTAKE + NUMERIC_TYPE + COMMA_SEP +
+                        DATAEntry.NON_CAFFEINE_FLUID_INTAKE + NUMERIC_TYPE + COMMA_SEP +
+                        DATAEntry.ABOUT_TO_SLEEP + NUMERIC_TYPE + COMMA_SEP +
+                        DATAEntry.DAILY_ACTIVITY + NUMERIC_TYPE + COMMA_SEP +
+                        DATAEntry.OTHER + TEXT_TYPE +
                         " )" + ";";
 
         public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
-        // Save record with a timestamp
-        // String timestamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new java.util.Date());
-
-//        public static final String[] KEY_ARRAY = {
-//                KEY_DATA_POINT_ID,
-//                KEY_DIASTOLIC_PRESSURE,
-//                KEY_SYSTOLIC_PRESSURE,
-//                KEY_MEAN_ARTERIAL_PRESSURE,
-//                KEY_HEART_RATE,
-//                KEY_TIMESTAMP
-//        };
     }
 }
 

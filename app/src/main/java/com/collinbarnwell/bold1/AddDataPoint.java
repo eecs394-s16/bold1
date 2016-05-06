@@ -3,6 +3,7 @@ package com.collinbarnwell.bold1;
 import com.collinbarnwell.bold1.DatabaseHelper;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.ActionBar;
@@ -11,6 +12,12 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+
+import java.io.FileOutputStream;
 
 public class AddDataPoint extends AppCompatActivity {
 
@@ -56,6 +63,32 @@ public class AddDataPoint extends AppCompatActivity {
 
         long newRowId;
         newRowId = db.insert(DatabaseContract.DataPoint.TABLE_NAME, null, values);
+
+        String FILE = "Hello_file";
+        String string = "hello_world";
+
+
+        try {
+            FileOutputStream fos = openFileOutput(FILE, Context.MODE_PRIVATE);
+            fos.write(string.getBytes());
+            fos.close();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try{
+            FileInputStream fin = openFileInput(FILE);
+            int c;
+            String temp="";
+
+            while( (c = fin.read()) != -1){
+                temp = temp + Character.toString((char)c);
+            }
+            Toast.makeText(getBaseContext(),temp,Toast.LENGTH_SHORT).show();
+        }
+        catch(Exception e){
+        }
     }
 
 
