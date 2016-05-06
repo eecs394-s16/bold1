@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">Bold1</string>
     <string name="title_activity_main">MainActivity</string>
+    <string name="user_name">User name</string>
+    <string name="user_email">User email</string>
+    <string name="user_institution_affiliation">Institution Affiliation</string>
+    <string name="user_respective_physiciann">Respective Physician</string>
+    <string name="update_user_info">Update</string>
+    <string name="user_profile_menu">Profile</string>
+    <string name="add_datapoint">Record your data</string>
 </resources>
