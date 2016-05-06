@@ -14,12 +14,29 @@ import android.widget.ViewFlipper;
 
 public class AddDataPoint extends AppCompatActivity {
 
-    private int currentDataPointId;
+    private ViewFlipper VF;
+    private int currentViewflipperChild = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_data_point);
+        VF = (ViewFlipper) findViewById(R.id.datapoint1);
+    }
+
+    @Override public void onBackPressed()
+    {
+        if (currentViewflipperChild == 0) {
+            super.onBackPressed();
+        } else {
+            currentViewflipperChild -= 1;
+            VF.setDisplayedChild(currentViewflipperChild);
+        }
+    }
+
+    public void nextFlipper(View button) {
+        currentViewflipperChild += 1;
+        VF.setDisplayedChild(currentViewflipperChild);
     }
 
     public void savePressureNumbers(View button) {
@@ -41,23 +58,15 @@ public class AddDataPoint extends AppCompatActivity {
         ContentValues values = new ContentValues();
 
 
-        currentDataPointId = 4;
-        values.put(DatabaseContract.DATAEntry.ID, 4);
         values.put(DatabaseContract.DATAEntry.DIASTOLIC_PRESSURE, dia_press);
         values.put(DatabaseContract.DATAEntry.SYSTOLIC_PRESSURE, sys_press);
         values.put(DatabaseContract.DATAEntry.MEAN_ARTERIAL_PRESSURE, mean_art_pres);
         values.put(DatabaseContract.DATAEntry.HEART_RATE, heart_rate);
 
+
+
         long newRowId;
         newRowId = db.insert(DatabaseContract.DataPoint.TABLE_NAME, null, values);
-
-        // Flip to next form page
-
-    }
-
-    public void saveDataPointDetails (View button) {
-
-
     }
 
 
