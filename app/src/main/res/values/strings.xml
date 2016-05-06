@@ -1,10 +1,18 @@
 <resources>
     <string name="app_name">Bold1</string>
     <string name="title_activity_main">MainActivity</string>
-    <string name="user_name">User name</string>
-    <string name="user_email">User email</string>
+
+    <!--Strings for user profile-->
+    <string name="user_ID">User ID</string>
+    <string name="user_email">Email</string>
     <string name="user_institution_affiliation">Institution Affiliation</string>
-    <string name="user_respective_physiciann">Respective Physician</string>
+    <string name="user_respective_physician">Respective Physician</string>
+    <string name="user_first_name">First Name</string>
+    <string name="user_last_name">Last Name</string>
+    <string name="user_age">Age</string>
+    <string name="user_dob">Date of Birth(MM/DD/YYYY)</string>
+
+
     <string name="update_user_info">Update</string>
     <string name="user_profile_menu">Profile</string>
     <string name="add_datapoint">Record your data</string>
