@@ -22,7 +22,8 @@ import java.io.FileOutputStream;
 
 public class AddDataPoint extends AppCompatActivity {
 
-    private int currentDataPointId;
+    private ViewFlipper VF;
+    private int currentViewflipperChild = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +40,22 @@ public class AddDataPoint extends AppCompatActivity {
 
         // Enable the Up button
         ab.setDisplayHomeAsUpEnabled(true);
+        VF = (ViewFlipper) findViewById(R.id.datapoint1);
+    }
+
+    @Override public void onBackPressed()
+    {
+        if (currentViewflipperChild == 0) {
+            super.onBackPressed();
+        } else {
+            currentViewflipperChild -= 1;
+            VF.setDisplayedChild(currentViewflipperChild);
+        }
+    }
+
+    public void nextFlipper(View button) {
+        currentViewflipperChild += 1;
+        VF.setDisplayedChild(currentViewflipperChild);
     }
 
     public void savePressureNumbers(View button) {
@@ -66,7 +83,6 @@ public class AddDataPoint extends AppCompatActivity {
 
         long newRowId;
         newRowId = db.insert(DatabaseContract.DataPoint.TABLE_NAME, null, values);
-
 
     }
 

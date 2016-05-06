@@ -1,81 +1,290 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-
-<RelativeLayout
+<LinearLayout android:id="@+id/LinearLayout01"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.collinbarnwell.bold1.AddDataPoint">
+    android:orientation="vertical">
 
 
-    <android.support.v7.widget.Toolbar
+<android.support.v7.widget.Toolbar
         android:id="@+id/add_data_point_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorAccent"
         android:theme="@style/AppTheme"
-        app:popupTheme="@style/AppTheme.PopupOverlay"
         android:elevation="4dp"/>
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:hint="Systolic Pressure"
-        android:ems="10"
-        android:id="@+id/sys_press"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="52dp" />
+    <ViewFlipper
+        android:id="@+id/datapoint1"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:hint="Diastolic Pressure"
-        android:ems="10"
-        android:id="@+id/dia_press"
-        android:layout_below="@+id/sys_press"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="36dp" />
+        <RelativeLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            tools:context="com.collinbarnwell.bold1.AddDataPoint">
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:hint="Mean arterial pressure"
-        android:ems="10"
-        android:id="@+id/art_press"
-        android:layout_below="@+id/dia_press"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="36dp" />
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:hint="Systolic Pressure"
+                android:ems="10"
+                android:id="@+id/sys_press"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="52dp" />
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:hint="Heart rate"
-        android:ems="10"
-        android:id="@+id/heart_rate"
-        android:layout_below="@+id/art_press"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="36dp" />
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:hint="Diastolic Pressure"
+                android:ems="10"
+                android:id="@+id/dia_press"
+                android:layout_below="@+id/sys_press"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="36dp" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Next"
-        android:id="@+id/button"
-        android:layout_below="@+id/heart_rate"
-        android:layout_marginTop="36dp"
-        android:layout_alignRight="@+id/heart_rate"
-        android:layout_alignEnd="@+id/heart_rate"
-        android:layout_alignLeft="@+id/heart_rate"
-        android:layout_alignStart="@+id/heart_rate"
-        android:onClick="savePressureNumbers"
-        android:clickable="true" />
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:hint="Mean arterial pressure"
+                android:ems="10"
+                android:id="@+id/art_press"
+                android:layout_below="@+id/dia_press"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="36dp" />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:hint="Heart rate"
+                android:ems="10"
+                android:id="@+id/heart_rate"
+                android:layout_below="@+id/art_press"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="36dp" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Next"
+                android:id="@+id/button"
+                android:layout_below="@+id/heart_rate"
+                android:layout_marginTop="36dp"
+                android:layout_alignRight="@+id/heart_rate"
+                android:layout_alignEnd="@+id/heart_rate"
+                android:layout_alignLeft="@+id/heart_rate"
+                android:layout_alignStart="@+id/heart_rate"
+                android:onClick="nextFlipper"
+                android:clickable="true" />
+        </RelativeLayout>
 
 
-</RelativeLayout>
+        <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/ScrollView1"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" >
+            <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                android:id="@+id/add_data_point2"
+                tools:context="com.collinbarnwell.bold1.AddDataPoint">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:id="@+id/textView"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Check if you've had or done any of the following in the past hour"
+                    android:layout_marginLeft="5dp"
+                    android:textSize="20dp"
+                    android:id="@+id/textView3" />
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Food"
+                    android:id="@+id/checkBox1"
+                    android:textSize="20dp"
+                    android:layout_below="@+id/textView3"
+                    android:layout_marginTop="10dp" />
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Caffeine"
+                    android:id="@+id/checkBox2"
+                    android:textSize="20dp"
+                    android:layout_below="@+id/checkBox1"
+                    android:layout_marginTop="10dp" />
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Non-caffeine fluids"
+                    android:id="@+id/checkBox3"
+                    android:textSize="20dp"
+                    android:layout_below="@+id/checkBox2"
+                    android:layout_marginTop="10dp" />
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tobacco"
+                    android:id="@+id/checkBox4"
+                    android:textSize="20dp"
+                    android:layout_below="@+id/checkBox3"
+                    android:layout_marginTop="10dp" />
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Exercise"
+                    android:id="@+id/checkBox5"
+                    android:textSize="20dp"
+                    android:layout_below="@+id/checkBox4"
+                    android:layout_marginTop="10dp" />
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Light physical activity"
+                    android:id="@+id/checkBox6"
+                    android:textSize="20dp"
+                    android:layout_below="@+id/checkBox5"
+                    android:layout_marginTop="10dp" />
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="I woke up recently"
+                    android:id="@+id/checkBox7"
+                    android:textSize="20dp"
+                    android:layout_below="@+id/checkBox6"
+                    android:layout_marginTop="10dp" />
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="I am going to bed soon"
+                    android:id="@+id/checkBox8"
+                    android:textSize="20dp"
+                    android:layout_below="@+id/checkBox7"
+                    android:layout_marginTop="10dp" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Next"
+                    android:id="@+id/next2"
+                    android:layout_marginTop="20dp"
+                    android:layout_below="@+id/checkBox8"
+                    android:onClick="nextFlipper"
+                    android:layout_centerHorizontal="true"
+                    android:width="200dp"
+                    android:clickable="true" />
+            </RelativeLayout>
+        </ScrollView>
+
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            android:id="@+id/add_data_point3"
+            tools:context="com.collinbarnwell.bold1.AddDataPoint">
+
+            <TextView
+                android:id="@+id/moodLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Mood"
+                android:layout_marginTop="25dp"
+                android:layout_centerHorizontal="true"
+                android:textSize="28dp" />
+
+            <RadioGroup
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="25dp"
+                android:layout_below="@id/moodLabel"
+                android:id="@+id/moodRadioGroup">
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Good"
+                    android:id="@+id/radioButtonGoodMood"
+                    android:checked="false"
+                    android:layout_marginLeft="20dp"
+                    android:textSize="20dp" />
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Average"
+                    android:id="@+id/radioButtonAverageMood"
+                    android:checked="false"
+                    android:layout_marginLeft="20dp"
+                    android:textSize="20dp" />
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Bad"
+                    android:id="@+id/radioButtonBadMood"
+                    android:checked="false"
+                    android:layout_marginLeft="20dp"
+                    android:textSize="20dp" />
+            </RadioGroup>
+
+            <EditText
+                android:inputType="textMultiLine"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:lines="2"
+                android:layout_marginTop="35dp"
+                android:hint="Please enter any other recent activities that might affect blood pressure"
+                android:id="@+id/otherThings"
+                android:layout_below="@+id/moodRadioGroup"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Save"
+                android:layout_marginTop="35dp"
+                android:onClick="saveDataPoint"
+                android:layout_below="@+id/otherThings"
+                android:width="200dp"
+                android:layout_centerHorizontal="true"/>
+
+        </RelativeLayout>
+    </ViewFlipper>
+</LinearLayout>
