@@ -4,17 +4,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".Profile">
+    tools:context=".Profile"
+    android:orientation="vertical">
+
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/profile_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorAccent"
         android:theme="@style/AppTheme"
         app:popupTheme="@style/AppTheme.PopupOverlay"
-        android:elevation="4dp"/>
+        android:elevation="4dp"
+        android:background="#000000">
+
+
+        <ImageView
+            android:layout_width="150dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:background="@drawable/bold_white_transparent_background"
+            />
+
+    </android.support.v7.widget.Toolbar>
+
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
