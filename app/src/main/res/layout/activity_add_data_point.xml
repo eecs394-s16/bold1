@@ -127,7 +127,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Food"
-                    android:id="@+id/checkBox1"
+                    android:id="@+id/food_intake"
                     android:textSize="20dp"
                     android:layout_below="@+id/textView3"
                     android:layout_marginTop="10dp" />
@@ -136,63 +136,63 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Caffeine"
-                    android:id="@+id/checkBox2"
+                    android:id="@+id/caffeine"
                     android:textSize="20dp"
-                    android:layout_below="@+id/checkBox1"
+                    android:layout_below="@+id/food_intake"
                     android:layout_marginTop="10dp" />
 
                 <CheckBox
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Non-caffeine fluids"
-                    android:id="@+id/checkBox3"
+                    android:id="@+id/non_caffeine"
                     android:textSize="20dp"
-                    android:layout_below="@+id/checkBox2"
+                    android:layout_below="@+id/caffeine"
                     android:layout_marginTop="10dp" />
 
                 <CheckBox
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Tobacco"
-                    android:id="@+id/checkBox4"
+                    android:id="@+id/tobacco"
                     android:textSize="20dp"
-                    android:layout_below="@+id/checkBox3"
+                    android:layout_below="@+id/non_caffeine"
                     android:layout_marginTop="10dp" />
 
                 <CheckBox
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Exercise"
-                    android:id="@+id/checkBox5"
+                    android:id="@+id/exercise"
                     android:textSize="20dp"
-                    android:layout_below="@+id/checkBox4"
+                    android:layout_below="@+id/tobacco"
                     android:layout_marginTop="10dp" />
 
                 <CheckBox
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Light physical activity"
-                    android:id="@+id/checkBox6"
+                    android:id="@+id/light_physical_activity"
                     android:textSize="20dp"
-                    android:layout_below="@+id/checkBox5"
+                    android:layout_below="@+id/exercise"
                     android:layout_marginTop="10dp" />
 
                 <CheckBox
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="I woke up recently"
-                    android:id="@+id/checkBox7"
+                    android:id="@+id/woke_up"
                     android:textSize="20dp"
-                    android:layout_below="@+id/checkBox6"
+                    android:layout_below="@+id/light_physical_activity"
                     android:layout_marginTop="10dp" />
 
                 <CheckBox
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="I am going to bed soon"
-                    android:id="@+id/checkBox8"
+                    android:id="@+id/going_to_bed"
                     android:textSize="20dp"
-                    android:layout_below="@+id/checkBox7"
+                    android:layout_below="@+id/woke_up"
                     android:layout_marginTop="10dp" />
 
                 <Button
@@ -201,7 +201,7 @@
                     android:text="Next"
                     android:id="@+id/next2"
                     android:layout_marginTop="20dp"
-                    android:layout_below="@+id/checkBox8"
+                    android:layout_below="@+id/going_to_bed"
                     android:onClick="nextFlipper"
                     android:layout_centerHorizontal="true"
                     android:width="200dp"
