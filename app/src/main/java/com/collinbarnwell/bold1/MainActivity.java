@@ -22,6 +22,7 @@ import org.json.JSONObject;
 
 
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
@@ -80,6 +81,8 @@ public class MainActivity extends AppCompatActivity {
 
         graph.addSeries(systolic_series);
         graph.getViewport().setScrollable(true);
+        graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(MainActivity.this));
+        graph.getGridLabelRenderer().setNumHorizontalLabels(4);
     }
 
 
