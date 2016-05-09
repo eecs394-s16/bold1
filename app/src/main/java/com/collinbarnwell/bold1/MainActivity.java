@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.content.Intent;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
@@ -33,6 +34,13 @@ public class MainActivity extends AppCompatActivity {
                 new DataPoint(4, 6)
         });
         graph.addSeries(series);
+
+        Button prof_button = (Button) findViewById(R.id.profile_button);
+        prof_button.setOnClickListener(new OnClickListener(){
+            public void onClick(View v){
+                startActivity(new Intent(MainActivity.this, Profile.class));
+            }
+        });
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new OnClickListener(){
