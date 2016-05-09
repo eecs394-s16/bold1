@@ -49,7 +49,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/YYYY", Locale.getDefault());
                 Date dt = null; //replace 4 with the column index
                 try {
-                    dt = sdf.parse(cursor.getString(4));
+                    dt = sdf.parse(timestamp_string);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
