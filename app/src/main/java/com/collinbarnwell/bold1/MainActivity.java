@@ -1,5 +1,7 @@
 package com.collinbarnwell.bold1;
 
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -20,6 +22,8 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
     public static final UtilClass utilClass = new UtilClass();
 
@@ -30,22 +34,13 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
 
-        GraphView graph = (GraphView) findViewById(R.id.graph);
-        LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(new DataPoint[] {
-                new DataPoint(0, 1),
-                new DataPoint(1, 5),
-                new DataPoint(2, 3),
-                new DataPoint(3, 2),
-                new DataPoint(4, 6)
-        });
-        graph.addSeries(series);
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new OnClickListener(){
             public void onClick(View v){
                 startActivity(new Intent(MainActivity.this, AddDataPoint.class));
             }
         });
+
         refreshWelcomeMessage();
     }
 
@@ -55,7 +50,19 @@ public class MainActivity extends AppCompatActivity {
         // Whenever we go back to main activity, the name of the user may have changed (very unlikely)
         // No matter whether that happens, refresh welcome message.
         refreshWelcomeMessage();
+
+        DatabaseHelper mDbHelper = new DatabaseHelper(getBaseContext());
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        GraphView graph = (GraphView) findViewById(R.id.graph);
+        LineGraphSeries<DataPoint> systolic_series =
+                new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "systolic_pressure"));
+
+
+        graph.addSeries(systolic_series);
+        graph.getViewport().setScrollable(true);
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -98,5 +105,4 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getBaseContext(),"Something went wrong while fetching user info.",Toast.LENGTH_LONG).show();
         }
     }
-
 }

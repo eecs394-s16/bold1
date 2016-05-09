@@ -24,13 +24,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.jjoe64.graphview.GraphView
-            android:layout_width="match_parent"
-            android:layout_height="200dip"
-            android:id="@+id/graph"
-            android:layout_marginTop="100dp"
-            android:layout_gravity="left|top" />
-
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab"
@@ -50,6 +43,14 @@
             android:id="@+id/welcomeMessage"
             android:layout_gravity="top|center"
             android:layout_marginTop="60dp" />
+
+        <com.jjoe64.graphview.GraphView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="80dp"
+            android:id="@+id/graph"
+            android:layout_gravity="center_horizontal|bottom" />
+
 
     </FrameLayout>
 

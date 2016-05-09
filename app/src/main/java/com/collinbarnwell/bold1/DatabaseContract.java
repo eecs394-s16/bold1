@@ -20,7 +20,7 @@ public final class DatabaseContract {
     public static final String SCHEME = "content://";
     public static final String SLASH = "/";
     public static final String DATABASE_NAME = "bold1.db";
-    public static final int DATABASE_VERSION = 6;
+    public static final int DATABASE_VERSION = 8;
     private static final String TEXT_TYPE          = " TEXT";
     private static final String INTEGER_TYPE       = " INTEGER";
     private static final String NUMERIC_TYPE       = " NUMERIC";
@@ -66,7 +66,7 @@ public final class DatabaseContract {
                         DATAEntry.DIASTOLIC_PRESSURE + REAL_TYPE + COMMA_SEP +
                         DATAEntry.MEAN_ARTERIAL_PRESSURE + REAL_TYPE + COMMA_SEP +
                         DATAEntry.HEART_RATE + INTEGER_TYPE +
-                        DATAEntry.TIMESTAMP + "TIMESTAMP DEFAULT CURRENT_TIMESTAMP" + COMMA_SEP +
+                        DATAEntry.TIMESTAMP + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP" + COMMA_SEP +
                         DATAEntry.MOOD + TEXT_TYPE + COMMA_SEP +
                         DATAEntry.EXERCISE + NUMERIC_TYPE + COMMA_SEP +
                         DATAEntry.TOBACCO + NUMERIC_TYPE + COMMA_SEP +
