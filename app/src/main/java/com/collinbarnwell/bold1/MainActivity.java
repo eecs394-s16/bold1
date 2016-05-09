@@ -94,8 +94,7 @@ public class MainActivity extends AppCompatActivity {
         // Refresh welcome message
         try{
             // This is where we stored the user info
-            String temp=utilClass.loadJSONStringFromFile(this,utilClass.UserInfoFile);
-            JSONObject saved_user_info = new JSONObject(utilClass.loadJSONStringFromFile(this,utilClass.UserInfoFile));
+            JSONObject saved_user_info=utilClass.loadJSONFromFile(this,utilClass.UserInfoFile);
             if (saved_user_info.has(utilClass.UserInfoStrings[4]) && !(saved_user_info.getString(utilClass.UserInfoStrings[4]).isEmpty())){
                 // If there is a user first name field in local storage and it's not empty
                 ((TextView)findViewById(R.id.welcomeMessage)).setText("Welcome, "+saved_user_info.getString(utilClass.UserInfoStrings[4]));
@@ -108,5 +107,4 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getBaseContext(),"Something went wrong while fetching user info.",Toast.LENGTH_LONG).show();
         }
     }
-
 }

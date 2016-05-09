@@ -46,9 +46,7 @@ public class Profile extends AppCompatActivity {
         // Now automatically get the info from local storage and fill in the text fields.
         try{
             // This is where we stored the user info
-            String temp=utilClass.loadJSONStringFromFile(this,utilClass.UserInfoFile);
-            Toast.makeText(getBaseContext(),temp,Toast.LENGTH_SHORT).show();
-            JSONObject saved_user_info = new JSONObject(utilClass.loadJSONStringFromFile(this,utilClass.UserInfoFile));
+            JSONObject saved_user_info = utilClass.loadJSONFromFile(this,utilClass.UserInfoFile);
             for (int i=0; i<utilClass.UserInfoStrings.length;i++) {
                 if (saved_user_info.has(utilClass.UserInfoStrings[i])){
                     ((EditText) findViewById(utilClass.UserInfoIds[i])).setText(saved_user_info.getString(utilClass.UserInfoStrings[i]));
@@ -72,18 +70,11 @@ public class Profile extends AppCompatActivity {
                 FileOutputStream fos = openFileOutput(utilClass.UserInfoFile, Context.MODE_PRIVATE);
                 fos.write(user_info_string.getBytes());
                 fos.close();
+                Toast.makeText(getBaseContext(),"Successfully saved info.",Toast.LENGTH_LONG).show();
             }
             catch (Exception e) {
                 e.printStackTrace();
             }
-
-            try{
-                String temp=utilClass.loadJSONStringFromFile(this,utilClass.UserInfoFile);
-                Toast.makeText(getBaseContext(),temp,Toast.LENGTH_SHORT).show();
-            }
-            catch(Exception e){
-            }
-
         } catch (Exception e) {
 
         }
