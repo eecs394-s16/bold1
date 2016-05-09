@@ -40,14 +40,24 @@
         android:hint="@string/user_age"
         android:id="@+id/user_age"
         android:inputType="number"/>
-    <EditText
+    <!--<EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:hint="@string/user_dob"
         android:id="@+id/user_dob"
-        android:inputType="date"/>
+        android:inputType="date"/>!-->
+
+    <DatePicker
+        android:id="@+id/user_dob"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:datePickerMode="calendar"
+        android:calendarViewShown="false" />
+
+
+
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

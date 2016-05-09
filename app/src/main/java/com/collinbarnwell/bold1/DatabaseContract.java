@@ -65,7 +65,7 @@ public final class DatabaseContract {
                         DATAEntry.SYSTOLIC_PRESSURE + REAL_TYPE + COMMA_SEP +
                         DATAEntry.DIASTOLIC_PRESSURE + REAL_TYPE + COMMA_SEP +
                         DATAEntry.MEAN_ARTERIAL_PRESSURE + REAL_TYPE + COMMA_SEP +
-                        DATAEntry.HEART_RATE + INTEGER_TYPE +
+                        DATAEntry.HEART_RATE + INTEGER_TYPE + COMMA_SEP +
                         DATAEntry.TIMESTAMP + "TIMESTAMP DEFAULT CURRENT_TIMESTAMP" + COMMA_SEP +
                         DATAEntry.MOOD + TEXT_TYPE + COMMA_SEP +
                         DATAEntry.EXERCISE + NUMERIC_TYPE + COMMA_SEP +
