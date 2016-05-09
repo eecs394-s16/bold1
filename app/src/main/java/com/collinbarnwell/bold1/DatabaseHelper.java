@@ -1,9 +1,22 @@
 package com.collinbarnwell.bold1;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
+
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Locale;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     public DatabaseHelper(Context context) {
@@ -13,7 +26,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Method is called during creation of the database
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(DatabaseContract.DataPoint.CREATE_TABLE);
-        Log.d("hello", "hello");
     }
 
     // Method is called during an upgrade of the database
@@ -22,4 +34,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    public DataPoint[] getColumnDataPoints(SQLiteDatabase db, String column) {
+        String query = "SELECT " + column + ", timestamp FROM data_point";
+        Cursor cursor      = db.rawQuery(query, null);
+        ArrayList<DataPoint> data = new ArrayList<DataPoint>();
+
+        if(cursor.moveToFirst() && cursor.getCount() >= 1) {
+            do {
+
+                Double val = cursor.getDouble(cursor.getColumnIndex(column));
+                String timestamp_string = cursor.getString(cursor.getColumnIndex("timestamp"));
+
+                Timestamp dt = Timestamp.valueOf(timestamp_string);
+                data.add(new DataPoint(dt, val));
+                
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+
+        DataPoint[] dataArray = new DataPoint[data.size()];
+        dataArray = data.toArray(dataArray);
+        return dataArray;
+    }
 }
