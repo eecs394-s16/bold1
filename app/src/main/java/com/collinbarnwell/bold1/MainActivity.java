@@ -68,6 +68,32 @@ public class MainActivity extends AppCompatActivity {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
         GraphView graph = (GraphView) findViewById(R.id.graph);
+        graph.removeAllSeries();
+
+        graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(MainActivity.this));
+        graph.getGridLabelRenderer().setNumHorizontalLabels(4);
+
+        // Get one day ago
+        Calendar cal = Calendar.getInstance();
+        Date now = cal.getTime();
+        cal.add(Calendar.DAY_OF_YEAR, -1);
+        Date oneDayAgo = cal.getTime();
+
+        graph.getViewport().setMinX(oneDayAgo.getTime());
+        graph.getViewport().setMaxX(now.getTime());
+        graph.getViewport().setXAxisBoundsManual(true);
+
+        graph.getGridLabelRenderer().setNumVerticalLabels(9);
+        graph.getViewport().setMinY(0);
+        graph.getViewport().setMaxY(200);
+        graph.getViewport().setYAxisBoundsManual(true);
+
+        graph.getViewport().setScrollable(true);
+        // graph.getViewport().setScalable(true);
+
+        // legend
+        graph.getLegendRenderer().setVisible(true);
+        graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
 
         LineGraphSeries<DataPoint> systolic_series =
                 new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "systolic_pressure"));
@@ -85,30 +111,6 @@ public class MainActivity extends AppCompatActivity {
         graph.addSeries(heart_rate_series);
         heart_rate_series.setColor(Color.RED);
         heart_rate_series.setTitle("Pulse Rate (/min)");
-
-        // Get one day ago
-        Calendar cal = Calendar.getInstance();
-        Date now = cal.getTime();
-        cal.add(Calendar.DAY_OF_YEAR, -1);
-        Date oneDayAgo = cal.getTime();
-
-        graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(MainActivity.this));
-        graph.getGridLabelRenderer().setNumHorizontalLabels(4);
-        graph.getViewport().setMinX(oneDayAgo.getTime());
-        graph.getViewport().setMaxX(now.getTime());
-        graph.getViewport().setXAxisBoundsManual(true);
-
-        graph.getGridLabelRenderer().setNumVerticalLabels(9);
-        graph.getViewport().setMinY(0);
-        graph.getViewport().setMaxY(200);
-        graph.getViewport().setYAxisBoundsManual(true);
-
-        graph.getViewport().setScrollable(true);
-        // graph.getViewport().setScalable(true);
-
-        // legend
-        graph.getLegendRenderer().setVisible(true);
-        graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
     }
 
 
