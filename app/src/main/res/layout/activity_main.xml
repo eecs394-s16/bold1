@@ -42,6 +42,15 @@
             app2:backgroundTint="#000000"
             android:tint="@android:color/white" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/welcome_message_default"
+            android:id="@+id/welcomeMessage"
+            android:layout_gravity="top|center"
+            android:layout_marginTop="60dp" />
+
     </FrameLayout>
 
 </android.support.design.widget.CoordinatorLayout>
