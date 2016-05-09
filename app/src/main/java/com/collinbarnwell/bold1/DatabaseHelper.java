@@ -39,22 +39,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor cursor      = db.rawQuery(query, null);
         ArrayList<DataPoint> data = new ArrayList<DataPoint>();
 
-        while(!cursor.isAfterLast()) {
-            Double val = cursor.getDouble(cursor.getColumnIndex(column));
-            String timestamp_string = cursor.getString(cursor.getColumnIndex("timestamp"));
+        if(cursor.moveToFirst() && cursor.getCount() >= 1) {
+            do {
 
-            Calendar t = new GregorianCalendar();
-            SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/YYYY", Locale.getDefault());
-            Date dt = null; //replace 4 with the column index
-            try {
-                dt = sdf.parse(cursor.getString(4));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            t.setTime(dt);
-            data.add(new DataPoint(dt, val));
-            cursor.moveToNext();
+                Double val = cursor.getDouble(cursor.getColumnIndex(column));
+                String timestamp_string = cursor.getString(cursor.getColumnIndex("timestamp"));
+
+                Calendar t = new GregorianCalendar();
+                SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/YYYY", Locale.getDefault());
+                Date dt = null; //replace 4 with the column index
+                try {
+                    dt = sdf.parse(cursor.getString(4));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                t.setTime(dt);
+                data.add(new DataPoint(dt, val));
+                
+            } while (cursor.moveToNext());
         }
+
         cursor.close();
 
         DataPoint[] dataArray = new DataPoint[data.size()];

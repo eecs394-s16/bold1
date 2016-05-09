@@ -58,7 +58,6 @@ public class MainActivity extends AppCompatActivity {
         LineGraphSeries<DataPoint> systolic_series =
                 new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "systolic_pressure"));
 
-
         graph.addSeries(systolic_series);
         graph.getViewport().setScrollable(true);
     }
