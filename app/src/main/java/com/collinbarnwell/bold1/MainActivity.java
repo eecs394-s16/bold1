@@ -2,6 +2,7 @@ package com.collinbarnwell.bold1;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -20,8 +21,10 @@ import android.widget.Toast;
 
 import org.json.JSONObject;
 
+import com.jjoe64.graphview.DefaultLabelFormatter;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GridLabelRenderer;
+import com.jjoe64.graphview.LegendRenderer;
 import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
@@ -68,11 +71,20 @@ public class MainActivity extends AppCompatActivity {
 
         LineGraphSeries<DataPoint> systolic_series =
                 new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "systolic_pressure"));
-
         graph.addSeries(systolic_series);
-        graph.getViewport().setScrollable(true);
-        graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(MainActivity.this));
-        graph.getGridLabelRenderer().setNumHorizontalLabels(4);
+        systolic_series.setTitle("Systolic Pressure (mmHg)");
+
+        LineGraphSeries<DataPoint> diastolic_series =
+                new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "diastolic_pressure"));
+        graph.addSeries(diastolic_series);
+        diastolic_series.setColor(Color.GREEN);
+        diastolic_series.setTitle("Diastolic Pressure (mmHg)");
+
+        LineGraphSeries<DataPoint> heart_rate_series =
+                new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "heart_rate"));
+        graph.addSeries(heart_rate_series);
+        heart_rate_series.setColor(Color.RED);
+        heart_rate_series.setTitle("Pulse Rate (/min)");
 
         // Get one day ago
         Calendar cal = Calendar.getInstance();
@@ -80,14 +92,23 @@ public class MainActivity extends AppCompatActivity {
         cal.add(Calendar.DAY_OF_YEAR, -1);
         Date oneDayAgo = cal.getTime();
 
-        graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(this));
+        graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(MainActivity.this));
         graph.getGridLabelRenderer().setNumHorizontalLabels(4);
         graph.getViewport().setMinX(oneDayAgo.getTime());
         graph.getViewport().setMaxX(now.getTime());
         graph.getViewport().setXAxisBoundsManual(true);
+
+        graph.getGridLabelRenderer().setNumVerticalLabels(9);
+        graph.getViewport().setMinY(0);
+        graph.getViewport().setMaxY(200);
+        graph.getViewport().setYAxisBoundsManual(true);
+
         graph.getViewport().setScrollable(true);
-        // graph.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.BOTH);
         // graph.getViewport().setScalable(true);
+
+        // legend
+        graph.getLegendRenderer().setVisible(true);
+        graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
     }
 
 
