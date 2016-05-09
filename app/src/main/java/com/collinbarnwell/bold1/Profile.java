@@ -13,6 +13,9 @@ import android.widget.Toast;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 import android.util.Log;
 
 import org.json.JSONObject;
@@ -22,7 +25,7 @@ import org.json.JSONObject;
  */
 public class Profile extends AppCompatActivity {
 
-    public static final String UserInfoFile = "User_Info_File";
+    public static final UtilClass utilClass = new UtilClass();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,29 +42,34 @@ public class Profile extends AppCompatActivity {
 
         // Enable the Up button
         ab.setDisplayHomeAsUpEnabled(true);
+
+        // Now automatically get the info from local storage and fill in the text fields.
+        try{
+            // This is where we stored the user info
+            String temp=utilClass.loadJSONStringFromFile(this,utilClass.UserInfoFile);
+            Toast.makeText(getBaseContext(),temp,Toast.LENGTH_SHORT).show();
+            JSONObject saved_user_info = new JSONObject(utilClass.loadJSONStringFromFile(this,utilClass.UserInfoFile));
+            for (int i=0; i<utilClass.UserInfoStrings.length;i++) {
+                if (saved_user_info.has(utilClass.UserInfoStrings[i])){
+                    ((EditText) findViewById(utilClass.UserInfoIds[i])).setText(saved_user_info.getString(utilClass.UserInfoStrings[i]));
+                }
+            }
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            Toast.makeText(getBaseContext(),"Something went wrong while fetching user info.",Toast.LENGTH_LONG).show();
+        }
     }
 
     public void saveUserInfo(View button) {
-        final String first_name = ((EditText) findViewById(R.id.user_first_name)).getText().toString();
-        final String last_name = ((EditText) findViewById(R.id.user_last_name)).getText().toString();
-        final String age = ((EditText) findViewById(R.id.user_age)).getText().toString();
-        final String date_of_birth = ((EditText) findViewById(R.id.user_dob)).getText().toString();
-//        final String user_id = ((EditText) findViewById(R.id.user_id)).getText().toString();
-//        final String email = ((EditText) findViewById(R.id.dia_press)).getText().toString();
-//        final String institution_affiliation = ((EditText) findViewById(R.id.institution_affiliation)).getText().toString();
-//        final String respective_physician = ((EditText) findViewById(R.id.user_respective_physician)).getText().toString();
-
+        JSONObject user_info = new JSONObject();
         try {
-            JSONObject user_info = new JSONObject();
-            user_info.put("first_name", first_name);
-            user_info.put("last_name", last_name);
-            user_info.put("age", age);
-            user_info.put("date_of_birth", date_of_birth);
+            for (int i=0; i<utilClass.UserInfoStrings.length;i++) {
+                user_info.put(utilClass.UserInfoStrings[i], ((EditText) findViewById(utilClass.UserInfoIds[i])).getText().toString());
+            }
             String user_info_string = user_info.toString();
-
-            String string = "asdf";
             try {
-                FileOutputStream fos = openFileOutput(UserInfoFile, Context.MODE_PRIVATE);
+                FileOutputStream fos = openFileOutput(utilClass.UserInfoFile, Context.MODE_PRIVATE);
                 fos.write(user_info_string.getBytes());
                 fos.close();
             }
@@ -70,13 +78,7 @@ public class Profile extends AppCompatActivity {
             }
 
             try{
-                FileInputStream fin = openFileInput(UserInfoFile);
-                int c;
-                String temp="";
-
-                while( (c = fin.read()) != -1){
-                    temp = temp + Character.toString((char)c);
-                }
+                String temp=utilClass.loadJSONStringFromFile(this,utilClass.UserInfoFile);
                 Toast.makeText(getBaseContext(),temp,Toast.LENGTH_SHORT).show();
             }
             catch(Exception e){
@@ -85,7 +87,5 @@ public class Profile extends AppCompatActivity {
         } catch (Exception e) {
 
         }
-
     }
-
 }
