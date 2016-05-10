@@ -40,6 +40,8 @@
         android:hint="@string/user_age"
         android:id="@+id/user_age"
         android:inputType="number"/>
+
+
     <!--<EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -49,12 +51,28 @@
         android:id="@+id/user_dob"
         android:inputType="date"/>!-->
 
-    <DatePicker
-        android:id="@+id/user_dob"
+
+    <!--<Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/set_dob"
+        android:onClick="showDatePickerDialog" />-->
+
+
+
+    <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:datePickerMode="calendar"
-        android:calendarViewShown="false" />
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:hint="@string/user_dob"
+        android:id="@+id/user_dob"
+        android:inputType="none"
+        android:onClick="showDatePickerDialog"
+        android:focusable="false"
+        android:focusableInTouchMode="false" />
+
 
 
 

@@ -1,8 +1,10 @@
 package com.collinbarnwell.bold1;
 
 
-
-
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.app.TimePickerDialog;
 import android.content.ContentValues;
 import android.content.Context;
 
@@ -11,6 +13,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatDialogFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -39,11 +43,9 @@ import org.json.JSONObject;
 /**
  * Created by Jerry on 5/4/2016.
  */
-public class Profile extends AppCompatActivity implements DatePicker.OnDateChangedListener {
+public class Profile extends AppCompatActivity {
 
     public static final String UserInfoFile = "User_Info_File";
-    private DatePicker datePicker;
-    private String lastDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,15 +64,7 @@ public class Profile extends AppCompatActivity implements DatePicker.OnDateChang
         // Enable the Up button
         ab.setDisplayHomeAsUpEnabled(true);
 
-        datePicker = (DatePicker) findViewById(R.id.user_dob);
 
-    }
-
-    @Override
-    public void onDateChanged(DatePicker view, int year, int month, int day){
-
-        lastDate = day + "/";
-        lastDate = lastDate + (month + 1) + "/" + year;
     }
 
 
@@ -80,6 +74,7 @@ public class Profile extends AppCompatActivity implements DatePicker.OnDateChang
         final String last_name = ((EditText) findViewById(R.id.user_last_name)).getText().toString();
         final String age = ((EditText) findViewById(R.id.user_age)).getText().toString();
         //final String date_of_birth = ((EditText) findViewById(R.id.user_dob)).getText().toString();
+        final String date_of_birth = "";
 
         /*DatePicker birthday = ((DatePicker) findViewById(R.id.user_dob));
         long dob = birthday.getCalendarView().getDate();
@@ -87,8 +82,6 @@ public class Profile extends AppCompatActivity implements DatePicker.OnDateChang
 
         DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.US);*/
 
-
-        final String date_of_birth = lastDate;
 
 
 //        final String user_id = ((EditText) findViewById(R.id.user_id)).getText().toString();
@@ -129,6 +122,39 @@ public class Profile extends AppCompatActivity implements DatePicker.OnDateChang
 
         }
 
+    }
+
+    public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
+
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState){
+
+            final Calendar c = Calendar.getInstance();
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            int day = c.get(Calendar.DAY_OF_MONTH);
+
+            return new DatePickerDialog(getActivity(), 0, this, year, month, day);
+
+        }
+
+
+
+
+
+        public void onDateSet(DatePicker view, int year, int month, int day) {
+            //Do nothing for now
+        }
+
+    }
+
+    public void showDatePickerDialog(View v){
+        DialogFragment newFragment = new DatePickerFragment();
+
+        DatePicker datePicker = ((DatePickerDialog) newFragment.getDialog()).getDatePicker();
+        datePicker.setCalendarViewShown(true);
+        newFragment.show(getFragmentManager(), "datePicker");
     }
 
 }
