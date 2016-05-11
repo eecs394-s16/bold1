@@ -70,41 +70,40 @@ public class MainActivity extends AppCompatActivity {
         pdf_button.setOnClickListener(new OnClickListener(){
             public void onClick(View v){
 
-//                DatabaseHelper mDbHelper = new DatabaseHelper(getBaseContext());
-//                SQLiteDatabase db = mDbHelper.getReadableDatabase();
-//
-//                Cursor cursor = db.rawQuery("SELECT * FROM data_point",null);
-//
-//                Document document = new Document();
-//
-//
-//                String pdf_address = "/Users/NourAlharithi/Desktop";
-//                String filename = "testfile.pdf";
-//
-//                File root = new File(pdf_address);
-//                File gpxfile = new File(root, filename);
-//                try {
-//                    PdfWriter.getInstance(document, new FileOutputStream(gpxfile));
-//                }
-//                catch(Exception e){
-//
-//                }
-//
-//                document.open();
-//                Paragraph p3 = new Paragraph();
-//                p3.add("Testing PDF output");
-//                try{
-//                    document.add(p3);
-//                }
-//                catch(DocumentException e){
-//
-//                }
-//
-//                document.close();
+                // Opening document
+                Document document = new Document();
+
+                // File shit
+                String filename = "doctor.pdf";
+                File gpxfile = new File("/Users/NourAlharithi/Desktop", filename);
+
+                try{
+                    PdfWriter.getInstance(document, new FileOutputStream(gpxfile));
+                }
+                catch(Exception e)
+                {
+                    e.printStackTrace();
+                }
+
+                Paragraph p3 = new Paragraph();
+                p3.add("Yay");
+
+                document.open();
+
+                try
+                {
+                    document.add(p3);
+                }
+                catch (DocumentException e)
+                {
+                    e.printStackTrace();
+                }
+
+                document.close();
+
 
             }
         });
-
 
 
     }
