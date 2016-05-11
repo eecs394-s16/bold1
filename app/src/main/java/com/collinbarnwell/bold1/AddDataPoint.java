@@ -13,7 +13,11 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class AddDataPoint extends AppCompatActivity {
@@ -50,48 +54,71 @@ public class AddDataPoint extends AppCompatActivity {
     }
 
     public void nextFlipper(View button) {
-        currentViewflipperChild += 1;
-        VF.setDisplayedChild(currentViewflipperChild);
+        boolean validData=true;
+        switch (button.getId()){
+            case R.id.datapoint1_next_button:
+                HashMap<String,Integer> bloodPressureData=  getBloodPressureData();
+                if ((bloodPressureData.get("dia_press") <40) ||
+                        (bloodPressureData.get("dia_press") >150)){
+                    Toast.makeText(getBaseContext(),"Please enter reasonable diastolic pressure in mm Hg",Toast.LENGTH_LONG).show();
+                    validData=false;
+                }else if ((bloodPressureData.get("sys_press") <80) ||
+                        (bloodPressureData.get("sys_press")>220)){
+                    Toast.makeText(getBaseContext(),"Please enter reasonable systolic pressure in mm Hg",Toast.LENGTH_LONG).show();
+                    validData=false;
+                    // Do not check for mean art pres now
+//                }else if ((bloodPressureData.get("mean_art_pres")<40) ||
+//                        (bloodPressureData.get("mean_art_pres")>220)){
+//                    Toast.makeText(getBaseContext(),"Please enter reasonable mean arterial pressure in mm Hg",Toast.LENGTH_LONG).show();
+//                    validData=false;
+                }else if ((bloodPressureData.get("heart_rate")<20) ||
+                        (bloodPressureData.get("heart_rate")>300)){
+                    Toast.makeText(getBaseContext(),"Please enter reasonable heart rate in beats per minute",Toast.LENGTH_LONG).show();
+                    validData=false;
+                }
+                break;
+            case R.id.datapoint2_next_button:
+                // HashMap<String,Boolean> relatedData = getRelatedData();
+                // For now Don't do anything. They don't have to answer those.
+                break;
+            default:
+                break;
+        }
+        if (validData){
+            currentViewflipperChild += 1;
+            VF.setDisplayedChild(currentViewflipperChild);
+        }
     }
 
     public void saveDataPoint(View button) {
-        final EditText dpress_field = (EditText) findViewById(R.id.dia_press);
-        int dia_press = Integer.parseInt(dpress_field.getText().toString());
+        // First check if the mood is filled out
+        HashMap<String,String> moodData=getMoodData();
+        String mood = moodData.get("mood");
+        if (mood.isEmpty()){
+            Toast.makeText(getBaseContext(),"Please choose a mood.",Toast.LENGTH_LONG).show();
+            return;
+        }
 
-        final EditText spress_field = (EditText) findViewById(R.id.sys_press);
-        int sys_press = Integer.parseInt(spress_field.getText().toString());
 
-        final EditText mean_art_press_field = (EditText) findViewById(R.id.art_press);
-        int mean_art_pres = Integer.parseInt(mean_art_press_field.getText().toString());
+        HashMap<String,Integer> bloodPressureData=  getBloodPressureData();
+        Integer dia_press = bloodPressureData.get("dia_press");
+        Integer sys_press = bloodPressureData.get("sys_press");
+        Integer mean_art_pres = bloodPressureData.get("mean_art_pres");
+        Integer heart_rate = bloodPressureData.get("heart_rate");
 
-        final EditText heart_rate_field = (EditText) findViewById(R.id.heart_rate);
-        int heart_rate = Integer.parseInt(heart_rate_field.getText().toString());
 
         String other = findViewById(R.id.otherThings).toString();
 
-        boolean food_intake = findViewById(R.id.food_intake).isPressed();
-        boolean caffeine = findViewById(R.id.caffeine).isPressed();
-        boolean non_caffeine = findViewById(R.id.non_caffeine).isPressed();
-        boolean tobacco = findViewById(R.id.tobacco).isPressed();
-        boolean exercise = findViewById(R.id.exercise).isPressed();
-        boolean daily_activity = findViewById(R.id.light_physical_activity).isPressed();
-        boolean wake_up = findViewById(R.id.woke_up).isPressed();
-        boolean about_to_sleep = findViewById(R.id.going_to_bed).isPressed();
+        HashMap<String,Boolean> relatedData = getRelatedData();
+        boolean food_intake = relatedData.get("food_intake");
+        boolean caffeine = relatedData.get("caffeine");
+        boolean non_caffeine = relatedData.get("non_caffeine");
+        boolean tobacco = relatedData.get("tobacco");
+        boolean exercise = relatedData.get("exercise");
+        boolean daily_activity = relatedData.get("daily_activity");
+        boolean wake_up = relatedData.get("wake_up");
+        boolean about_to_sleep = relatedData.get("about_to_sleep");
 
-
-        final RadioGroup moodGroup = (RadioGroup) findViewById(R.id.moodRadioGroup);
-        int radioButtonID = moodGroup.getCheckedRadioButtonId();
-        View radioButton = moodGroup.findViewById(radioButtonID);
-        int idx = moodGroup.indexOfChild(radioButton);
-
-        String mood = "";
-        if (idx == 0) {
-            mood = "good";
-        } else if (idx == 1) {
-            mood = "average";
-        } else if (idx == 2) {
-            mood = "bad";
-        }
 
         DatabaseHelper mDbHelper = new DatabaseHelper(getBaseContext());
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
@@ -119,5 +146,93 @@ public class AddDataPoint extends AppCompatActivity {
         newRowId = db.insert(DatabaseContract.DataPoint.TABLE_NAME, null, values);
 
         finish();
+    }
+
+
+    public HashMap<String,Integer> getBloodPressureData(){
+        HashMap<String,Integer> data = new HashMap<String,Integer>();
+
+        final EditText dpress_field = (EditText) findViewById(R.id.dia_press);
+        Integer dia_press;
+        try {
+            dia_press = Integer.parseInt(dpress_field.getText().toString());
+        } catch(NumberFormatException nfe) {
+            dia_press = -1;
+        }
+        data.put("dia_press",dia_press);
+
+        final EditText spress_field = (EditText) findViewById(R.id.sys_press);
+        Integer sys_press;
+        try {
+            sys_press = Integer.parseInt(spress_field.getText().toString());
+        } catch(NumberFormatException nfe) {
+            sys_press = -1;
+        }
+        data.put("sys_press",sys_press);
+
+        final EditText mean_art_press_field = (EditText) findViewById(R.id.art_press);
+        Integer mean_art_pres;
+        try {
+            mean_art_pres = Integer.parseInt(mean_art_press_field.getText().toString());
+        } catch(NumberFormatException nfe) {
+            mean_art_pres = -1;
+        }
+        data.put("mean_art_pres",mean_art_pres);
+
+        final EditText heart_rate_field = (EditText) findViewById(R.id.heart_rate);
+        Integer heart_rate;
+        try {
+            heart_rate = Integer.parseInt(heart_rate_field.getText().toString());
+        } catch(NumberFormatException nfe) {
+            heart_rate = -1;
+        }
+        data.put("heart_rate",heart_rate);
+
+        return data;
+    }
+
+
+    public HashMap<String,Boolean> getRelatedData(){
+        HashMap<String,Boolean> data = new HashMap<String,Boolean>();
+        boolean food_intake = findViewById(R.id.food_intake).isPressed();
+        boolean caffeine = findViewById(R.id.caffeine).isPressed();
+        boolean non_caffeine = findViewById(R.id.non_caffeine).isPressed();
+        boolean tobacco = findViewById(R.id.tobacco).isPressed();
+        boolean exercise = findViewById(R.id.exercise).isPressed();
+        boolean daily_activity = findViewById(R.id.light_physical_activity).isPressed();
+        boolean wake_up = findViewById(R.id.woke_up).isPressed();
+        boolean about_to_sleep = findViewById(R.id.going_to_bed).isPressed();
+
+        data.put("food_intake",food_intake);
+        data.put("caffeine",caffeine);
+        data.put("non_caffeine",non_caffeine);
+        data.put("tobacco",tobacco);
+        data.put("exercise",exercise);
+        data.put("daily_activity",daily_activity);
+        data.put("wake_up",wake_up);
+        data.put("about_to_sleep",about_to_sleep);
+
+        return data;
+    }
+
+
+    public HashMap<String,String> getMoodData(){
+        HashMap<String,String> data = new HashMap<String,String>();
+
+        final RadioGroup moodGroup = (RadioGroup) findViewById(R.id.moodRadioGroup);
+        int radioButtonID = moodGroup.getCheckedRadioButtonId();
+        View radioButton = moodGroup.findViewById(radioButtonID);
+        int idx = moodGroup.indexOfChild(radioButton);
+
+        String mood = "";
+        if (idx == 0) {
+            mood = "good";
+        } else if (idx == 1) {
+            mood = "average";
+        } else if (idx == 2) {
+            mood = "bad";
+        }
+        data.put("mood",mood);
+        return data;
     }
 }
