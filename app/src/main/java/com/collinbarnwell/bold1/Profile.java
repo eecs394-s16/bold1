@@ -4,11 +4,8 @@ package com.collinbarnwell.bold1;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.app.TimePickerDialog;
 import android.content.ContentValues;
 import android.content.Context;
-
-
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
@@ -18,23 +15,20 @@ import android.support.v7.app.AppCompatDialogFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-
 import android.view.View;
-
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.DatePicker;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 import android.util.Log;
 
@@ -45,7 +39,7 @@ import org.json.JSONObject;
  */
 public class Profile extends AppCompatActivity {
 
-    public static final String UserInfoFile = "User_Info_File";
+    public static final UtilClass utilClass = new UtilClass();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,61 +54,46 @@ public class Profile extends AppCompatActivity {
         // Get a support ActionBar corresponding to this toolbar
         ActionBar ab = getSupportActionBar();
 
-
         // Enable the Up button
         ab.setDisplayHomeAsUpEnabled(true);
 
 
+
+        // Now automatically get the info from local storage and fill in the text fields.
+        try{
+            // This is where we stored the user info
+            JSONObject saved_user_info = utilClass.loadJSONFromFile(this,utilClass.UserInfoFile);
+            for (int i=0; i<utilClass.UserInfoStrings.length;i++) {
+                if (saved_user_info.has(utilClass.UserInfoStrings[i])){
+                    ((EditText) findViewById(utilClass.UserInfoIds[i])).setText(saved_user_info.getString(utilClass.UserInfoStrings[i]));
+                }
+            }
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            Toast.makeText(getBaseContext(),"Something went wrong while fetching user info.",Toast.LENGTH_LONG).show();
+        }
     }
 
-
-
     public void saveUserInfo(View button) {
-        final String first_name = ((EditText) findViewById(R.id.user_first_name)).getText().toString();
-        final String last_name = ((EditText) findViewById(R.id.user_last_name)).getText().toString();
-        final String age = ((EditText) findViewById(R.id.user_age)).getText().toString();
-        final String date_of_birth = ((EditText) findViewById(R.id.user_dob)).getText().toString();
-
-
-
-//        final String user_id = ((EditText) findViewById(R.id.user_id)).getText().toString();
-//        final String email = ((EditText) findViewById(R.id.dia_press)).getText().toString();
-//        final String institution_affiliation = ((EditText) findViewById(R.id.institution_affiliation)).getText().toString();
-//        final String respective_physician = ((EditText) findViewById(R.id.user_respective_physician)).getText().toString();
-
+        JSONObject user_info = new JSONObject();
         try {
-            JSONObject user_info = new JSONObject();
-            user_info.put("first_name", first_name);
-            user_info.put("last_name", last_name);
-            user_info.put("age", age);
-            user_info.put("date_of_birth", date_of_birth);
+            for (int i=0; i<utilClass.UserInfoStrings.length;i++) {
+                user_info.put(utilClass.UserInfoStrings[i], ((EditText) findViewById(utilClass.UserInfoIds[i])).getText().toString());
+            }
             String user_info_string = user_info.toString();
-
-            // String string = "asdf";
             try {
-                FileOutputStream fos = openFileOutput(UserInfoFile, Context.MODE_PRIVATE);
+                FileOutputStream fos = openFileOutput(utilClass.UserInfoFile, Context.MODE_PRIVATE);
                 fos.write(user_info_string.getBytes());
                 fos.close();
-            } catch (Exception e) {
+                Toast.makeText(getBaseContext(),"Successfully saved info.",Toast.LENGTH_LONG).show();
+            }
+            catch (Exception e) {
                 e.printStackTrace();
             }
-
-            try {
-                FileInputStream fin = openFileInput(UserInfoFile);
-                int c;
-                String temp = "";
-
-                while ((c = fin.read()) != -1) {
-                    temp = temp + Character.toString((char) c);
-                }
-                Toast.makeText(getBaseContext(), temp, Toast.LENGTH_SHORT).show();
-            } catch (Exception e) {
-            }
-
         } catch (Exception e) {
 
         }
-
     }
 
     public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {

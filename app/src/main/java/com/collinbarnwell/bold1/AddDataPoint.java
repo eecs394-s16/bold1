@@ -120,4 +120,5 @@ public class AddDataPoint extends AppCompatActivity {
 
         finish();
     }
+
 }

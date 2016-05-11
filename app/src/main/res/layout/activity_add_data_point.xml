@@ -4,16 +4,28 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
-<android.support.v7.widget.Toolbar
+    <android.support.v7.widget.Toolbar
         android:id="@+id/add_data_point_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorAccent"
         android:theme="@style/AppTheme"
-        android:elevation="4dp"/>
+        app:popupTheme="@style/AppTheme.PopupOverlay"
+        android:elevation="4dp"
+        android:background="#000000">
+
+
+        <ImageView
+            android:layout_width="150dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:background="@drawable/bold_white_transparent_background"
+            />
+
+    </android.support.v7.widget.Toolbar>
 
     <ViewFlipper
         android:id="@+id/datapoint1"
@@ -89,6 +101,7 @@
                 android:layout_alignStart="@+id/heart_rate"
                 android:onClick="nextFlipper"
                 android:clickable="true" />
+
         </RelativeLayout>
 
 

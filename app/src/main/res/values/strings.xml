@@ -2,6 +2,9 @@
     <string name="app_name">Bold1</string>
     <string name="title_activity_main">MainActivity</string>
 
+    <!--Strings for main page-->
+    <string name="welcome_message_default">Welcome</string>
+
     <!--Strings for user profile-->
     <string name="user_ID">User ID</string>
     <string name="user_email">Email</string>
