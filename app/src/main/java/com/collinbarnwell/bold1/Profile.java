@@ -73,14 +73,7 @@ public class Profile extends AppCompatActivity {
         final String first_name = ((EditText) findViewById(R.id.user_first_name)).getText().toString();
         final String last_name = ((EditText) findViewById(R.id.user_last_name)).getText().toString();
         final String age = ((EditText) findViewById(R.id.user_age)).getText().toString();
-        //final String date_of_birth = ((EditText) findViewById(R.id.user_dob)).getText().toString();
-        final String date_of_birth = "";
-
-        /*DatePicker birthday = ((DatePicker) findViewById(R.id.user_dob));
-        long dob = birthday.getCalendarView().getDate();
-        Date date = new Date(dob);
-
-        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.US);*/
+        final String date_of_birth = ((EditText) findViewById(R.id.user_dob)).getText().toString();
 
 
 
@@ -135,26 +128,26 @@ public class Profile extends AppCompatActivity {
             int month = c.get(Calendar.MONTH);
             int day = c.get(Calendar.DAY_OF_MONTH);
 
-            return new DatePickerDialog(getActivity(), 0, this, year, month, day);
+            return new DatePickerDialog(getActivity(), android.R.style.Theme_Holo_Dialog_NoActionBar, this, year, month, day);
+
 
         }
 
 
-
-
-
         public void onDateSet(DatePicker view, int year, int month, int day) {
-            //Do nothing for now
+
+            EditText editText = (EditText) this.getActivity().findViewById(R.id.user_dob);
+            final String date = (month+1) + "/" + day + "/" + year;
+            editText.setText(date, TextView.BufferType.EDITABLE);
+
         }
 
     }
 
     public void showDatePickerDialog(View v){
         DialogFragment newFragment = new DatePickerFragment();
-
-        DatePicker datePicker = ((DatePickerDialog) newFragment.getDialog()).getDatePicker();
-        datePicker.setCalendarViewShown(true);
         newFragment.show(getFragmentManager(), "datePicker");
+
     }
 
 }
