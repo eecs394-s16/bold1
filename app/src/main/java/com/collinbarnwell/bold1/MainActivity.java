@@ -9,6 +9,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -67,50 +68,57 @@ public class MainActivity extends AppCompatActivity {
         DatabaseHelper mDbHelper = new DatabaseHelper(getBaseContext());
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
-        GraphView graph = (GraphView) findViewById(R.id.graph);
-        graph.removeAllSeries();
+        String count = "SELECT count(*) FROM data_point";
+        Cursor mcursor = db.rawQuery(count, null);
+        mcursor.moveToFirst();
+        int icount = mcursor.getInt(0);
+        if(icount>0){
 
-        graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(MainActivity.this));
-        graph.getGridLabelRenderer().setNumHorizontalLabels(4);
+            GraphView graph = (GraphView) findViewById(R.id.graph);
+            graph.removeAllSeries();
 
-        // Get one day ago
-        Calendar cal = Calendar.getInstance();
-        Date now = cal.getTime();
-        cal.add(Calendar.DAY_OF_YEAR, -1);
-        Date oneDayAgo = cal.getTime();
+            graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(MainActivity.this));
+            graph.getGridLabelRenderer().setNumHorizontalLabels(4);
 
-        graph.getViewport().setMinX(oneDayAgo.getTime());
-        graph.getViewport().setMaxX(now.getTime());
-        graph.getViewport().setXAxisBoundsManual(true);
+            // Get one day ago
+            Calendar cal = Calendar.getInstance();
+            Date now = cal.getTime();
+            cal.add(Calendar.DAY_OF_YEAR, -1);
+            Date oneDayAgo = cal.getTime();
 
-        graph.getGridLabelRenderer().setNumVerticalLabels(9);
-        graph.getViewport().setMinY(0);
-        graph.getViewport().setMaxY(200);
-        graph.getViewport().setYAxisBoundsManual(true);
+            graph.getViewport().setMinX(oneDayAgo.getTime());
+            graph.getViewport().setMaxX(now.getTime());
+            graph.getViewport().setXAxisBoundsManual(true);
 
-        graph.getViewport().setScrollable(true);
-        // graph.getViewport().setScalable(true);
+            graph.getGridLabelRenderer().setNumVerticalLabels(9);
+            graph.getViewport().setMinY(0);
+            graph.getViewport().setMaxY(200);
+            graph.getViewport().setYAxisBoundsManual(true);
 
-        // legend
-        graph.getLegendRenderer().setVisible(true);
-        graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
+            graph.getViewport().setScrollable(true);
+            // graph.getViewport().setScalable(true);
 
-        LineGraphSeries<DataPoint> systolic_series =
-                new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "systolic_pressure"));
-        graph.addSeries(systolic_series);
-        systolic_series.setTitle("Systolic Pressure (mmHg)");
+            // legend
+            graph.getLegendRenderer().setVisible(true);
+            graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
 
-        LineGraphSeries<DataPoint> diastolic_series =
-                new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "diastolic_pressure"));
-        graph.addSeries(diastolic_series);
-        diastolic_series.setColor(Color.GREEN);
-        diastolic_series.setTitle("Diastolic Pressure (mmHg)");
+            LineGraphSeries<DataPoint> systolic_series =
+                    new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "systolic_pressure"));
+            graph.addSeries(systolic_series);
+            systolic_series.setTitle("Systolic Pressure (mmHg)");
 
-        LineGraphSeries<DataPoint> heart_rate_series =
-                new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "heart_rate"));
-        graph.addSeries(heart_rate_series);
-        heart_rate_series.setColor(Color.RED);
-        heart_rate_series.setTitle("Pulse Rate (/min)");
+            LineGraphSeries<DataPoint> diastolic_series =
+                    new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "diastolic_pressure"));
+            graph.addSeries(diastolic_series);
+            diastolic_series.setColor(Color.GREEN);
+            diastolic_series.setTitle("Diastolic Pressure (mmHg)");
+
+            LineGraphSeries<DataPoint> heart_rate_series =
+                    new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "heart_rate"));
+            graph.addSeries(heart_rate_series);
+            heart_rate_series.setColor(Color.RED);
+            heart_rate_series.setTitle("Pulse Rate (/min)");
+        }
     }
 
 
