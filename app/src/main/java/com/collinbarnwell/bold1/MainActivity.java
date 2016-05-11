@@ -30,6 +30,7 @@ import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -78,13 +79,29 @@ public class MainActivity extends AppCompatActivity {
             graph.removeAllSeries();
 
             graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(MainActivity.this));
-            graph.getGridLabelRenderer().setNumHorizontalLabels(4);
+            graph.getGridLabelRenderer().setNumHorizontalLabels(3);
 
             // Get one day ago
             Calendar cal = Calendar.getInstance();
             Date now = cal.getTime();
-            cal.add(Calendar.DAY_OF_YEAR, -1);
+            cal.add(Calendar.HOUR_OF_DAY, -8);
             Date oneDayAgo = cal.getTime();
+
+
+            graph.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
+                @Override
+                public String formatLabel(double value, boolean isValueX) {
+                    if (isValueX) {
+                        // show normal x values
+                        Date date = new Date((long)value);
+                        SimpleDateFormat format = new SimpleDateFormat("HH:mm MM/dd");
+                        return format.format(date);
+                    } else {
+                        // show currency for y values
+                        return super.formatLabel(value, isValueX);
+                    }
+                }
+            });
 
             graph.getViewport().setMinX(oneDayAgo.getTime());
             graph.getViewport().setMaxX(now.getTime());
