@@ -4,6 +4,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.DocumentsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +24,10 @@ import android.widget.Toast;
 
 import org.json.JSONObject;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.jjoe64.graphview.DefaultLabelFormatter;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GridLabelRenderer;
@@ -30,6 +36,8 @@ import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -57,6 +65,48 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, AddDataPoint.class));
             }
         });
+
+        Button pdf_button = (Button) findViewById(R.id.pdf_create);
+        pdf_button.setOnClickListener(new OnClickListener(){
+            public void onClick(View v){
+
+//                DatabaseHelper mDbHelper = new DatabaseHelper(getBaseContext());
+//                SQLiteDatabase db = mDbHelper.getReadableDatabase();
+//
+//                Cursor cursor = db.rawQuery("SELECT * FROM data_point",null);
+//
+//                Document document = new Document();
+//
+//
+//                String pdf_address = "/Users/NourAlharithi/Desktop";
+//                String filename = "testfile.pdf";
+//
+//                File root = new File(pdf_address);
+//                File gpxfile = new File(root, filename);
+//                try {
+//                    PdfWriter.getInstance(document, new FileOutputStream(gpxfile));
+//                }
+//                catch(Exception e){
+//
+//                }
+//
+//                document.open();
+//                Paragraph p3 = new Paragraph();
+//                p3.add("Testing PDF output");
+//                try{
+//                    document.add(p3);
+//                }
+//                catch(DocumentException e){
+//
+//                }
+//
+//                document.close();
+
+            }
+        });
+
+
+
     }
 
     @Override
