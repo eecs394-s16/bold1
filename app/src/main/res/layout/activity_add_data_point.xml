@@ -70,21 +70,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:inputType="number"
-                android:hint="Mean arterial pressure"
-                android:ems="10"
-                android:id="@+id/art_press"
-                android:layout_below="@+id/dia_press"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="36dp" />
-
-            <EditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="number"
-                android:hint="Heart rate"
+                android:hint="Pulse"
                 android:ems="10"
                 android:id="@+id/heart_rate"
-                android:layout_below="@+id/art_press"
+                android:layout_below="@+id/dia_press"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="36dp" />
 

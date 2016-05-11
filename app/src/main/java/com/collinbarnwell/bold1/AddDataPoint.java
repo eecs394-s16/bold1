@@ -103,7 +103,6 @@ public class AddDataPoint extends AppCompatActivity {
         HashMap<String,Integer> bloodPressureData=  getBloodPressureData();
         Integer dia_press = bloodPressureData.get("dia_press");
         Integer sys_press = bloodPressureData.get("sys_press");
-        Integer mean_art_pres = bloodPressureData.get("mean_art_pres");
         Integer heart_rate = bloodPressureData.get("heart_rate");
 
 
@@ -127,7 +126,6 @@ public class AddDataPoint extends AppCompatActivity {
 
         values.put(DatabaseContract.DATAEntry.DIASTOLIC_PRESSURE, dia_press);
         values.put(DatabaseContract.DATAEntry.SYSTOLIC_PRESSURE, sys_press);
-        values.put(DatabaseContract.DATAEntry.MEAN_ARTERIAL_PRESSURE, mean_art_pres);
         values.put(DatabaseContract.DATAEntry.HEART_RATE, heart_rate);
 
         values.put(DatabaseContract.DATAEntry.EXERCISE, exercise);
@@ -169,15 +167,6 @@ public class AddDataPoint extends AppCompatActivity {
             sys_press = -1;
         }
         data.put("sys_press",sys_press);
-
-        final EditText mean_art_press_field = (EditText) findViewById(R.id.art_press);
-        Integer mean_art_pres;
-        try {
-            mean_art_pres = Integer.parseInt(mean_art_press_field.getText().toString());
-        } catch(NumberFormatException nfe) {
-            mean_art_pres = -1;
-        }
-        data.put("mean_art_pres",mean_art_pres);
 
         final EditText heart_rate_field = (EditText) findViewById(R.id.heart_rate);
         Integer heart_rate;
