@@ -1,20 +1,36 @@
 package com.collinbarnwell.bold1;
 
+
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+
+
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatDialogFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
+
 import android.widget.Toast;
+import android.widget.DatePicker;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
+
+
+import java.util.Calendar;
+import java.util.Date;
 
 import android.util.Log;
 
@@ -42,6 +58,8 @@ public class Profile extends AppCompatActivity {
 
         // Enable the Up button
         ab.setDisplayHomeAsUpEnabled(true);
+
+
 
         // Now automatically get the info from local storage and fill in the text fields.
         try{
@@ -79,4 +97,42 @@ public class Profile extends AppCompatActivity {
 
         }
     }
+
+    public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
+
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState){
+
+            final Calendar c = Calendar.getInstance();
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            int day = c.get(Calendar.DAY_OF_MONTH);
+
+            return new DatePickerDialog(getActivity(), android.R.style.Theme_Holo_Dialog_NoActionBar, this, year, month, day);
+
+
+        }
+
+
+        public void onDateSet(DatePicker view, int year, int month, int day) {
+
+            EditText editText = (EditText) this.getActivity().findViewById(R.id.user_dob);
+            final String date = (month+1) + "/" + day + "/" + year;
+            editText.setText(date, TextView.BufferType.EDITABLE);
+
+        }
+
+    }
+
+    public void showDatePickerDialog(View v){
+        DialogFragment newFragment = new DatePickerFragment();
+        newFragment.show(getFragmentManager(), "datePicker");
+
+    }
+
 }
+
+
+
+

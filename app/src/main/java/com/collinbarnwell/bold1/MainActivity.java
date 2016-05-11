@@ -1,10 +1,15 @@
 package com.collinbarnwell.bold1;
 
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,16 +17,22 @@ import android.content.Intent;
 import android.view.View.OnClickListener;
 
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONObject;
 
-
+import com.jjoe64.graphview.DefaultLabelFormatter;
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.GridLabelRenderer;
+import com.jjoe64.graphview.LegendRenderer;
+import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
     public static final UtilClass utilClass = new UtilClass();
@@ -32,16 +43,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
-
-        GraphView graph = (GraphView) findViewById(R.id.graph);
-        LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(new DataPoint[] {
-                new DataPoint(0, 1),
-                new DataPoint(1, 5),
-                new DataPoint(2, 3),
-                new DataPoint(3, 2),
-                new DataPoint(4, 6)
-        });
-        graph.addSeries(series);
 
         Button prof_button = (Button) findViewById(R.id.profile_button);
         prof_button.setOnClickListener(new OnClickListener(){
@@ -56,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, AddDataPoint.class));
             }
         });
-        refreshWelcomeMessage();
     }
 
     @Override
@@ -64,8 +64,63 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         // Whenever we go back to main activity, the name of the user may have changed (very unlikely)
         // No matter whether that happens, refresh welcome message.
-        refreshWelcomeMessage();
+
+        DatabaseHelper mDbHelper = new DatabaseHelper(getBaseContext());
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        String count = "SELECT count(*) FROM data_point";
+        Cursor mcursor = db.rawQuery(count, null);
+        mcursor.moveToFirst();
+        int icount = mcursor.getInt(0);
+        if(icount>0){
+
+            GraphView graph = (GraphView) findViewById(R.id.graph);
+            graph.removeAllSeries();
+
+            graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(MainActivity.this));
+            graph.getGridLabelRenderer().setNumHorizontalLabels(4);
+
+            // Get one day ago
+            Calendar cal = Calendar.getInstance();
+            Date now = cal.getTime();
+            cal.add(Calendar.DAY_OF_YEAR, -1);
+            Date oneDayAgo = cal.getTime();
+
+            graph.getViewport().setMinX(oneDayAgo.getTime());
+            graph.getViewport().setMaxX(now.getTime());
+            graph.getViewport().setXAxisBoundsManual(true);
+
+            graph.getGridLabelRenderer().setNumVerticalLabels(9);
+            graph.getViewport().setMinY(0);
+            graph.getViewport().setMaxY(200);
+            graph.getViewport().setYAxisBoundsManual(true);
+
+            graph.getViewport().setScrollable(true);
+            // graph.getViewport().setScalable(true);
+
+            // legend
+            graph.getLegendRenderer().setVisible(true);
+            graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
+
+            LineGraphSeries<DataPoint> systolic_series =
+                    new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "systolic_pressure"));
+            graph.addSeries(systolic_series);
+            systolic_series.setTitle("Systolic Pressure (mmHg)");
+
+            LineGraphSeries<DataPoint> diastolic_series =
+                    new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "diastolic_pressure"));
+            graph.addSeries(diastolic_series);
+            diastolic_series.setColor(Color.GREEN);
+            diastolic_series.setTitle("Diastolic Pressure (mmHg)");
+
+            LineGraphSeries<DataPoint> heart_rate_series =
+                    new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "heart_rate"));
+            graph.addSeries(heart_rate_series);
+            heart_rate_series.setColor(Color.RED);
+            heart_rate_series.setTitle("Pulse Rate (/min)");
+        }
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -87,24 +142,6 @@ public class MainActivity extends AppCompatActivity {
                 // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
 
-        }
-    }
-
-    private void refreshWelcomeMessage(){
-        // Refresh welcome message
-        try{
-            // This is where we stored the user info
-            JSONObject saved_user_info=utilClass.loadJSONFromFile(this,utilClass.UserInfoFile);
-            if (saved_user_info.has(utilClass.UserInfoStrings[4]) && !(saved_user_info.getString(utilClass.UserInfoStrings[4]).isEmpty())){
-                // If there is a user first name field in local storage and it's not empty
-                ((TextView)findViewById(R.id.welcomeMessage)).setText("Welcome, "+saved_user_info.getString(utilClass.UserInfoStrings[4]));
-            }else{
-                ((TextView)findViewById(R.id.welcomeMessage)).setText(R.string.welcome_message_default);
-            }
-        }
-        catch(Exception e){
-            e.printStackTrace();
-            Toast.makeText(getBaseContext(),"Something went wrong while fetching user info.",Toast.LENGTH_LONG).show();
         }
     }
 }

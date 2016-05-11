@@ -59,8 +59,10 @@
         android:layout_marginRight="16dp"
         android:hint="@string/user_dob"
         android:id="@+id/user_dob"
-        android:inputType="date"/>
-
+        android:inputType="none"
+        android:onClick="showDatePickerDialog"
+        android:focusable="false"
+        android:focusableInTouchMode="false" />
 
     <!--The following fields are the uneditable fields.
         Making them editable now for testing-->
@@ -69,6 +71,7 @@
         android:cursorVisible="false"
         android:focusable="false"
         android:focusableInTouchMode="false"-->
+
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -101,6 +101,7 @@
                 android:layout_alignStart="@+id/heart_rate"
                 android:onClick="nextFlipper"
                 android:clickable="true" />
+
         </RelativeLayout>
 
 
