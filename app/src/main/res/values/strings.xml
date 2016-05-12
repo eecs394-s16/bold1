@@ -19,5 +19,5 @@
     <string name="update_user_info">Update</string>
     <string name="user_profile_menu">Update patient info</string>
     <string name="add_datapoint">Record your data</string>
-    <string name="gen_pdf">Generate PDF report</string>
+    <string name="gen_pdf">Email PDF report</string>
 </resources>
