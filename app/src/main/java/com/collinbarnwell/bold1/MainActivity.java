@@ -45,12 +45,12 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
 
-        Button prof_button = (Button) findViewById(R.id.profile_button);
-        prof_button.setOnClickListener(new OnClickListener(){
-            public void onClick(View v){
-                startActivity(new Intent(MainActivity.this, Profile.class));
-            }
-        });
+//        Button prof_button = (Button) findViewById(R.id.profile_button);
+//        prof_button.setOnClickListener(new OnClickListener(){
+//            public void onClick(View v){
+//                startActivity(new Intent(MainActivity.this, Profile.class));
+//            }
+//        });
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new OnClickListener(){
@@ -149,10 +149,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_settings:
+            case R.id.user_profile_menu:
                 // User chose the "Settings" item, show the app settings UI...
                 startActivity(new Intent(MainActivity.this, Profile.class));
                 return true;
+            // Add new actions here for the items in the action bar menu
 
             default:
                 // If we got here, the user's action was not recognized.
