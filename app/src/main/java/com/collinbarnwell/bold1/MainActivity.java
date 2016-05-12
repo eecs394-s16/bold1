@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
             graph.getViewport().setYAxisBoundsManual(true);
 
             graph.getViewport().setScrollable(true);
-            // graph.getViewport().setScalable(true);
+            graph.getViewport().setScalable(true);
 
             // legend
             graph.getLegendRenderer().setVisible(true);
