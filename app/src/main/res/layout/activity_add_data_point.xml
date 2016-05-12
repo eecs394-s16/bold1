@@ -22,8 +22,7 @@
             android:layout_width="150dp"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:background="@drawable/bold_white_transparent_background"
-            />
+            android:background="@drawable/bold_white_transparent_background" />
 
     </android.support.v7.widget.Toolbar>
 

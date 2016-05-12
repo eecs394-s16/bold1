@@ -46,6 +46,7 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
 
+import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.io.File;
 import java.io.FileInputStream;
@@ -59,7 +60,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-
+import static com.collinbarnwell.bold1.R.color.graph_red;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -112,8 +113,7 @@ public class MainActivity extends AppCompatActivity {
             Date now = cal.getTime();
             cal.add(Calendar.HOUR_OF_DAY, -8);
             Date oneDayAgo = cal.getTime();
-
-
+            
             graph.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
                 @Override
                 public String formatLabel(double value, boolean isValueX) {
@@ -148,19 +148,30 @@ public class MainActivity extends AppCompatActivity {
             LineGraphSeries<DataPoint> systolic_series =
                     new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "systolic_pressure"));
             graph.addSeries(systolic_series);
+            systolic_series.setColor(getResources().getColor(R.color.graph_blue));
             systolic_series.setTitle("Systolic Pressure (mmHg)");
+            systolic_series.setDrawDataPoints(true);
+            systolic_series.setDataPointsRadius(30);
+            systolic_series.setThickness(20);
 
             LineGraphSeries<DataPoint> diastolic_series =
                     new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "diastolic_pressure"));
             graph.addSeries(diastolic_series);
-            diastolic_series.setColor(Color.GREEN);
+            diastolic_series.setColor(getResources().getColor(R.color.graph_orange));
             diastolic_series.setTitle("Diastolic Pressure (mmHg)");
+            diastolic_series.setDrawDataPoints(true);
+            diastolic_series.setDataPointsRadius(30);
+            diastolic_series.setThickness(20);
 
             LineGraphSeries<DataPoint> heart_rate_series =
                     new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "heart_rate"));
             graph.addSeries(heart_rate_series);
-            heart_rate_series.setColor(Color.RED);
+            heart_rate_series.setColor(getResources().getColor(R.color.graph_red));
             heart_rate_series.setTitle("Pulse Rate (/min)");
+            heart_rate_series.setDrawDataPoints(true);
+            heart_rate_series.setDataPointsRadius(30);
+            heart_rate_series.setThickness(20);
+
         }
     }
 
