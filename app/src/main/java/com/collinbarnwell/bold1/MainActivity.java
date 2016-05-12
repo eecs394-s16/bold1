@@ -45,12 +45,12 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
 
-        Button prof_button = (Button) findViewById(R.id.profile_button);
-        prof_button.setOnClickListener(new OnClickListener(){
-            public void onClick(View v){
-                startActivity(new Intent(MainActivity.this, Profile.class));
-            }
-        });
+//        Button prof_button = (Button) findViewById(R.id.profile_button);
+//        prof_button.setOnClickListener(new OnClickListener(){
+//            public void onClick(View v){
+//                startActivity(new Intent(MainActivity.this, Profile.class));
+//            }
+//        });
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new OnClickListener(){
