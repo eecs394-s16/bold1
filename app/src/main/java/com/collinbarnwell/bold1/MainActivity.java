@@ -149,10 +149,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_settings:
+            case R.id.user_profile_menu:
                 // User chose the "Settings" item, show the app settings UI...
                 startActivity(new Intent(MainActivity.this, Profile.class));
                 return true;
+            // Add new actions here for the items in the action bar menu
 
             default:
                 // If we got here, the user's action was not recognized.

@@ -17,13 +17,13 @@
         <!--android:theme="@style/AppTheme"-->
         <!--app:popupTheme="@style/AppTheme.PopupOverlay"-->
         <!--android:elevation="4dp"/>-->
-
-
+    <!--To change the color of the tool bar buttons, change this following line-->
+    <!--android:theme="@style/Base.ThemeOverlay.AppCompat.Dark"-->
     <android.support.v7.widget.Toolbar
         android:id="@+id/main_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:theme="@style/AppTheme"
+        android:theme="@style/Base.ThemeOverlay.AppCompat.Dark"
         app:popupTheme="@style/AppTheme.PopupOverlay"
         android:elevation="4dp"
         android:background="#000000">
