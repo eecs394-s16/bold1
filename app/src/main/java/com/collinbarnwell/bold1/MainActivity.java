@@ -1,13 +1,18 @@
 package com.collinbarnwell.bold1;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
@@ -28,6 +33,7 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.codec.Base64;
 import com.jjoe64.graphview.DefaultLabelFormatter;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GridLabelRenderer;
@@ -37,13 +43,28 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+
+
+
 public class MainActivity extends AppCompatActivity {
     public static final UtilClass utilClass = new UtilClass();
+    // Storage Permissions
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,8 +96,21 @@ public class MainActivity extends AppCompatActivity {
 
                 // File shit
                 String filename = "doctor.pdf";
-                File gpxfile = new File("/Users/NourAlharithi/Desktop", filename);
+                File gpxfile = new File("sdcard/", filename); // Where to save. Currently trying external storage. Save in
+                                                                // "/data/data/com.collinbarnwell.bold1" to get it to save in internal storage
 
+                // Checking to see if Android Manifest actually gave me permission to save to external storage
+                // Right now, it's being a bitch.
+                if(Environment.getExternalStorageDirectory().canWrite()){
+                    Log.i("hip hi", "hooray!");
+                }
+                else{
+                    Log.i("damn:", "you suck");
+                }
+
+
+
+                // Writing to PDF
                 try{
                     PdfWriter.getInstance(document, new FileOutputStream(gpxfile));
                 }
@@ -84,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
                 {
                     e.printStackTrace();
                 }
+
 
                 Paragraph p3 = new Paragraph();
                 p3.add("Yay");
@@ -100,6 +135,45 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 document.close();
+
+                // Done writing stuff
+
+
+
+
+                try {
+
+                    // File mailed_file = copyFile(gpxfile, dst);
+                    // Opening up mail app to send with...
+
+                    String[] TO = {"nour.alharithi@gmail.com"};
+                    Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                    emailIntent.setData(Uri.parse("mailto:"));
+                    emailIntent.setType("application/pdf");
+
+
+                    emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
+                    emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Your subject");
+                    emailIntent.putExtra(Intent.EXTRA_TEXT, "Email message goes here");
+                    emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(gpxfile));
+                    emailIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                    startActivityForResult(Intent.createChooser(emailIntent, "Send mail..."),  1);
+                    finish();
+                }
+                catch(Exception e){
+                    Log.i("didn't work", "damn");
+                }
+
+
+                // Don't worry about the following until later.
+
+//                try {
+//
+//                } catch (android.content.ActivityNotFoundException ex) {
+//                    Toast.makeText(MainActivity.this,
+//                            "There is no email client installed.", Toast.LENGTH_SHORT).show();
+//                }
 
 
             }
@@ -192,5 +266,35 @@ public class MainActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
 
         }
+    }
+
+    public static File copyFile(File src, File dst) throws IOException
+    {
+        //if folder does not exist
+        if (!dst.exists()) {
+            dst.mkdir();
+        }
+
+        File expFile = new File(dst.getPath() + File.separator + "doctor.pdf");
+        FileChannel inChannel = null;
+        FileChannel outChannel = null;
+
+        try {
+            inChannel = new FileInputStream(src).getChannel();
+            outChannel = new FileOutputStream(expFile).getChannel();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            inChannel.transferTo(0, inChannel.size(), outChannel);
+        } finally {
+            if (inChannel != null)
+                inChannel.close();
+            if (outChannel != null)
+                outChannel.close();
+        }
+
+        return expFile;
     }
 }
