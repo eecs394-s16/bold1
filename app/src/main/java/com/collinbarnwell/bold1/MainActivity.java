@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
             graph.removeAllSeries();
 
             graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(MainActivity.this));
-            graph.getGridLabelRenderer().setNumHorizontalLabels(3);
+            graph.getGridLabelRenderer().setNumHorizontalLabels(4);
 
             // Get one day ago
             Calendar cal = Calendar.getInstance();
@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
                     if (isValueX) {
                         // show normal x values
                         Date date = new Date((long)value);
-                        SimpleDateFormat format = new SimpleDateFormat("HH:mm MM/dd");
+                        SimpleDateFormat format = new SimpleDateFormat("h:mm a\nM/dd");
                         return format.format(date);
                     } else {
                         // show currency for y values
@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
             graph.getViewport().setYAxisBoundsManual(true);
 
             graph.getViewport().setScrollable(true);
-            graph.getViewport().setScalable(true);
+            // graph.getViewport().setScalable(true);
 
             // legend
             graph.getLegendRenderer().setVisible(true);
