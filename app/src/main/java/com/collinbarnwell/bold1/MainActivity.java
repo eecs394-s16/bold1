@@ -7,6 +7,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.net.Uri;
+import android.nfc.Tag;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.DocumentsContract;
@@ -101,12 +103,7 @@ public class MainActivity extends AppCompatActivity {
 
                 // Checking to see if Android Manifest actually gave me permission to save to external storage
                 // Right now, it's being a bitch.
-                if(Environment.getExternalStorageDirectory().canWrite()){
-                    Log.i("hip hi", "hooray!");
-                }
-                else{
-                    Log.i("damn:", "you suck");
-                }
+                isStoragePermissionGranted();
 
 
 
@@ -143,15 +140,11 @@ public class MainActivity extends AppCompatActivity {
 
                 try {
 
-                    // File mailed_file = copyFile(gpxfile, dst);
-                    // Opening up mail app to send with...
-
                     String[] TO = {"nour.alharithi@gmail.com"};
                     Intent emailIntent = new Intent(Intent.ACTION_SEND);
                     emailIntent.setData(Uri.parse("mailto:"));
                     emailIntent.setType("application/pdf");
-
-
+                    
                     emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
                     emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Your subject");
                     emailIntent.putExtra(Intent.EXTRA_TEXT, "Email message goes here");
@@ -296,5 +289,26 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return expFile;
+    }
+
+    public  boolean isStoragePermissionGranted() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                Log.i("whoop!","Permission is granted");
+                return true;
+            } else {
+
+                Log.i("fuck","Permission is revoked");
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                return false;
+            }
+        }
+        else { //permission is automatically granted on sdk<23 upon installation
+            Log.i("dope","Permission is granted");
+            return true;
+        }
+
+
     }
 }
