@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
@@ -17,20 +18,13 @@ import android.content.Intent;
 import android.view.View.OnClickListener;
 
 import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import org.json.JSONObject;
-
-import com.jjoe64.graphview.DefaultLabelFormatter;
 import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.GridLabelRenderer;
 import com.jjoe64.graphview.LegendRenderer;
 import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -57,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, AddDataPoint.class));
             }
         });
+
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.graph_table_tabber);
     }
 
     @Override
@@ -96,28 +92,32 @@ public class MainActivity extends AppCompatActivity {
             graph.getViewport().setYAxisBoundsManual(true);
 
             graph.getViewport().setScrollable(true);
-            // graph.getViewport().setScalable(true);
+            graph.getViewport().setScalable(true);
 
             // legend
             graph.getLegendRenderer().setVisible(true);
             graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
+            graph.getLegendRenderer().setTextSize(50);
+            graph.getLegendRenderer().setSpacing(30);
+            graph.getLegendRenderer().setMargin(20);
+            graph.getLegendRenderer().setPadding(20);
 
             LineGraphSeries<DataPoint> systolic_series =
                     new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "systolic_pressure"));
             graph.addSeries(systolic_series);
-            systolic_series.setTitle("Systolic Pressure (mmHg)");
+            systolic_series.setTitle("Systolic (mmHg)");
 
             LineGraphSeries<DataPoint> diastolic_series =
                     new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "diastolic_pressure"));
             graph.addSeries(diastolic_series);
             diastolic_series.setColor(Color.GREEN);
-            diastolic_series.setTitle("Diastolic Pressure (mmHg)");
+            diastolic_series.setTitle("Diastolic (mmHg)");
 
             LineGraphSeries<DataPoint> heart_rate_series =
                     new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "heart_rate"));
             graph.addSeries(heart_rate_series);
             heart_rate_series.setColor(Color.RED);
-            heart_rate_series.setTitle("Pulse Rate (/min)");
+            heart_rate_series.setTitle("Pulse (bpm)");
         }
     }
 
