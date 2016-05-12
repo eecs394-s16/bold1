@@ -34,6 +34,7 @@ import org.json.JSONObject;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.codec.Base64;
 import com.jjoe64.graphview.DefaultLabelFormatter;
@@ -120,11 +121,42 @@ public class MainActivity extends AppCompatActivity {
                 Paragraph p3 = new Paragraph();
                 p3.add("Yay");
 
+
+                DatabaseHelper mDbHelper = new DatabaseHelper(getBaseContext());
+                SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+
+                Cursor cursor = db.rawQuery("SELECT SYSTOLIC_PRESSURE, DIASTOLIC_PRESSURE, HEART_RATE, MEAN_ARTERIAL_PRESSURE, TIMESTAMP FROM data_point",null);
+
+                PdfPTable table = new PdfPTable(5);
+
+
+                table.addCell("Systolic Pressure");
+                table.addCell("Diastolic Pressure");
+                table.addCell("Heart Rate");
+                table.addCell("Mean Arterial Pressure");
+                table.addCell("Timestamp");
+
+                cursor.moveToFirst();
+                int count = cursor.getCount();
+
+                for (int j = 0; j < count; j++)
+                {
+                    table.addCell(cursor.getString(cursor.getColumnIndex("systolic_pressure")));
+                    table.addCell(cursor.getString(cursor.getColumnIndex("diastolic_pressure")));
+                    table.addCell(cursor.getString(cursor.getColumnIndex("heart_rate")));
+                    table.addCell(cursor.getString(cursor.getColumnIndex("mean_arterial_pressure")));
+                    table.addCell(cursor.getString(cursor.getColumnIndex("timestamp")));
+
+                    cursor.moveToNext();
+                }
+
+
                 document.open();
 
                 try
                 {
-                    document.add(p3);
+                    document.add(table);
                 }
                 catch (DocumentException e)
                 {
@@ -144,9 +176,9 @@ public class MainActivity extends AppCompatActivity {
                     Intent emailIntent = new Intent(Intent.ACTION_SEND);
                     emailIntent.setData(Uri.parse("mailto:"));
                     emailIntent.setType("application/pdf");
-                    
-                    emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
-                    emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Your subject");
+
+                    //emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
+                    emailIntent.putExtra(Intent.EXTRA_SUBJECT, "BOLD Blood Pressure Summary");
                     emailIntent.putExtra(Intent.EXTRA_TEXT, "Email message goes here");
                     emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(gpxfile));
                     emailIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -261,35 +293,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public static File copyFile(File src, File dst) throws IOException
-    {
-        //if folder does not exist
-        if (!dst.exists()) {
-            dst.mkdir();
-        }
-
-        File expFile = new File(dst.getPath() + File.separator + "doctor.pdf");
-        FileChannel inChannel = null;
-        FileChannel outChannel = null;
-
-        try {
-            inChannel = new FileInputStream(src).getChannel();
-            outChannel = new FileOutputStream(expFile).getChannel();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            inChannel.transferTo(0, inChannel.size(), outChannel);
-        } finally {
-            if (inChannel != null)
-                inChannel.close();
-            if (outChannel != null)
-                outChannel.close();
-        }
-
-        return expFile;
-    }
 
     public  boolean isStoragePermissionGranted() {
         if (Build.VERSION.SDK_INT >= 23) {
