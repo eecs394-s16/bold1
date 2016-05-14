@@ -20,7 +20,7 @@
             android:id="@+id/main_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:theme="@style/AppTheme"
+            android:theme="@style/Base.ThemeOverlay.AppCompat.Dark"
             app:popupTheme="@style/AppTheme.PopupOverlay"
             android:elevation="4dp"
             android:background="#000000">
@@ -28,20 +28,11 @@
             <ImageView
                 android:layout_width="150dp"
                 android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:background="@drawable/bold_white_transparent_background" />
-
-            <Button
-                android:id="@+id/profile_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:layout_marginRight="0dp"
-                android:background="@null"
-                android:textColor="#FFFFFF"
-                android:text="View \n Profile" />
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/bold_white_transparent_background"/>
 
         </android.support.v7.widget.Toolbar>
+
 
         <include layout="@layout/content_main" />
 

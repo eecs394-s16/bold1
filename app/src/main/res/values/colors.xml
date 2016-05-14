@@ -6,4 +6,7 @@
     <color name="colorTextLight">#fefefe</color>
     <color name="white"> #ffffff </color>
 
+    <color name="graph_blue">#20538B</color>
+    <color name="graph_orange">#ff9900</color>
+    <color name="graph_red">#ff0000</color>
 </resources>

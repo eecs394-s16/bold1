@@ -1,12 +1,21 @@
 package com.collinbarnwell.bold1;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.net.Uri;
+import android.nfc.Tag;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.DocumentsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
@@ -19,17 +28,46 @@ import android.view.View.OnClickListener;
 
 import android.widget.Button;
 
+import org.json.JSONObject;
+
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.codec.Base64;
+import com.jjoe64.graphview.DefaultLabelFormatter;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.LegendRenderer;
 import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import java.sql.Time;
+import java.text.SimpleDateFormat;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.channels.FileChannel;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import static com.collinbarnwell.bold1.R.color.graph_red;
+
+
 public class MainActivity extends AppCompatActivity {
     public static final UtilClass utilClass = new UtilClass();
+    // Storage Permissions
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,13 +75,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
-
-        Button prof_button = (Button) findViewById(R.id.profile_button);
-        prof_button.setOnClickListener(new OnClickListener(){
-            public void onClick(View v){
-                startActivity(new Intent(MainActivity.this, Profile.class));
-            }
-        });
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new OnClickListener(){
@@ -79,8 +110,23 @@ public class MainActivity extends AppCompatActivity {
             // Get one day ago
             Calendar cal = Calendar.getInstance();
             Date now = cal.getTime();
-            cal.add(Calendar.DAY_OF_YEAR, -1);
+            cal.add(Calendar.HOUR_OF_DAY, -8);
             Date oneDayAgo = cal.getTime();
+            
+            graph.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
+                @Override
+                public String formatLabel(double value, boolean isValueX) {
+                    if (isValueX) {
+                        // show normal x values
+                        Date date = new Date((long)value);
+                        SimpleDateFormat format = new SimpleDateFormat("h:mm a\nM/dd");
+                        return format.format(date);
+                    } else {
+                        // show currency for y values
+                        return super.formatLabel(value, isValueX);
+                    }
+                }
+            });
 
             graph.getViewport().setMinX(oneDayAgo.getTime());
             graph.getViewport().setMaxX(now.getTime());
@@ -106,18 +152,31 @@ public class MainActivity extends AppCompatActivity {
                     new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "systolic_pressure"));
             graph.addSeries(systolic_series);
             systolic_series.setTitle("Systolic (mmHg)");
+            systolic_series.setColor(getResources().getColor(R.color.graph_blue));
+            systolic_series.setDrawDataPoints(true);
+            systolic_series.setDataPointsRadius(30);
+            systolic_series.setThickness(20);
 
             LineGraphSeries<DataPoint> diastolic_series =
                     new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "diastolic_pressure"));
             graph.addSeries(diastolic_series);
             diastolic_series.setColor(Color.GREEN);
             diastolic_series.setTitle("Diastolic (mmHg)");
+            diastolic_series.setColor(getResources().getColor(R.color.graph_orange));
+            diastolic_series.setDrawDataPoints(true);
+            diastolic_series.setDataPointsRadius(30);
+            diastolic_series.setThickness(20);
 
             LineGraphSeries<DataPoint> heart_rate_series =
                     new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "heart_rate"));
             graph.addSeries(heart_rate_series);
             heart_rate_series.setColor(Color.RED);
             heart_rate_series.setTitle("Pulse (bpm)");
+            heart_rate_series.setColor(getResources().getColor(R.color.graph_red));
+            heart_rate_series.setDrawDataPoints(true);
+            heart_rate_series.setDataPointsRadius(30);
+            heart_rate_series.setThickness(20);
+
         }
     }
 
@@ -132,9 +191,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_settings:
+            case R.id.user_profile_menu:
                 // User chose the "Settings" item, show the app settings UI...
                 startActivity(new Intent(MainActivity.this, Profile.class));
+                return true;
+
+            case R.id.gen_pdf:
+                generatePdfReport();
                 return true;
 
             default:
@@ -142,6 +205,122 @@ public class MainActivity extends AppCompatActivity {
                 // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
 
+        }
+    }
+
+
+    private  boolean isStoragePermissionGranted() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                Log.i("whoop!","Permission is granted");
+                return true;
+            } else {
+
+                Log.i("fuck","Permission is revoked");
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                return false;
+            }
+        }
+        else { //permission is automatically granted on sdk<23 upon installation
+            Log.i("dope","Permission is granted");
+            return true;
+        }
+
+
+    }
+
+    private void generatePdfReport() {
+
+        // Opening document
+        Document document = new Document();
+
+        // File shit
+        String filename = "doctor.pdf";
+        File gpxfile = new File("sdcard/", filename); // Where to save. Currently trying external storage. Save in
+        // "/data/data/com.collinbarnwell.bold1" to get it to save in internal storage
+
+        // Checking to see if Android Manifest actually gave me permission to save to external storage
+        // Right now, it's being a bitch.
+        isStoragePermissionGranted();
+
+
+
+        // Writing to PDF
+        try{
+            PdfWriter.getInstance(document, new FileOutputStream(gpxfile));
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+
+
+        Paragraph p3 = new Paragraph();
+        p3.add("Yay");
+
+
+        DatabaseHelper mDbHelper = new DatabaseHelper(getBaseContext());
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+
+        Cursor cursor = db.rawQuery("SELECT SYSTOLIC_PRESSURE, DIASTOLIC_PRESSURE, HEART_RATE, MEAN_ARTERIAL_PRESSURE, TIMESTAMP FROM data_point",null);
+
+        PdfPTable table = new PdfPTable(5);
+
+
+        table.addCell("Systolic Pressure");
+        table.addCell("Diastolic Pressure");
+        table.addCell("Heart Rate");
+        table.addCell("Mean Arterial Pressure");
+        table.addCell("Timestamp");
+
+        cursor.moveToFirst();
+        int count = cursor.getCount();
+
+        for (int j = 0; j < count; j++)
+        {
+            table.addCell(cursor.getString(cursor.getColumnIndex("systolic_pressure")));
+            table.addCell(cursor.getString(cursor.getColumnIndex("diastolic_pressure")));
+            table.addCell(cursor.getString(cursor.getColumnIndex("heart_rate")));
+            table.addCell(cursor.getString(cursor.getColumnIndex("mean_arterial_pressure")));
+            table.addCell(cursor.getString(cursor.getColumnIndex("timestamp")));
+
+            cursor.moveToNext();
+        }
+
+
+        document.open();
+
+        try
+        {
+            document.add(table);
+        }
+        catch (DocumentException e)
+        {
+            e.printStackTrace();
+        }
+
+        document.close();
+
+        try {
+
+            String[] TO = {"nour.alharithi@gmail.com"};
+            Intent emailIntent = new Intent(Intent.ACTION_SEND);
+            emailIntent.setData(Uri.parse("mailto:"));
+            emailIntent.setType("application/pdf");
+
+            //emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "BOLD Blood Pressure Summary");
+            emailIntent.putExtra(Intent.EXTRA_TEXT, "Email message goes here");
+            emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(gpxfile));
+            emailIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+            startActivityForResult(Intent.createChooser(emailIntent, "Send mail..."),  1);
+            finish();
+        }
+        catch(Exception e){
+            Log.i("didn't work", "damn");
         }
     }
 }

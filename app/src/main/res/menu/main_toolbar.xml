@@ -3,10 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainActivity">
 
-    <!--<item-->
-        <!--android:id="@+id/action_settings"-->
-        <!--android:title="@string/user_profile_menu"-->
-        <!--app:showAsAction="never"/>-->
+    <item
+        android:id="@+id/user_profile_menu"
+        android:title="@string/user_profile_menu"
+        app:showAsAction="never"/>
+
+    <!-- this is the email one -->
+    <item
+        android:id="@+id/gen_pdf"
+        android:title="@string/gen_pdf"
+        app:showAsAction="never"/>
 
 </menu>
 
