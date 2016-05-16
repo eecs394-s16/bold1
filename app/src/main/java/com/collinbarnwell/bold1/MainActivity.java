@@ -31,6 +31,13 @@ import android.widget.ViewFlipper;
 
 import org.json.JSONObject;
 
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.mikephil.charting.utils.ViewPortHandler;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Paragraph;
@@ -45,6 +52,7 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.sql.Time;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.io.File;
 import java.io.FileInputStream;
@@ -55,6 +63,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -100,6 +109,8 @@ public class MainActivity extends AppCompatActivity {
             public void onTabReselected(TabLayout.Tab tab) {}
         });
 
+
+        setupPieCharts();
     }
 
     @Override
@@ -339,5 +350,43 @@ public class MainActivity extends AppCompatActivity {
         catch(Exception e){
             Log.i("didn't work", "damn");
         }
+    }
+
+    private void setupPieCharts () {
+
+        class MyValueFormatter implements ValueFormatter {
+            private DecimalFormat mFormat;
+            public MyValueFormatter() {
+                mFormat = new DecimalFormat("###,###");
+            }
+            @Override
+            public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
+                return mFormat.format(value);
+            }
+        }
+
+        PieChart allTimePieChart = (PieChart) findViewById(R.id.all_time_pie_chart);
+        ArrayList<Entry> entries = new ArrayList<>();
+
+        entries.add(new Entry(4, 0));
+        entries.add(new Entry(8, 1));
+        entries.add(new Entry(6, 2));
+        entries.add(new Entry(12, 3));
+
+        ArrayList<String> labels = new ArrayList<String>();
+        labels.add("Hypertensive");
+        labels.add("At Risk");
+        labels.add("Normal");
+        labels.add("Low");
+
+        PieDataSet dataset = new PieDataSet(entries, "");
+        dataset.setColors(ColorTemplate.COLORFUL_COLORS);
+        dataset.setValueFormatter(new MyValueFormatter());
+        dataset.setValueTextSize(15);
+        PieData data = new PieData(labels, dataset);
+        allTimePieChart.setData(data);
+        allTimePieChart.getLegend().setEnabled(false);
+        allTimePieChart.setDescription("");
+
     }
 }

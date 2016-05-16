@@ -86,15 +86,30 @@
                     android:tint="@android:color/white"/>
             </FrameLayout>
 
-            <FrameLayout
+            <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-
-                <TextView
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="HAIIIIII"/>
-            </FrameLayout>
+                    android:layout_height="match_parent">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="All Time # of Readings by Hypertension Risk Level"
+                        android:textSize="25sp"
+                        android:id="@+id/all_time_label"
+                        android:layout_centerHorizontal="true"
+                        android:layout_margin="20dp"
+                        android:gravity="center"/>
+                    <com.github.mikephil.charting.charts.PieChart
+                        android:id="@+id/all_time_pie_chart"
+                        android:layout_width="300dp"
+                        android:layout_height="300dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_below="@+id/all_time_label"/>
+                </RelativeLayout>
+            </ScrollView>
 
         </ViewFlipper>
 
