@@ -126,8 +126,8 @@ public class MainActivity extends AppCompatActivity {
             // Get one day ago
             Calendar cal = Calendar.getInstance();
             Date now = cal.getTime();
-            cal.add(Calendar.HOUR_OF_DAY, -48);
-            Date twoDaysAgo = cal.getTime();
+            cal.add(Calendar.HOUR_OF_DAY, -72);
+            Date threeDaysAgo = cal.getTime();
 
             graph.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
                 @Override
@@ -145,17 +145,11 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-            graph.getViewport().setMinX(twoDaysAgo.getTime());
+            graph.getViewport().setMinX(threeDaysAgo.getTime());
             graph.getViewport().setMaxX(now.getTime());
             graph.getViewport().setXAxisBoundsManual(true);
 
-            double minX graph.getViewport().getMinX(false);
-            double maxX = graph.getViewport().getMaxX(false);
-
-
-
-
-            graph.getGridLabelRenderer().setNumVerticalLabels(9);
+                        graph.getGridLabelRenderer().setNumVerticalLabels(9);
             graph.getViewport().setMinY(0);
             graph.getViewport().setMaxY(200);
             graph.getViewport().setYAxisBoundsManual(true);
