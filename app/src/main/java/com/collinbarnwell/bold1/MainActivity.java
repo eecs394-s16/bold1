@@ -27,6 +27,9 @@ import android.content.Intent;
 import android.view.View.OnClickListener;
 
 import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import org.json.JSONObject;
@@ -126,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
             // Get one day ago
             Calendar cal = Calendar.getInstance();
             Date now = cal.getTime();
-            cal.add(Calendar.HOUR_OF_DAY, -8);
+            cal.add(Calendar.DAY_OF_YEAR, -7);
             Date oneDayAgo = cal.getTime();
 
             graph.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
@@ -165,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
             graph.getLegendRenderer().setPadding(20);
 
             LineGraphSeries<DataPoint> systolic_series =
-                    new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "systolic_pressure"));
+                    new LineGraphSeries<DataPoint>(mDbHelper.getDailyAverageDataPoints(db, "systolic_pressure"));
             graph.addSeries(systolic_series);
             systolic_series.setTitle("Systolic (mmHg)");
             systolic_series.setColor(getResources().getColor(R.color.graph_blue));
@@ -174,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
             systolic_series.setThickness(20);
 
             LineGraphSeries<DataPoint> diastolic_series =
-                    new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "diastolic_pressure"));
+                    new LineGraphSeries<DataPoint>(mDbHelper.getDailyAverageDataPoints(db, "diastolic_pressure"));
             graph.addSeries(diastolic_series);
             diastolic_series.setColor(Color.GREEN);
             diastolic_series.setTitle("Diastolic (mmHg)");
@@ -184,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
             diastolic_series.setThickness(20);
 
             LineGraphSeries<DataPoint> heart_rate_series =
-                    new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "heart_rate"));
+                    new LineGraphSeries<DataPoint>(mDbHelper.getDailyAverageDataPoints(db, "heart_rate"));
             graph.addSeries(heart_rate_series);
             heart_rate_series.setColor(Color.RED);
             heart_rate_series.setTitle("Pulse (bpm)");
