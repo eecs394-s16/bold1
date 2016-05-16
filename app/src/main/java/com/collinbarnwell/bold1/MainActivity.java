@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
             graph.getViewport().setYAxisBoundsManual(true);
 
             graph.getViewport().setScrollable(true);
-            // graph.getViewport().setScalable(true);
+            graph.getViewport().setScalable(true);
 
             // legend
             graph.getLegendRenderer().setVisible(true);
@@ -177,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
             systolic_series.setThickness(20);
 
             LineGraphSeries<DataPoint> diastolic_series =
-                    new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "diastolic_pressure"));
+                    new LineGraphSeries<DataPoint>(mDbHelper.getDailyAverageDataPoints(db, "diastolic_pressure"));
             graph.addSeries(diastolic_series);
             diastolic_series.setColor(Color.GREEN);
             diastolic_series.setTitle("Diastolic (mmHg)");
@@ -187,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
             diastolic_series.setThickness(20);
 
             LineGraphSeries<DataPoint> heart_rate_series =
-                    new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "heart_rate"));
+                    new LineGraphSeries<DataPoint>(mDbHelper.getDailyAverageDataPoints(db, "heart_rate"));
             graph.addSeries(heart_rate_series);
             heart_rate_series.setColor(Color.RED);
             heart_rate_series.setTitle("Pulse (bpm)");
