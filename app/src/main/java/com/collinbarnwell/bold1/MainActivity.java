@@ -27,6 +27,7 @@ import android.content.Intent;
 import android.view.View.OnClickListener;
 
 import android.widget.Button;
+import android.widget.ViewFlipper;
 
 import org.json.JSONObject;
 
@@ -84,6 +85,19 @@ public class MainActivity extends AppCompatActivity {
         });
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.graph_table_tabber);
+        TabLayout.TabLayoutOnPageChangeListener tabLayoutOnPageChangeListener = new TabLayout.TabLayoutOnPageChangeListener(tabLayout);
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                ViewFlipper vFlip = (ViewFlipper) findViewById(R.id.tab_flipper);
+                vFlip.setDisplayedChild(tab.getPosition());
+            }
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {}
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {}
+        });
+
     }
 
     @Override
@@ -112,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
             Date now = cal.getTime();
             cal.add(Calendar.HOUR_OF_DAY, -8);
             Date oneDayAgo = cal.getTime();
-            
+
             graph.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
                 @Override
                 public String formatLabel(double value, boolean isValueX) {

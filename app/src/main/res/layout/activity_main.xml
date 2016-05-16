@@ -47,23 +47,28 @@
             <android.support.design.widget.TabItem
                 android:icon="@drawable/graph_icon"
                 android:layout_height="wrap_content"
-                android:layout_width="wrap_content" />
+                android:layout_width="wrap_content"
+                android:onClick="goToGraph"/>
             <android.support.design.widget.TabItem
                 android:icon="@drawable/light_bulb"
                 android:layout_height="wrap_content"
-                android:layout_width="wrap_content"/>
+                android:layout_width="wrap_content"
+                android:onClick="goToTable"/>
 
         </android.support.design.widget.TabLayout>
 
-        <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app2="http://schemas.android.com/apk/res-auto"
+        <ViewFlipper
+            android:id="@+id/tab_flipper"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/graph_table_tabber">
 
-            <TabHost
+
+            <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app2="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:layout_below="@+id/graph_table_tabber">
 
                 <com.jjoe64.graphview.GraphView
                     android:layout_width="match_parent"
@@ -81,8 +86,21 @@
                     android:src="@android:drawable/ic_input_add"
                     app2:backgroundTint="#000000"
                     android:tint="@android:color/white" />
+            </FrameLayout>
 
-            </TabHost>
-        </FrameLayout>
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="HAIIIIII"/>
+            </FrameLayout>
+
+        </ViewFlipper>
+
+
+
     </RelativeLayout>
 </android.support.design.widget.CoordinatorLayout>
