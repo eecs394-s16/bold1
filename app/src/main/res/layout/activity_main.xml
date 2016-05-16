@@ -64,36 +64,36 @@
             android:layout_below="@+id/graph_table_tabber">
 
 
-            <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app2="http://schemas.android.com/apk/res-auto"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@+id/graph_table_tabber">
-                <com.jjoe64.graphview.GraphView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="5dp"
-                    android:id="@+id/graph"
-                    android:layout_gravity="center_horizontal|bottom" />
-                <android.support.design.widget.FloatingActionButton
-                    android:id="@+id/fab"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|end"
-                    android:layout_margin="@dimen/fab_margin"
-                    android:src="@android:drawable/ic_input_add"
-                    app2:backgroundTint="#000000"
-                    android:tint="@android:color/white"/>
-            </FrameLayout>
+            <!--<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+                <!--xmlns:app2="http://schemas.android.com/apk/res-auto"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_below="@+id/graph_table_tabber">-->
+                <!--<com.jjoe64.graphview.GraphView-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:layout_marginTop="5dp"-->
+                    <!--android:id="@+id/graph"-->
+                    <!--android:layout_gravity="center_horizontal|bottom" />-->
+                <!--<android.support.design.widget.FloatingActionButton-->
+                    <!--android:id="@+id/fab"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_gravity="bottom|end"-->
+                    <!--android:layout_margin="@dimen/fab_margin"-->
+                    <!--android:src="@android:drawable/ic_input_add"-->
+                    <!--app2:backgroundTint="#000000"-->
+                    <!--android:tint="@android:color/white"/>-->
+            <!--</FrameLayout>-->
 
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="HAIIIIII"/>
+
+                
+
+
             </FrameLayout>
 
         </ViewFlipper>
