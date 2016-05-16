@@ -306,8 +306,8 @@ public class MainActivity extends AppCompatActivity {
             emailIntent.setType("application/pdf");
 
             //emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
-            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "BOLD Blood Pressure Summary");
-            emailIntent.putExtra(Intent.EXTRA_TEXT, "Email message goes here");
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "BOLD DIAGNOSTICS: Blood Pressure Summary");
+            emailIntent.putExtra(Intent.EXTRA_TEXT, "Attached is my blood pressure summary report courtesy of BOLD Diagnostics");
             emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(gpxfile));
             emailIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
