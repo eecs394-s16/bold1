@@ -51,6 +51,7 @@ public class Profile extends AppCompatActivity {
         // my_child_toolbar is defined in the layout file
         Toolbar myChildToolbar =
                 (Toolbar) findViewById(R.id.profile_toolbar);
+        myChildToolbar.setTitle("");
         setSupportActionBar(myChildToolbar);
 
         // Get a support ActionBar corresponding to this toolbar

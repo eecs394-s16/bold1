@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">Bold1</string>
-    <string name="title_activity_main"> </string>
+    <string name="app_name">Bold</string>
+    <string name="title_activity_main">Bold</string>
 
     <!--Strings for main page-->
     <string name="welcome_message_default">Welcome</string>

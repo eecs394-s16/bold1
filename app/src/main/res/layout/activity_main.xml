@@ -45,7 +45,8 @@
             android:layout_margin="@dimen/fab_margin"
             android:src="@android:drawable/ic_input_add"
             app2:backgroundTint="#000000"
-            android:tint="@android:color/white" />
+            android:tint="@android:color/white"
+            android:title=""/>
 
         <com.jjoe64.graphview.GraphView
             android:layout_width="match_parent"

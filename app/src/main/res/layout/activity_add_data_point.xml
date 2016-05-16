@@ -12,10 +12,11 @@
         android:id="@+id/add_data_point_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:theme="@style/AppTheme"
+        android:theme="@style/Base.ThemeOverlay.AppCompat.Dark"
         app:popupTheme="@style/AppTheme.PopupOverlay"
         android:elevation="4dp"
-        android:background="#000000">
+        android:background="#000000"
+        android:title="">
 
 
         <ImageView
