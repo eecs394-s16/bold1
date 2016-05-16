@@ -14,7 +14,8 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:background="#dfdfdf"
         android:layout_height="match_parent"
-        tools:context=".MainActivity">
+        tools:context=".MainActivity"
+        android:id="@+id/relative">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/main_toolbar"

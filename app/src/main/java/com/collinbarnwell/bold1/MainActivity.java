@@ -16,17 +16,26 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.view.MotionEventCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.content.Intent;
 import android.view.View.OnClickListener;
 
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import org.json.JSONObject;
@@ -42,7 +51,10 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.LegendRenderer;
 import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.DataPointInterface;
 import com.jjoe64.graphview.series.LineGraphSeries;
+import com.jjoe64.graphview.series.OnDataPointTapListener;
+import com.jjoe64.graphview.series.Series;
 
 import java.sql.Time;
 import java.text.SimpleDateFormat;
@@ -69,6 +81,10 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
+
+    private PopupWindow popupWindow;
+    private LayoutInflater layoutInflater;
+    private RelativeLayout relativeLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -172,6 +188,25 @@ public class MainActivity extends AppCompatActivity {
             systolic_series.setDrawDataPoints(true);
             systolic_series.setDataPointsRadius(30);
             systolic_series.setThickness(20);
+            relativeLayout = (RelativeLayout) findViewById(R.id.relative);
+            systolic_series.setOnDataPointTapListener(new OnDataPointTapListener() {
+                @Override
+                public void onTap(Series series, DataPointInterface dataPoint) {
+//                    Toast.makeText(MainActivity.this, "Series: On Data Point clicked: " + dataPoint, Toast.LENGTH_SHORT).show();
+                    layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(LAYOUT_INFLATER_SERVICE);
+                    ViewGroup container = (ViewGroup) layoutInflater.inflate(R.layout.data, null);
+                    popupWindow = new PopupWindow(container, 400, 400, true);
+                    popupWindow.showAtLocation(relativeLayout, Gravity.NO_GRAVITY, 500, 500);
+
+                    container.setOnTouchListener(new View.OnTouchListener() {
+                        @Override
+                        public boolean onTouch(View view, MotionEvent motionEvent) {
+                            popupWindow.dismiss();
+                            return true;
+                        }
+                    });
+                }
+            });
 
             LineGraphSeries<DataPoint> diastolic_series =
                     new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "diastolic_pressure"));
@@ -182,6 +217,12 @@ public class MainActivity extends AppCompatActivity {
             diastolic_series.setDrawDataPoints(true);
             diastolic_series.setDataPointsRadius(30);
             diastolic_series.setThickness(20);
+            diastolic_series.setOnDataPointTapListener(new OnDataPointTapListener() {
+                @Override
+                public void onTap(Series series, DataPointInterface dataPoint) {
+                    Toast.makeText(MainActivity.this, "Series: On Data Point clicked: " + dataPoint, Toast.LENGTH_SHORT).show();
+                }
+            });
 
             LineGraphSeries<DataPoint> heart_rate_series =
                     new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "heart_rate"));
