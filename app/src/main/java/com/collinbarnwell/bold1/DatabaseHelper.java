@@ -57,4 +57,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         dataArray = data.toArray(dataArray);
         return dataArray;
     }
+
+    public ArrayList<Double> getDataForPopup(SQLiteDatabase db, String timestamp) {
+        String query = "SELECT systolic_pressure, diastolic_pressure, heart_rate FROM data_point WHERE timestamp = " + timestamp + ";";
+        Cursor cursor = db.rawQuery("query", null);
+        ArrayList<Double> data = new ArrayList<Double>();
+        Double sp = cursor.getDouble(cursor.getColumnIndex("systolic_pressure"));
+        Double dp = cursor.getDouble(cursor.getColumnIndex("diastolic_pressure"));
+        Double hr = cursor.getDouble(cursor.getColumnIndex("heart_rate"));
+        data.add(sp);
+        data.add(dp);
+        data.add(hr);
+        return data;
+    }
+
 }
