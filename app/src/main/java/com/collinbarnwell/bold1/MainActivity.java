@@ -35,6 +35,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
@@ -195,16 +196,21 @@ public class MainActivity extends AppCompatActivity {
 //                    Toast.makeText(MainActivity.this, "Series: On Data Point clicked: " + dataPoint, Toast.LENGTH_SHORT).show();
                     layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(LAYOUT_INFLATER_SERVICE);
                     ViewGroup container = (ViewGroup) layoutInflater.inflate(R.layout.data, null);
-                    popupWindow = new PopupWindow(container, 400, 400, true);
-                    popupWindow.showAtLocation(relativeLayout, Gravity.NO_GRAVITY, 500, 500);
+                    container.setAlpha(0.5f);
+//                    TextView x = (TextView) container.findViewById(R.id.Data);
+//                    x.setText("aaaa");
+                    popupWindow = new PopupWindow(container, 600, 300, true);
+                    popupWindow.showAtLocation(relativeLayout, Gravity.NO_GRAVITY, 300, 700);
 
-                    container.setOnTouchListener(new View.OnTouchListener() {
-                        @Override
-                        public boolean onTouch(View view, MotionEvent motionEvent) {
-                            popupWindow.dismiss();
-                            return true;
-                        }
-                    });
+//                    container.setOnTouchListener(new View.OnTouchListener() {
+//
+//                        @Override
+//                        public boolean onTouch(View view, MotionEvent motionEvent) {
+//                            flag = true;
+//                            popupWindow.dismiss();
+//                            return true;
+//                        }
+//                    });
                 }
             });
 
@@ -220,7 +226,23 @@ public class MainActivity extends AppCompatActivity {
             diastolic_series.setOnDataPointTapListener(new OnDataPointTapListener() {
                 @Override
                 public void onTap(Series series, DataPointInterface dataPoint) {
-                    Toast.makeText(MainActivity.this, "Series: On Data Point clicked: " + dataPoint, Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(MainActivity.this, "Series: On Data Point clicked: " + dataPoint, Toast.LENGTH_SHORT).show();
+                    layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(LAYOUT_INFLATER_SERVICE);
+                    ViewGroup container = (ViewGroup) layoutInflater.inflate(R.layout.data, null);
+                    container.setAlpha(0.5f);
+                    TextView x = (TextView) container.findViewById(R.id.Heart_Rate);
+                    x.setText("aaaa");
+                    popupWindow = new PopupWindow(container, 600, 300, true);
+                    popupWindow.showAtLocation(relativeLayout, Gravity.NO_GRAVITY, 300, 700);
+
+//                    container.setOnTouchListener(new View.OnTouchListener() {
+//                        @Override
+//                        public boolean onTouch(View view, MotionEvent motionEvent) {
+//                            flag = true;
+//                            popupWindow.dismiss();
+//                            return true;
+//                        }
+//                    });
                 }
             });
 
@@ -233,6 +255,28 @@ public class MainActivity extends AppCompatActivity {
             heart_rate_series.setDrawDataPoints(true);
             heart_rate_series.setDataPointsRadius(30);
             heart_rate_series.setThickness(20);
+            heart_rate_series.setOnDataPointTapListener(new OnDataPointTapListener() {
+                @Override
+                public void onTap(Series series, DataPointInterface dataPoint) {
+//                    Toast.makeText(MainActivity.this, "Series: On Data Point clicked: " + dataPoint, Toast.LENGTH_SHORT).show();
+                    layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(LAYOUT_INFLATER_SERVICE);
+                    ViewGroup container = (ViewGroup) layoutInflater.inflate(R.layout.data, null);
+                    container.setAlpha(0.5f);
+                    TextView x = (TextView) container.findViewById(R.id.Systolic_Pressure);
+                    x.setText("aaaa");
+                    popupWindow = new PopupWindow(container, 600, 300, true);
+                    popupWindow.showAtLocation(relativeLayout, Gravity.NO_GRAVITY, 300, 700);
+
+//                    container.setOnTouchListener(new View.OnTouchListener() {
+//                        @Override
+//                        public boolean onTouch(View view, MotionEvent motionEvent) {
+//                            flag = true;
+//                            popupWindow.dismiss();
+//                            return true;
+//                        }
+//                    });
+                }
+            });
 
         }
     }
@@ -264,7 +308,6 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
-
 
     private  boolean isStoragePermissionGranted() {
         if (Build.VERSION.SDK_INT >= 23) {

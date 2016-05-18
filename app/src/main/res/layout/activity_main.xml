@@ -15,7 +15,8 @@
         android:background="#dfdfdf"
         android:layout_height="match_parent"
         tools:context=".MainActivity"
-        android:id="@+id/relative">
+        android:id="@+id/relative"
+        android:clickable="false">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/main_toolbar"
@@ -62,7 +63,8 @@
             android:id="@+id/tab_flipper"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/graph_table_tabber">
+            android:layout_below="@+id/graph_table_tabber"
+            android:clickable="false">
 
 
             <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
