@@ -9,6 +9,6 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="123123"
-        android:id="@+id/textView14"
+        android:id="@+id/Data"
         android:layout_gravity="center_horizontal" />
 </LinearLayout>
