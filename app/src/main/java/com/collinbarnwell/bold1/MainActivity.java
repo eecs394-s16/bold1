@@ -368,19 +368,30 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        DatabaseHelper mDbHelper = new DatabaseHelper(getBaseContext());
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        int[] counts = mDbHelper.getHypertensionRiskLevelCounts(db);
+
         PieChart allTimePieChart = (PieChart) findViewById(R.id.all_time_pie_chart);
         ArrayList<Entry> entries = new ArrayList<>();
-
-        entries.add(new Entry(4, 0));
-        entries.add(new Entry(8, 1));
-        entries.add(new Entry(6, 2));
-        entries.add(new Entry(12, 3));
-
         ArrayList<String> labels = new ArrayList<String>();
-        labels.add("Hypertensive");
-        labels.add("At Risk");
-        labels.add("Normal");
-        labels.add("Low");
+
+        if (counts[0] > 0) {
+            entries.add(new Entry(counts[0], 0));
+            labels.add("Hypertension Stage II");
+        }
+        if (counts[1] > 0) {
+            entries.add(new Entry(counts[1], 1));
+            labels.add("Hypertension Stage I");
+        }
+        if (counts[2] > 0) {
+            entries.add(new Entry(counts[2], 2));
+            labels.add("Pre-hypertension");
+        }
+        if (counts[3] > 0) {
+            entries.add(new Entry(counts[3], 3));
+            labels.add("Normal");
+        }
 
         PieDataSet dataset = new PieDataSet(entries, "");
         dataset.setColors(ColorTemplate.COLORFUL_COLORS);
@@ -388,8 +399,10 @@ public class MainActivity extends AppCompatActivity {
         dataset.setValueTextSize(15);
         PieData data = new PieData(labels, dataset);
         allTimePieChart.setData(data);
+        allTimePieChart.setDrawSliceText(true);
         allTimePieChart.getLegend().setEnabled(false);
         allTimePieChart.setDescription("");
-
+        allTimePieChart.setHoleRadius(0);
+        allTimePieChart.setTransparentCircleRadius(10);
     }
 }

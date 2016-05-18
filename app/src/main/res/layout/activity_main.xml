@@ -95,16 +95,17 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="All Time # of Readings by Hypertension Risk Level"
+                        android:text="# of Readings by Hypertension Risk Level (all time)"
                         android:textSize="25sp"
                         android:id="@+id/all_time_label"
                         android:layout_centerHorizontal="true"
                         android:layout_margin="20dp"
+                        android:textColor="@color/colorPrimary"
                         android:gravity="center"/>
                     <com.github.mikephil.charting.charts.PieChart
                         android:id="@+id/all_time_pie_chart"
-                        android:layout_width="300dp"
-                        android:layout_height="300dp"
+                        android:layout_width="200dp"
+                        android:layout_height="200dp"
                         android:layout_marginTop="5dp"
                         android:layout_centerHorizontal="true"
                         android:layout_below="@+id/all_time_label"/>
