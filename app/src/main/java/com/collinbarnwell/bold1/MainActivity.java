@@ -376,32 +376,22 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<Entry> entries = new ArrayList<>();
         ArrayList<String> labels = new ArrayList<String>();
 
-        entries.add(new Entry(1, 0));
-        entries.add(new Entry(1, 1));
-        entries.add(new Entry(1, 2));
-        entries.add(new Entry(1, 3));
-
-        labels.add("hia");
-        labels.add("haia");
-        labels.add("hfdsia");
-        labels.add("hsadia");
-
-//        if (counts[0] > 0) {
-//            entries.add(new Entry(counts[0], 0));
-//            labels.add("Hypertension Stage II");
-//        }
-//        if (counts[1] > 0) {
-//            entries.add(new Entry(counts[1], 1));
-//            labels.add("Hypertension Stage I");
-//        }
-//        if (counts[2] > 0) {
-//            entries.add(new Entry(counts[2], 2));
-//            labels.add("Pre-hypertension");
-//        }
-//        if (counts[3] > 0) {
-//            entries.add(new Entry(counts[3], 3));
-//            labels.add("Normal");
-//        }
+        if (counts[0] > 0) {
+            entries.add(new Entry(counts[0], 0));
+            labels.add("Hypertension Stage II");
+        }
+        if (counts[1] > 0) {
+            entries.add(new Entry(counts[1], 1));
+            labels.add("Hypertension Stage I");
+        }
+        if (counts[2] > 0) {
+            entries.add(new Entry(counts[2], 2));
+            labels.add("Pre-hypertension");
+        }
+        if (counts[3] > 0) {
+            entries.add(new Entry(counts[3], 3));
+            labels.add("Normal");
+        }
 
         PieDataSet dataset = new PieDataSet(entries, "");
         dataset.setColors(ColorTemplate.COLORFUL_COLORS);
