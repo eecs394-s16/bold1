@@ -70,6 +70,8 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
+import android.util.Pair;
 
 import static com.collinbarnwell.bold1.R.color.graph_red;
 
@@ -125,9 +127,9 @@ public class MainActivity extends AppCompatActivity {
         // Whenever we go back to main activity, the name of the user may have changed (very unlikely)
         // No matter whether that happens, refresh welcome message.
 
-        DatabaseHelper mDbHelper = new DatabaseHelper(getBaseContext());
+        final DatabaseHelper mDbHelper = new DatabaseHelper(getBaseContext());
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
-
+        final SQLiteDatabase dbr = mDbHelper.getReadableDatabase();
         String count = "SELECT count(*) FROM data_point";
         Cursor mcursor = db.rawQuery(count, null);
         mcursor.moveToFirst();
@@ -206,12 +208,25 @@ public class MainActivity extends AppCompatActivity {
                         return;
                     }
                     flag = false;
+
 //                    Toast.makeText(MainActivity.this, "Series: On Data Point clicked: " + dataPoint, Toast.LENGTH_SHORT).show();
+                    Date date = new Date((long)dataPoint.getX());
+                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    Object[] data = mDbHelper.getDataForPopup(dbr, format.format(date));
                     layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(LAYOUT_INFLATER_SERVICE);
                     ViewGroup container = (ViewGroup) layoutInflater.inflate(R.layout.data, null);
-//                    container.setAlpha(0.5f);
-//                    TextView x = (TextView) container.findViewById(R.id.Data);
-//                    x.setText("aaaa");
+                    TextView x = (TextView) container.findViewById(R.id.Time);
+                    x.setText("Time: " + format.format(date));
+                    x = (TextView) container.findViewById(R.id.Systolic_Pressure);
+                    x.setText("Systolic_Pressure: " + ((Pair)data[0]).second);
+                    x = (TextView) container.findViewById(R.id.Diastolic_Pressure);
+                    x.setText("Diastolic_Pressure: " + ((Pair)data[1]).second);
+                    x = (TextView) container.findViewById(R.id.Pulse);
+                    x.setText("Pulse: " + ((Pair)data[2]).second);
+//                    x = (TextView) container.findViewById(R.id.Tag);
+//                    x.setText("Tag: " + format.format(data));
+                    x = (TextView) container.findViewById(R.id.Mood);
+                    x.setText("Mood: " + ((Pair)data[4]).second);
                     popupWindow = new PopupWindow(container, 800, 1200, true);
                     popupWindow.showAtLocation(relativeLayout, Gravity.NO_GRAVITY, 150, 400);
 
@@ -243,10 +258,23 @@ public class MainActivity extends AppCompatActivity {
                     }
                     flag = false;
 //                    Toast.makeText(MainActivity.this, "Series: On Data Point clicked: " + dataPoint, Toast.LENGTH_SHORT).show();
+                    Date date = new Date((long)dataPoint.getX());
+                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    Object[] data = mDbHelper.getDataForPopup(dbr, format.format(date));
                     layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(LAYOUT_INFLATER_SERVICE);
                     ViewGroup container = (ViewGroup) layoutInflater.inflate(R.layout.data, null);
-//                    container.setAlpha(0.5f);
-                    TextView x = (TextView) container.findViewById(R.id.Pulse);
+                    TextView x = (TextView) container.findViewById(R.id.Time);
+                    x.setText("Time: " + format.format(date));
+                    x = (TextView) container.findViewById(R.id.Systolic_Pressure);
+                    x.setText("Systolic_Pressure: " + ((Pair)data[0]).second);
+                    x = (TextView) container.findViewById(R.id.Diastolic_Pressure);
+                    x.setText("Diastolic_Pressure: " + ((Pair)data[1]).second);
+                    x = (TextView) container.findViewById(R.id.Pulse);
+                    x.setText("Pulse: " + ((Pair)data[2]).second);
+//                    x = (TextView) container.findViewById(R.id.Tag);
+//                    x.setText("Tag: " + format.format(data));
+                    x = (TextView) container.findViewById(R.id.Mood);
+                    x.setText("Mood: " + ((Pair)data[4]).second);
                     popupWindow = new PopupWindow(container, 800, 1200, true);
                     popupWindow.showAtLocation(relativeLayout, Gravity.NO_GRAVITY, 150, 400);
 
@@ -277,10 +305,23 @@ public class MainActivity extends AppCompatActivity {
                     }
                     flag = false;
 //                    Toast.makeText(MainActivity.this, "Series: On Data Point clicked: " + dataPoint, Toast.LENGTH_SHORT).show();
+                    Date date = new Date((long)dataPoint.getX());
+                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    Object[] data = mDbHelper.getDataForPopup(dbr, format.format(date));
                     layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(LAYOUT_INFLATER_SERVICE);
                     ViewGroup container = (ViewGroup) layoutInflater.inflate(R.layout.data, null);
-//                    container.setAlpha(0.5f);
-                    TextView x = (TextView) container.findViewById(R.id.Systolic_Pressure);
+                    TextView x = (TextView) container.findViewById(R.id.Time);
+                    x.setText("Time: " + format.format(date));
+                    x = (TextView) container.findViewById(R.id.Systolic_Pressure);
+                    x.setText("Systolic_Pressure: " + ((Pair)data[0]).second);
+                    x = (TextView) container.findViewById(R.id.Diastolic_Pressure);
+                    x.setText("Diastolic_Pressure: " + ((Pair)data[1]).second);
+                    x = (TextView) container.findViewById(R.id.Pulse);
+                    x.setText("Pulse: " + ((Pair)data[2]).second);
+//                    x = (TextView) container.findViewById(R.id.Tag);
+//                    x.setText("Tag: " + format.format(data));
+                    x = (TextView) container.findViewById(R.id.Mood);
+                    x.setText("Mood: " + ((Pair)data[4]).second);
                     popupWindow = new PopupWindow(container, 800, 1200, true);
                     popupWindow.showAtLocation(relativeLayout, Gravity.NO_GRAVITY, 150, 400);
 
