@@ -11,6 +11,7 @@ import android.nfc.Tag;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.ContactsContract;
 import android.provider.DocumentsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -27,10 +28,21 @@ import android.content.Intent;
 import android.view.View.OnClickListener;
 
 import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import org.json.JSONObject;
 
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.mikephil.charting.utils.ViewPortHandler;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Paragraph;
@@ -45,6 +57,7 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.sql.Time;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.io.File;
 import java.io.FileInputStream;
@@ -55,6 +68,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -100,6 +114,8 @@ public class MainActivity extends AppCompatActivity {
             public void onTabReselected(TabLayout.Tab tab) {}
         });
 
+        setupPieCharts();
+        getAverageBP();
     }
 
     @Override
@@ -126,8 +142,8 @@ public class MainActivity extends AppCompatActivity {
             // Get one day ago
             Calendar cal = Calendar.getInstance();
             Date now = cal.getTime();
-            cal.add(Calendar.HOUR_OF_DAY, -8);
-            Date oneDayAgo = cal.getTime();
+            cal.add(Calendar.HOUR_OF_DAY, -72);
+            Date threeDaysAgo = cal.getTime();
 
             graph.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
                 @Override
@@ -135,7 +151,8 @@ public class MainActivity extends AppCompatActivity {
                     if (isValueX) {
                         // show normal x values
                         Date date = new Date((long)value);
-                        SimpleDateFormat format = new SimpleDateFormat("h:mm a\nM/dd");
+                        // SimpleDateFormat format = new SimpleDateFormat("h:mm a\nM/dd");
+                        SimpleDateFormat format = new SimpleDateFormat("M/d");
                         return format.format(date);
                     } else {
                         // show currency for y values
@@ -144,11 +161,11 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-            graph.getViewport().setMinX(oneDayAgo.getTime());
+            graph.getViewport().setMinX(threeDaysAgo.getTime());
             graph.getViewport().setMaxX(now.getTime());
             graph.getViewport().setXAxisBoundsManual(true);
 
-            graph.getGridLabelRenderer().setNumVerticalLabels(9);
+                        graph.getGridLabelRenderer().setNumVerticalLabels(9);
             graph.getViewport().setMinY(0);
             graph.getViewport().setMaxY(200);
             graph.getViewport().setYAxisBoundsManual(true);
@@ -165,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
             graph.getLegendRenderer().setPadding(20);
 
             LineGraphSeries<DataPoint> systolic_series =
-                    new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "systolic_pressure"));
+                    new LineGraphSeries<DataPoint>(mDbHelper.getDailyAverageDataPoints(db, "systolic_pressure"));
             graph.addSeries(systolic_series);
             systolic_series.setTitle("Systolic (mmHg)");
             systolic_series.setColor(getResources().getColor(R.color.graph_blue));
@@ -174,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
             systolic_series.setThickness(20);
 
             LineGraphSeries<DataPoint> diastolic_series =
-                    new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "diastolic_pressure"));
+                    new LineGraphSeries<DataPoint>(mDbHelper.getDailyAverageDataPoints(db, "diastolic_pressure"));
             graph.addSeries(diastolic_series);
             diastolic_series.setColor(Color.GREEN);
             diastolic_series.setTitle("Diastolic (mmHg)");
@@ -184,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
             diastolic_series.setThickness(20);
 
             LineGraphSeries<DataPoint> heart_rate_series =
-                    new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "heart_rate"));
+                    new LineGraphSeries<DataPoint>(mDbHelper.getDailyAverageDataPoints(db, "heart_rate"));
             graph.addSeries(heart_rate_series);
             heart_rate_series.setColor(Color.RED);
             heart_rate_series.setTitle("Pulse (bpm)");
@@ -339,4 +356,79 @@ public class MainActivity extends AppCompatActivity {
             Log.i("didn't work", "damn");
         }
     }
+
+    private void setupPieCharts () {
+
+        class MyValueFormatter implements ValueFormatter {
+            private DecimalFormat mFormat;
+            public MyValueFormatter() {
+                mFormat = new DecimalFormat("###,###");
+            }
+            @Override
+            public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
+                return mFormat.format(value);
+            }
+        }
+
+        PieChart allTimePieChart = (PieChart) findViewById(R.id.all_time_pie_chart);
+        ArrayList<Entry> entries = new ArrayList<>();
+
+        entries.add(new Entry(4, 0));
+        entries.add(new Entry(8, 1));
+        entries.add(new Entry(6, 2));
+        entries.add(new Entry(12, 3));
+
+        ArrayList<String> labels = new ArrayList<String>();
+        labels.add("Hypertensive");
+        labels.add("At Risk");
+        labels.add("Normal");
+        labels.add("Low");
+
+        PieDataSet dataset = new PieDataSet(entries, "");
+        dataset.setColors(ColorTemplate.COLORFUL_COLORS);
+        dataset.setValueFormatter(new MyValueFormatter());
+        dataset.setValueTextSize(15);
+        PieData data = new PieData(labels, dataset);
+        allTimePieChart.setData(data);
+        allTimePieChart.getLegend().setEnabled(false);
+        allTimePieChart.setDescription("");
+
+    }
+
+    public void getAverageBP(){
+
+
+        DatabaseHelper mDbHelper = new DatabaseHelper(getBaseContext());
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+
+        double avg_systolic = mDbHelper.getAverageOverPastWeek(db, "systolic_pressure");
+        double avg_diastolic = mDbHelper.getAverageOverPastWeek(db, "diastolic_pressure");
+
+        TextView bp_textview = (TextView) findViewById(R.id.avg_bp);
+        ImageView circle = (ImageView) findViewById(R.id.circle);
+        bp_textview.setText(avg_systolic + "\n" + avg_diastolic);
+
+        if(avg_systolic < 120 && avg_diastolic < 80){
+            circle.setImageResource(R.drawable.green_circle);
+            bp_textview.setTextColor(Color.parseColor("#33ff33"));
+        }
+        else if((avg_systolic > 120 && avg_systolic < 139) || (avg_diastolic < 89 && avg_diastolic > 80)){
+            circle.setImageResource(R.drawable.yellow_circle);
+            bp_textview.setTextColor(Color.parseColor("#ffff00"));
+        }
+        else{
+            circle.setImageResource(R.drawable.red_circle);
+            bp_textview.setTextColor(Color.parseColor("#ff0000"));
+        }
+
+
+
+
+    }
+
+
+
+
+
 }

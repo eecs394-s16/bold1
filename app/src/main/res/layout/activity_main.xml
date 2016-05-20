@@ -12,7 +12,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:background="#dfdfdf"
+        android:background="@color/white"
         android:layout_height="match_parent"
         tools:context=".MainActivity">
 
@@ -64,70 +64,105 @@
             android:layout_below="@+id/graph_table_tabber">
 
 
-            <!--<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-                <!--xmlns:app2="http://schemas.android.com/apk/res-auto"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="match_parent"-->
-                <!--android:layout_below="@+id/graph_table_tabber">-->
-                <!--<com.jjoe64.graphview.GraphView-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="match_parent"-->
-                    <!--android:layout_marginTop="5dp"-->
-                    <!--android:id="@+id/graph"-->
-                    <!--android:layout_gravity="center_horizontal|bottom" />-->
-                <!--<android.support.design.widget.FloatingActionButton-->
-                    <!--android:id="@+id/fab"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_gravity="bottom|end"-->
-                    <!--android:layout_margin="@dimen/fab_margin"-->
-                    <!--android:src="@android:drawable/ic_input_add"-->
-                    <!--app2:backgroundTint="#000000"-->
-                    <!--android:tint="@android:color/white"/>-->
-            <!--</FrameLayout>-->
-
-            <RelativeLayout
+            <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app2="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/welcome"
+                android:layout_below="@+id/graph_table_tabber"
+                android:background="@color/white">
+                <com.jjoe64.graphview.GraphView
                     android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="5dp"
+                    android:id="@+id/graph"
+                    android:layout_gravity="center_horizontal|bottom" />
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/fab"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Average Blood Pressure:\n Last 7 days"
-                    android:textSize="22dp"
-                    android:gravity="center"
-                    android:layout_marginBottom="10dp"/>
-                
+                    android:layout_gravity="bottom|end"
+                    android:layout_margin="@dimen/fab_margin"
+                    android:src="@android:drawable/ic_input_add"
+                    app2:backgroundTint="#000000"
+                    android:tint="@android:color/white"/>
+            </FrameLayout>
+
+
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white">
                 <RelativeLayout
-                    android:layout_width="150dp"
-                    android:layout_height="150dp"
-                    android:layout_below="@id/welcome"
-                    android:layout_centerHorizontal="true">
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/welcome"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Average Blood Pressure:\n Last 7 days"
+                            android:textSize="22dp"
+                            android:gravity="center"
+                            android:layout_marginBottom="10dp"
+                            android:layout_marginTop="15dp"/>
+
+                        <RelativeLayout
+                            android:id="@+id/pretty_average"
+                            android:layout_width="150dp"
+                            android:layout_height="150dp"
+                            android:layout_below="@id/welcome"
+                            android:layout_centerHorizontal="true">
 
 
-                    <ImageView
-                        android:id="@+id/green_cricle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="150dp"
-                        android:src="@drawable/green_circle"
-                        />
+                            <ImageView
+                                android:id="@+id/circle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="150dp"
+                                android:src="@drawable/green_circle"
+                                />
 
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:layout_centerVertical="true"
-                        android:text="hey"
-                        />
+                            <TextView
+                                android:id="@+id/avg_bp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerInParent="true"
+                                android:layout_centerVertical="true"
+                                android:gravity="center_horizontal"
+                                android:textColor="@color/neonGreen"
+                                android:textSize= "22dp"
+                                />
+
+                        </RelativeLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="All Time # of Readings by Hypertension Risk Level"
+                            android:textSize="25sp"
+                            android:id="@+id/all_time_label"
+                            android:layout_centerHorizontal="true"
+                            android:layout_margin="20dp"
+                            android:layout_below="@id/pretty_average"
+                            android:gravity="center"/>
+                        <com.github.mikephil.charting.charts.PieChart
+                            android:id="@+id/all_time_pie_chart"
+                            android:layout_width="300dp"
+                            android:layout_height="300dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_centerHorizontal="true"
+                            android:layout_below="@+id/all_time_label"/>
+
+                    </RelativeLayout>
 
                 </RelativeLayout>
-
-
-
-            </RelativeLayout>
+            </ScrollView>
 
         </ViewFlipper>
 
