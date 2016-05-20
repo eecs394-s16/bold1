@@ -11,6 +11,7 @@ import android.nfc.Tag;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.ContactsContract;
 import android.provider.DocumentsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -28,6 +29,7 @@ import android.view.View.OnClickListener;
 
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -112,6 +114,8 @@ public class MainActivity extends AppCompatActivity {
             public void onTabReselected(TabLayout.Tab tab) {}
         });
 
+        setupPieCharts();
+        getAverageBP();
     }
 
     @Override
@@ -407,4 +411,47 @@ public class MainActivity extends AppCompatActivity {
             heart_rate_series.setThickness(20);
         }
     }
+
+    public void getAverageBP(){
+
+
+        DatabaseHelper mDbHelper = new DatabaseHelper(getBaseContext());
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+
+        double avg_systolic;
+        avg_systolic = mDbHelper.getAverageOverPastWeek(db, "systolic_pressure");
+
+        double avg_diastolic;
+        avg_diastolic = mDbHelper.getAverageOverPastWeek(db, "diastolic_pressure");
+
+        //double avg_systolic = 140.0;
+        //double avg_diastolic = 80.0;
+
+        TextView bp_textview = (TextView) findViewById(R.id.avg_bp);
+        ImageView circle = (ImageView) findViewById(R.id.circle);
+        bp_textview.setText(avg_systolic + "\n" + avg_diastolic);
+
+        if(avg_systolic < 120 && avg_diastolic < 80){
+            circle.setImageResource(R.drawable.green_circle);
+            bp_textview.setTextColor(Color.parseColor("#33ff33"));
+        }
+        else if((avg_systolic > 120 && avg_systolic < 139) || (avg_diastolic < 89 && avg_diastolic > 80)){
+            circle.setImageResource(R.drawable.yellow_circle);
+            bp_textview.setTextColor(Color.parseColor("#ffff00"));
+        }
+        else{
+            circle.setImageResource(R.drawable.red_circle);
+            bp_textview.setTextColor(Color.parseColor("#ff0000"));
+        }
+
+
+
+
+    }
+
+
+
+
+
 }
