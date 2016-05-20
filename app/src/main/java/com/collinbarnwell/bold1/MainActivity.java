@@ -403,6 +403,6 @@ public class MainActivity extends AppCompatActivity {
         allTimePieChart.getLegend().setEnabled(false);
         allTimePieChart.setDescription("");
         allTimePieChart.setHoleRadius(0);
-        allTimePieChart.setTransparentCircleRadius(10);
+        allTimePieChart.setTransparentCircleRadius(0);
     }
 }
