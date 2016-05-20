@@ -186,11 +186,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void generatePdfReport() {
-
+        // First get the first/last name
+        // Now automatically get the info from local storage and fill in the text fields.
+        try{
+            // This is where we stored the user info
+            JSONObject saved_user_info = utilClass.loadJSONFromFile(this,utilClass.UserInfoFile);
+            if (saved_user_info.has(utilClass.UserInfoStrings[4]) && saved_user_info.has(utilClass.UserInfoStrings[5])){
+                String firstLastName=saved_user_info.getString(utilClass.UserInfoStrings[4])+" "+saved_user_info.getString(utilClass.UserInfoStrings[5]);
+            }
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            Toast.makeText(getBaseContext(),"Something went wrong while fetching user info.",Toast.LENGTH_LONG).show();
+        }
         // Opening document
         Document document = new Document();
 
         // File shit
+
         String filename = "doctor.pdf";
         File gpxfile = new File("sdcard/", filename); // Where to save. Currently trying external storage. Save in
         // "/data/data/com.collinbarnwell.bold1" to get it to save in internal storage
