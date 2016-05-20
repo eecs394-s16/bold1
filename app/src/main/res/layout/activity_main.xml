@@ -106,6 +106,7 @@
                             android:layout_height="wrap_content"
                             android:text="Average Blood Pressure:\n Last 7 days"
                             android:textSize="22dp"
+                            android:textColor="@color/fontColor"
                             android:gravity="center"
                             android:layout_marginBottom="10dp"
                             android:layout_marginTop="15dp"/>
@@ -133,7 +134,7 @@
                                 android:layout_centerInParent="true"
                                 android:layout_centerVertical="true"
                                 android:gravity="center_horizontal"
-                                android:textColor="@color/neonGreen"
+                                android:textColor="@color/fontColor"
                                 android:textSize= "22dp"
                                 />
 
@@ -147,6 +148,7 @@
                             android:id="@+id/all_time_label"
                             android:layout_centerHorizontal="true"
                             android:layout_margin="20dp"
+                            android:textColor="@color/fontColor"
                             android:layout_below="@id/pretty_average"
                             android:gravity="center"/>
                         <com.github.mikephil.charting.charts.PieChart

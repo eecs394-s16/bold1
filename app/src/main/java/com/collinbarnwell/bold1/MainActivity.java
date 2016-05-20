@@ -434,15 +434,15 @@ public class MainActivity extends AppCompatActivity {
 
         if(avg_systolic < 120 && avg_diastolic < 80){
             circle.setImageResource(R.drawable.green_circle);
-            bp_textview.setTextColor(Color.parseColor("#33ff33"));
+            // bp_textview.setTextColor(Color.parseColor("#33ff33"));
         }
         else if((avg_systolic > 120 && avg_systolic < 139) || (avg_diastolic < 89 && avg_diastolic > 80)){
             circle.setImageResource(R.drawable.yellow_circle);
-            bp_textview.setTextColor(Color.parseColor("#ffff00"));
+            // bp_textview.setTextColor(Color.parseColor("#ffff00"));
         }
         else{
             circle.setImageResource(R.drawable.red_circle);
-            bp_textview.setTextColor(Color.parseColor("#ff0000"));
+            // bp_textview.setTextColor(Color.parseColor("#ff0000"));
         }
 
 
