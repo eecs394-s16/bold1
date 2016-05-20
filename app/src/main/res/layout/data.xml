@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="15dp"
     android:background="#FFFFFF">
 
     <LinearLayout
@@ -15,10 +16,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Time:"
-            android:id="@+id/Time"
-            android:layout_gravity="center_horizontal"
-            android:textColor="#000000" />
+            android:text=""
+            android:textStyle="bold"
+            android:id="@+id/Timetext"
+            android:textColor="#000000"/>
     </LinearLayout>
 
     <LinearLayout
@@ -31,10 +32,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Systolic Pressure:"
+            android:text="Systolic Pressure: "
             android:id="@+id/Systolic_Pressure"
             android:layout_gravity="center_horizontal"
-            android:textColor="#000000" />
+            android:textColor="#000000"
+            android:textStyle="bold"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text=""
+            android:id="@+id/Systolic_Pressuretext"
+            android:textColor="#000000"/>
     </LinearLayout>
 
     <LinearLayout
@@ -47,10 +56,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Diastolic Pressure:"
+            android:text="Diastolic Pressure: "
             android:id="@+id/Diastolic_Pressure"
             android:layout_gravity="center_horizontal"
-            android:textColor="#000000" />
+            android:textColor="#000000"
+            android:textStyle="bold"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text=""
+            android:id="@+id/Diastolic_Pressuretext"
+            android:textColor="#000000"/>
     </LinearLayout>
 
     <LinearLayout
@@ -63,10 +80,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Pulse:"
+            android:text="Pulse: "
             android:id="@+id/Pulse"
             android:layout_gravity="center_horizontal"
-            android:textColor="#000000" />
+            android:textColor="#000000"
+            android:textStyle="bold"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text=""
+            android:id="@+id/Pulsetext"
+            android:textColor="#000000"/>
     </LinearLayout>
 
 
@@ -81,10 +106,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Tag:"
+            android:text="Tags: "
             android:id="@+id/Tag"
             android:layout_gravity="center_horizontal"
-            android:textColor="#000000" />
+            android:textColor="#000000"
+            android:textStyle="bold"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text=""
+            android:id="@+id/Tagtext"
+            android:textColor="#000000"/>
     </LinearLayout>
 
     <LinearLayout
@@ -97,10 +130,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Mood:"
+            android:text="Mood: "
             android:id="@+id/Mood"
             android:layout_gravity="center_horizontal"
-            android:textColor="#000000" />
+            android:textColor="#000000"
+            android:textStyle="bold"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text=""
+            android:id="@+id/Moodtext"
+            android:textColor="#000000"/>
     </LinearLayout>
 
 </LinearLayout>
