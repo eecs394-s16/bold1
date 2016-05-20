@@ -77,6 +77,7 @@ import static com.collinbarnwell.bold1.R.color.graph_red;
 
 public class MainActivity extends AppCompatActivity {
     public static final UtilClass utilClass = new UtilClass();
+    private static final NotificationHelper notifHelper = new NotificationHelper();
     // Storage Permissions
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
@@ -148,6 +149,12 @@ public class MainActivity extends AppCompatActivity {
                 generatePdfReport();
                 return true;
 
+            case R.id.notification_menu:
+                notifHelper.alarmMethod(this);
+                return true;
+            case R.id.notification_cancel_menu:
+                notifHelper.cancelAlarmMethod(this);
+                return true;
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.

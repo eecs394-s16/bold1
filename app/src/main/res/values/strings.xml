@@ -20,4 +20,7 @@
     <string name="user_profile_menu">Update patient info</string>
     <string name="add_datapoint">Record your data</string>
     <string name="gen_pdf">Email PDF report</string>
+    <string name="notification_menu">Add daily notification</string>
+    <string name="notification_cancel_menu">Cancel notification</string>
+
 </resources>
