@@ -425,8 +425,9 @@ public class MainActivity extends AppCompatActivity {
         double avg_diastolic;
         avg_diastolic = mDbHelper.getAverageOverPastWeek(db, "diastolic_pressure");
 
-        //double avg_systolic = 140.0;
-        //double avg_diastolic = 80.0;
+        avg_diastolic = Math.round(avg_diastolic);
+        avg_systolic = Math.round(avg_systolic);
+
 
         TextView bp_textview = (TextView) findViewById(R.id.avg_bp);
         ImageView circle = (ImageView) findViewById(R.id.circle);
