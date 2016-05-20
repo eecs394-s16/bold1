@@ -67,11 +67,6 @@ public class AddDataPoint extends AppCompatActivity {
                         (bloodPressureData.get("sys_press")>220)){
                     Toast.makeText(getBaseContext(),"Please enter reasonable systolic pressure in mm Hg",Toast.LENGTH_LONG).show();
                     validData=false;
-                    // Do not check for mean art pres now
-//                }else if ((bloodPressureData.get("mean_art_pres")<40) ||
-//                        (bloodPressureData.get("mean_art_pres")>220)){
-//                    Toast.makeText(getBaseContext(),"Please enter reasonable mean arterial pressure in mm Hg",Toast.LENGTH_LONG).show();
-//                    validData=false;
                 }else if ((bloodPressureData.get("heart_rate")<20) ||
                         (bloodPressureData.get("heart_rate")>300)){
                     Toast.makeText(getBaseContext(),"Please enter reasonable heart rate in beats per minute",Toast.LENGTH_LONG).show();

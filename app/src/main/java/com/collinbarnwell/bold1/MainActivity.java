@@ -77,6 +77,7 @@ import static com.collinbarnwell.bold1.R.color.graph_red;
 
 public class MainActivity extends AppCompatActivity {
     public static final UtilClass utilClass = new UtilClass();
+    private static final NotificationHelper notifHelper = new NotificationHelper();
     // Storage Permissions
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
@@ -148,6 +149,12 @@ public class MainActivity extends AppCompatActivity {
                 generatePdfReport();
                 return true;
 
+            case R.id.notification_menu:
+                notifHelper.alarmMethod(this);
+                return true;
+            case R.id.notification_cancel_menu:
+                notifHelper.cancelAlarmMethod(this);
+                return true;
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
@@ -179,11 +186,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void generatePdfReport() {
-
+        // First get the first/last name
+        // Now automatically get the info from local storage and fill in the text fields.
+        try{
+            // This is where we stored the user info
+            JSONObject saved_user_info = utilClass.loadJSONFromFile(this,utilClass.UserInfoFile);
+            if (saved_user_info.has(utilClass.UserInfoStrings[4]) && saved_user_info.has(utilClass.UserInfoStrings[5])){
+                String firstLastName=saved_user_info.getString(utilClass.UserInfoStrings[4])+" "+saved_user_info.getString(utilClass.UserInfoStrings[5]);
+            }
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            Toast.makeText(getBaseContext(),"Something went wrong while fetching user info.",Toast.LENGTH_LONG).show();
+        }
         // Opening document
         Document document = new Document();
 
         // File shit
+
         String filename = "doctor.pdf";
         File gpxfile = new File("sdcard/", filename); // Where to save. Currently trying external storage. Save in
         // "/data/data/com.collinbarnwell.bold1" to get it to save in internal storage
@@ -311,7 +331,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         PieDataSet dataset = new PieDataSet(entries, "");
-        dataset.setColors(ColorTemplate.COLORFUL_COLORS);
+        dataset.setColors(new int[]{R.color.graph_red, R.color.graph_orange, R.color.insights_yellow, R.color.insights_green}, getBaseContext());
         dataset.setValueFormatter(new MyValueFormatter());
         dataset.setValueTextSize(15);
         PieData data = new PieData(labels, dataset);
@@ -342,8 +362,8 @@ public class MainActivity extends AppCompatActivity {
             // Get one day ago
             Calendar cal = Calendar.getInstance();
             Date now = cal.getTime();
-            cal.add(Calendar.HOUR_OF_DAY, -72);
-            Date threeDaysAgo = cal.getTime();
+            cal.add(Calendar.HOUR_OF_DAY, -24);
+            Date oneDayAgo = cal.getTime();
 
             graph.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
                 @Override
@@ -351,8 +371,8 @@ public class MainActivity extends AppCompatActivity {
                     if (isValueX) {
                         // show normal x values
                         Date date = new Date((long)value);
-                        // SimpleDateFormat format = new SimpleDateFormat("h:mm a\nM/dd");
-                        SimpleDateFormat format = new SimpleDateFormat("M/d");
+                        SimpleDateFormat format = new SimpleDateFormat("h:mm a\nM/d");
+                        // SimpleDateFormat format = new SimpleDateFormat("M/d");
                         return format.format(date);
                     } else {
                         // show currency for y values
@@ -361,7 +381,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-            graph.getViewport().setMinX(threeDaysAgo.getTime());
+            graph.getViewport().setMinX(oneDayAgo.getTime());
             graph.getViewport().setMaxX(now.getTime());
             graph.getViewport().setXAxisBoundsManual(true);
 
@@ -435,15 +455,15 @@ public class MainActivity extends AppCompatActivity {
 
         if(avg_systolic < 120 && avg_diastolic < 80){
             circle.setImageResource(R.drawable.green_circle);
-            bp_textview.setTextColor(Color.parseColor("#33ff33"));
+            // bp_textview.setTextColor(Color.parseColor("#33ff33"));
         }
         else if((avg_systolic > 120 && avg_systolic < 139) || (avg_diastolic < 89 && avg_diastolic > 80)){
             circle.setImageResource(R.drawable.yellow_circle);
-            bp_textview.setTextColor(Color.parseColor("#ffff00"));
+            // bp_textview.setTextColor(Color.parseColor("#ffff00"));
         }
         else{
             circle.setImageResource(R.drawable.red_circle);
-            bp_textview.setTextColor(Color.parseColor("#ff0000"));
+            // bp_textview.setTextColor(Color.parseColor("#ff0000"));
         }
 
 

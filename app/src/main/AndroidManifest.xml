@@ -45,9 +45,9 @@
                 android:value=".MainActivity" />
         </activity>
 
-
-
-
+        <service android:name=".NotificationService"
+        android:enabled="true" />
+        <!--Has to add the receiver line-->
     </application>
 
 </manifest>
