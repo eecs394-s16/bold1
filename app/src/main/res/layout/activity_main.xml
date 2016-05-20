@@ -81,7 +81,7 @@
                     android:layout_gravity="bottom|end"
                     android:layout_margin="@dimen/fab_margin"
                     android:src="@android:drawable/ic_input_add"
-                    app2:backgroundTint="#000000"
+                    app2:backgroundTint="@color/colorPrimary"
                     android:tint="@android:color/white"/>
             </FrameLayout>
 
@@ -142,7 +142,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="All Time # of Readings by Hypertension Risk Level"
+                            android:text="Hypertension Risk Level"
                             android:textSize="25sp"
                             android:id="@+id/all_time_label"
                             android:layout_centerHorizontal="true"

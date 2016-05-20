@@ -311,7 +311,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         PieDataSet dataset = new PieDataSet(entries, "");
-        dataset.setColors(ColorTemplate.COLORFUL_COLORS);
+        dataset.setColors(new int[]{R.color.graph_red, R.color.graph_orange, R.color.insights_yellow, R.color.insights_green}, getBaseContext());
         dataset.setValueFormatter(new MyValueFormatter());
         dataset.setValueTextSize(15);
         PieData data = new PieData(labels, dataset);
