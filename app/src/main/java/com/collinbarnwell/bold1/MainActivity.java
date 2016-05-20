@@ -338,8 +338,8 @@ public class MainActivity extends AppCompatActivity {
             // Get one day ago
             Calendar cal = Calendar.getInstance();
             Date now = cal.getTime();
-            cal.add(Calendar.HOUR_OF_DAY, -72);
-            Date threeDaysAgo = cal.getTime();
+            cal.add(Calendar.HOUR_OF_DAY, -24);
+            Date oneDayAgo = cal.getTime();
 
             graph.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
                 @Override
@@ -347,8 +347,8 @@ public class MainActivity extends AppCompatActivity {
                     if (isValueX) {
                         // show normal x values
                         Date date = new Date((long)value);
-                        // SimpleDateFormat format = new SimpleDateFormat("h:mm a\nM/dd");
-                        SimpleDateFormat format = new SimpleDateFormat("M/d");
+                        SimpleDateFormat format = new SimpleDateFormat("h:mm a\nM/d");
+                        // SimpleDateFormat format = new SimpleDateFormat("M/d");
                         return format.format(date);
                     } else {
                         // show currency for y values
@@ -357,7 +357,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-            graph.getViewport().setMinX(threeDaysAgo.getTime());
+            graph.getViewport().setMinX(oneDayAgo.getTime());
             graph.getViewport().setMaxX(now.getTime());
             graph.getViewport().setXAxisBoundsManual(true);
 
