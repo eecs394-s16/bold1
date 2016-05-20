@@ -114,7 +114,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return data;
     }
 
-    // FUNCTIONS USED IN MAIN ACTIVITY
+    ////////////////////////////////////// FUNCTIONS USED IN MAIN ACTIVITY
 
     public DataPoint[] getColumnDataPoints(SQLiteDatabase db, String column) {
 
