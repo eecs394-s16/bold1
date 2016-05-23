@@ -5,7 +5,10 @@ import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.nfc.Tag;
 import android.os.Build;
@@ -17,6 +20,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
@@ -52,8 +56,13 @@ import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.ViewPortHandler;
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Image;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -69,6 +78,7 @@ import com.jjoe64.graphview.series.OnDataPointTapListener;
 import com.jjoe64.graphview.series.Series;
 import com.ns.developer.tagview.widget.TagCloudLinkView;
 
+import java.io.ByteArrayOutputStream;
 import java.sql.Time;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -206,9 +216,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void generatePdfReport() {
+
+        // Initilizaing stuff
         String filename = "";
-        // First get the first/last name
-        // Now automatically get the info from local storage and fill in the text fields.
+
         try{
             String firstLastName;
             // This is where we stored the user info
@@ -231,26 +242,28 @@ public class MainActivity extends AppCompatActivity {
                 timeString=timeString+"PM";
             }
             filename=firstLastName+" "+timeString+" Blood Pressure Report.pdf";
+
         }
         catch(Exception e){
             e.printStackTrace();
             Toast.makeText(getBaseContext(),"Something went wrong while fetching user info.",Toast.LENGTH_LONG).show();
             filename="Blood Pressure Report.pdf";
         }
+
+
+
         // Opening document
+        // Starting new Document instance
         Document document = new Document();
 
         // File shit
-        File gpxfile = new File(Environment.getExternalStorageDirectory(), filename); // Where to save. Currently trying external storage. Save in
-        // "/data/data/com.collinbarnwell.bold1" to get it to save in internal storage
+        File gpxfile = new File(Environment.getExternalStorageDirectory(), filename);
 
         // Checking to see if Android Manifest actually gave me permission to save to external storage
         // Right now, it's being a bitch.
         isStoragePermissionGranted();
 
-
-
-        // Writing to PDF
+        // Opening PDF Instance
         try{
             PdfWriter.getInstance(document, new FileOutputStream(gpxfile));
         }
@@ -259,15 +272,38 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-
-        Paragraph p3 = new Paragraph();
-        p3.add("Yay");
-
-
+        // Initializing database helper for this function
         DatabaseHelper mDbHelper = new DatabaseHelper(getBaseContext());
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
 
+        // Going to now Populate top of the PDF with Patient info
+        Paragraph paragraph = new Paragraph();
+
+        try{
+            JSONObject user_profile_info = utilClass.loadJSONFromFile(this,utilClass.UserInfoFile);
+            paragraph.add("Name: " + user_profile_info.getString(utilClass.UserInfoStrings[4]) + " " + user_profile_info.getString(utilClass.UserInfoStrings[5]) + "\n");
+            paragraph.add("DOB: " + user_profile_info.getString(utilClass.UserInfoStrings[7]) + "\n");
+            paragraph.add("Affiliated Medical Institution: " + user_profile_info.getString(utilClass.UserInfoStrings[2]) + "\n");
+            paragraph.add("\n");
+        }
+        catch(Exception e){
+            Toast.makeText(getBaseContext(),"Something went wrong while fetching user info.",Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
+
+
+
+
+        // Getting the BOLD logo -- This will be set to the logo variable below
+        Drawable d = ResourcesCompat.getDrawable(getResources(), R.drawable.bold_white_transparent_background, null);
+        Bitmap bitmap = ((BitmapDrawable)d).getBitmap();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byte[] bitmapData = stream.toByteArray();
+
+
+        // Getting info from the database
         Cursor cursor = db.rawQuery("SELECT SYSTOLIC_PRESSURE, DIASTOLIC_PRESSURE, HEART_RATE, MEAN_ARTERIAL_PRESSURE, TIMESTAMP FROM data_point",null);
 
         PdfPTable table = new PdfPTable(5);
@@ -298,23 +334,37 @@ public class MainActivity extends AppCompatActivity {
 
         try
         {
+//            Image logo = Image.getInstance(bitmapData);
+//            document.add(logo);
+
+            document.add(paragraph);
             document.add(table);
         }
-        catch (DocumentException e)
+        catch (Exception e)
         {
             e.printStackTrace();
         }
 
         document.close();
 
+
+
         try {
+
+            // Getting doctor email to put in TO for email generation
+
+            //JSONObject saved_user_info1 = utilClass.loadJSONFromFile(this,utilClass.UserInfoFile);
+            //String[] TO = {saved_user_info1.getString(utilClass.UserInfoStrings[])};
 
             String[] TO = {"nour.alharithi@gmail.com"};
             Intent emailIntent = new Intent(Intent.ACTION_SEND);
             emailIntent.setData(Uri.parse("mailto:"));
             emailIntent.setType("application/pdf");
 
-            //emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
+            if(TO != null) {
+                emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
+            }
+
             emailIntent.putExtra(Intent.EXTRA_SUBJECT, "BOLD DIAGNOSTICS: Blood Pressure Summary");
             emailIntent.putExtra(Intent.EXTRA_TEXT, "Attached is my blood pressure summary report courtesy of BOLD Diagnostics");
             emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(gpxfile));
@@ -571,11 +621,18 @@ public class MainActivity extends AppCompatActivity {
 
         popupWindow = new PopupWindow(container, 900, 1400, true);
         popupWindow.showAtLocation(relativeLayout, Gravity.NO_GRAVITY, 100, 200);
-
+        ImageView close = (ImageView) container.findViewById(R.id.close);
+        close.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                popupWindow.dismiss();
+                return false;
+            }
+        });
         container.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                popupWindow.dismiss();
+//                popupWindow.dismiss();
                 return true;
             }
         });
@@ -609,16 +666,16 @@ public class MainActivity extends AppCompatActivity {
 
         if(avg_systolic < 120 && avg_diastolic < 80){
             circle.setImageResource(R.drawable.green_circle);
-            bp_textview.setTextColor(getResources().getColor(R.color.insights_green));
+            //bp_textview.setTextColor(getResources().getColor(R.color.insights_green));
         }
         else if((avg_systolic > 120 && avg_systolic
                 < 139) || (avg_diastolic < 89 && avg_diastolic > 80)){
             circle.setImageResource(R.drawable.yellow_circle);
-            bp_textview.setTextColor(getResources().getColor(R.color.insights_yellow));
+            //bp_textview.setTextColor(getResources().getColor(R.color.insights_yellow));
         }
         else{
             circle.setImageResource(R.drawable.red_circle);
-            bp_textview.setTextColor(getResources().getColor(R.color.graph_red));
+            //bp_textview.setTextColor(getResources().getColor(R.color.graph_red));
         }
     }
 
