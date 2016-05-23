@@ -395,6 +395,7 @@ public class MainActivity extends AppCompatActivity {
         PieChart allTimePieChart = (PieChart) findViewById(R.id.all_time_pie_chart);
         ArrayList<Entry> entries = new ArrayList<>();
         ArrayList<String> labels = new ArrayList<String>();
+
         int[] palette = new int[]{R.color.graph_red, R.color.graph_orange, R.color.insights_yellow, R.color.insights_green};
         List<Integer> myColors = new ArrayList<Integer>();
 
