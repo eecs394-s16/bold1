@@ -411,7 +411,7 @@ public class MainActivity extends AppCompatActivity {
                     if (isValueX) {
                         // show normal x values
                         Date date = new Date((long)value);
-                        SimpleDateFormat format = new SimpleDateFormat("h:mm a\nM/d");
+                        SimpleDateFormat format = new SimpleDateFormat("h:mm a\\nM/d");
                         // SimpleDateFormat format = new SimpleDateFormat("M/d");
                         return format.format(date);
                     } else {
@@ -517,7 +517,7 @@ public class MainActivity extends AppCompatActivity {
     private void showWindow(DataPointInterface dataPoint) {
         final SQLiteDatabase dbr = mDbHelper.getReadableDatabase();
         Date date = new Date((long)dataPoint.getX());
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat format = new SimpleDateFormat("EEE M/d at h:mm a");
         Object[] data = mDbHelper.getDataForPopup(dbr, format.format(date));
         layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(LAYOUT_INFLATER_SERVICE);
         ViewGroup container = (ViewGroup) layoutInflater.inflate(R.layout.data, null);
