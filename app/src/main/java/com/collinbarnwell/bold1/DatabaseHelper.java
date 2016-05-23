@@ -253,7 +253,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if(cursor.moveToFirst() && cursor.getCount() >= 1) {
             do {
                 Double sys = cursor.getDouble(cursor.getColumnIndex("systolic_pressure"));
-                Double dias = cursor.getDouble(cursor.getColumnIndex("systolic_pressure"));
+                Double dias = cursor.getDouble(cursor.getColumnIndex("diastolic_pressure"));
 
                 if (sys > 160 || dias > 100) {
                     hypII++;
