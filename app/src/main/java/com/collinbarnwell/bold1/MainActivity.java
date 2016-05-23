@@ -262,12 +262,41 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void generatePdfReport() {
-
+        String filename = "";
+        // First get the first/last name
+        // Now automatically get the info from local storage and fill in the text fields.
+        try{
+            String firstLastName;
+            // This is where we stored the user info
+            JSONObject saved_user_info = utilClass.loadJSONFromFile(this,utilClass.UserInfoFile);
+            if (saved_user_info.has(utilClass.UserInfoStrings[4]) && saved_user_info.has(utilClass.UserInfoStrings[5])){
+                firstLastName=saved_user_info.getString(utilClass.UserInfoStrings[4])+" "+saved_user_info.getString(utilClass.UserInfoStrings[5]);
+            }else{
+                firstLastName="";
+            }
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.SECOND, calendar.get(Calendar.SECOND)+10);
+            calendar.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE));
+            calendar.set(Calendar.HOUR, calendar.get(Calendar.HOUR));
+            String timeString=  calendar.get(Calendar.HOUR)+":"
+                    + calendar.get(Calendar.MINUTE)+":"+ calendar.get(Calendar.SECOND);
+            if (+calendar.get(Calendar.AM_PM)==Calendar.AM){
+                timeString=timeString+"AM";
+            }
+            else{
+                timeString=timeString+"PM";
+            }
+            filename=firstLastName+" "+timeString+" Blood Pressure Report.pdf";
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            Toast.makeText(getBaseContext(),"Something went wrong while fetching user info.",Toast.LENGTH_LONG).show();
+            filename="Blood Pressure Report.pdf";
+        }
         // Opening document
         Document document = new Document();
 
         // File shit
-        String filename = "doctor.pdf";
         File gpxfile = new File("sdcard/", filename); // Where to save. Currently trying external storage. Save in
         // "/data/data/com.collinbarnwell.bold1" to get it to save in internal storage
 
