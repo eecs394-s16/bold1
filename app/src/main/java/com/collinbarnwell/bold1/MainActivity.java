@@ -457,10 +457,10 @@ public class MainActivity extends AppCompatActivity {
 
 
         double avg_systolic;
-        avg_systolic = mDbHelper.getAverageOverPastWeek(db, "systolic_pressure");
+        avg_systolic = mDbHelper.getAverageOverPastWeek(db, "systolic_pressure",-1,-1);
 
         double avg_diastolic;
-        avg_diastolic = mDbHelper.getAverageOverPastWeek(db, "diastolic_pressure");
+        avg_diastolic = mDbHelper.getAverageOverPastWeek(db, "diastolic_pressure",-1,-1);
 
         avg_diastolic = Math.round(avg_diastolic);
         avg_systolic = Math.round(avg_systolic);

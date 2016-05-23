@@ -58,9 +58,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cal.setTime(date);
         return cal;
     }
+    // In current time zone.
     public static int getDayOfMonthFromDate(Date date){
         Calendar cal=dateToCalendar(date);
         return cal.get(Calendar.DAY_OF_MONTH);
+    }
+
+    // In current time zone.
+    public static int getHourFromDate(Date date){
+        Calendar cal=dateToCalendar(date);
+        return cal.get(Calendar.HOUR_OF_DAY);
     }
 
     private static String getFormattedStringFromDate(Date date){
@@ -69,34 +76,67 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return simpleDateFormat.format(date);
     }
 
+    // Converts a time string in GMT to a Date object in current timezone.
+    public static Date getDateFromFormattedStringInGMT(String str){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+        Date date = null;
+        try {
+            date = simpleDateFormat.parse(str);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
+    }
+
     // return an array list of data points
     // By default this will be ordered by time.
     private ArrayList<DataPoint> getColumnArrayList(SQLiteDatabase db, String column) {
-        String query = "SELECT " + column + ", timestamp FROM data_point ORDER BY timestamp";
-        Cursor cursor      = db.rawQuery(query, null);
-        ArrayList<DataPoint> data = new ArrayList<DataPoint>();
-
-        if(cursor.moveToFirst() && cursor.getCount() >= 1) {
-            do {
-
-                Double val = cursor.getDouble(cursor.getColumnIndex(column));
-                String timestamp_string = cursor.getString(cursor.getColumnIndex("timestamp"));
-
-                Timestamp dt = Timestamp.valueOf(timestamp_string);
-                data.add(new DataPoint(dt, val));
-
-            } while (cursor.moveToNext());
-        }
-
-        cursor.close();
-        return data;
+//        String query = "SELECT " + column + ", timestamp FROM data_point ORDER BY timestamp";
+//        Cursor cursor      = db.rawQuery(query, null);
+//        ArrayList<DataPoint> data = new ArrayList<DataPoint>();
+//
+//        if(cursor.moveToFirst() && cursor.getCount() >= 1) {
+//            do {
+//
+//                Double val = cursor.getDouble(cursor.getColumnIndex(column));
+//                String timestamp_string = cursor.getString(cursor.getColumnIndex("timestamp"));
+//
+//                Timestamp dt = Timestamp.valueOf(timestamp_string);
+//                data.add(new DataPoint(dt, val));
+//
+//            } while (cursor.moveToNext());
+//        }
+//
+//        cursor.close();
+//        return data;
+        return getColumnArrayListFromTillDateTime(db,column,null,null,-1,-1);
     }
-    // return an array list of data points between the from and till time.
-    // By default this will be ordered by time.
-    private ArrayList<DataPoint> getColumnArrayListFromTillDate(SQLiteDatabase db, String column,Date from,Date till ) {
-        String query = "SELECT " + column +
-                ", timestamp FROM data_point WHERE timestamp >= strftime('"+ getFormattedStringFromDate(from)+"')"+
-                " AND timestamp < strftime('"+getFormattedStringFromDate(till)+"') ORDER BY timestamp";
+    // return an array list of data points between the from and till date and start and end time (0-24 int).
+    // By default this will be ordered by time. Set startTime or endTime to -1 if you don't want to
+    // have a specific range.
+    private ArrayList<DataPoint> getColumnArrayListFromTillDateTime(SQLiteDatabase db, String column,Date from,Date till,int startTime,int endTime ) {
+        // First get all entries between start and end date. Don't worry about start end time in sql
+        // Because it's hard to deal with hours in sql.
+//        String query = "SELECT " + column +
+//                ", timestamp FROM data_point WHERE timestamp >= strftime('"+ getFormattedStringFromDate(from)+"')"+
+//                " AND timestamp < strftime('"+getFormattedStringFromDate(till)+"') ORDER BY timestamp";
+
+        String query = "SELECT " + column + ", timestamp FROM data_point";
+        if (from!=null){
+            if (till!=null){
+                query+= " WHERE timestamp >= strftime('"+ getFormattedStringFromDate(from)+"')"+
+                        " AND timestamp < strftime('"+getFormattedStringFromDate(till)+"')";
+            }else{
+                // there's a from but no till
+                query+= " WHERE timestamp >= strftime('"+ getFormattedStringFromDate(from)+"')";
+            }
+        }else if (till!=null){
+            // there's a till but no from
+            query+= " WHERE timestamp < strftime('"+getFormattedStringFromDate(till)+"')";
+        }
+        query +=" ORDER BY timestamp";
+
         Cursor cursor      = db.rawQuery(query, null);
         ArrayList<DataPoint> data = new ArrayList<DataPoint>();
 
@@ -106,8 +146,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 Double val = cursor.getDouble(cursor.getColumnIndex(column));
                 String timestamp_string = cursor.getString(cursor.getColumnIndex("timestamp"));
 
-                Timestamp dt = Timestamp.valueOf(timestamp_string);
-                data.add(new DataPoint(dt, val));
+                Date date = getDateFromFormattedStringInGMT(timestamp_string);
+                //Timestamp dt = Timestamp.valueOf(timestamp_string);
+
+                //Now check whether the timestamp is within the hour range. If it is, add to data.
+                int hour=getHourFromDate(date);
+                if (startTime<0 || endTime<0 || (startTime<=hour && hour<=endTime)){
+                    data.add(new DataPoint(date, val));
+                }
 
             } while (cursor.moveToNext());
         }
@@ -127,12 +173,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return dataArray;
     }
 
-    public double getAverageOverPastWeek(SQLiteDatabase db, String column) {
+    // Set startTime or endTime to -1 if you don't want to have a specific range.
+    public double getAverageOverPastWeek(SQLiteDatabase db, String column,int startTime,int endTime ) {
         Calendar cal = Calendar.getInstance();
         Date now = cal.getTime();
         cal.add(Calendar.DAY_OF_YEAR, -7);
         Date oneWeekAgo = cal.getTime();
-        ArrayList<DataPoint> data = getColumnArrayListFromTillDate(db,column,oneWeekAgo,now);
+        ArrayList<DataPoint> data = getColumnArrayListFromTillDateTime(db,column,oneWeekAgo,now,startTime,endTime);
 
         // Now iterate through the list and combine the data into one.
         double ret=0.0;
@@ -146,13 +193,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return ret/currDataPointCount;
     }
 
-
-    public double getAverageOverPastMonth(SQLiteDatabase db, String column) {
+    // Set startTime or endTime to -1 if you don't want to have a specific range.
+    public double getAverageOverPastMonth(SQLiteDatabase db, String column,int startTime,int endTime ) {
         Calendar cal = Calendar.getInstance();
         Date now = cal.getTime();
         cal.add(Calendar.MONTH, -1);
         Date oneMonthAgo = cal.getTime();
-        ArrayList<DataPoint> data = getColumnArrayListFromTillDate(db,column,oneMonthAgo,now);
+        ArrayList<DataPoint> data = getColumnArrayListFromTillDateTime(db,column,oneMonthAgo,now,startTime,endTime);
 
         // Now iterate through the list and combine the data into one.
         double ret=0.0;
