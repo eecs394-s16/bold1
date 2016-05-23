@@ -11,6 +11,7 @@ import android.nfc.Tag;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.ContactsContract;
 import android.provider.DocumentsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -35,12 +36,21 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
+import android.widget.DatePicker;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import org.json.JSONObject;
 
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.mikephil.charting.utils.ViewPortHandler;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Paragraph;
@@ -56,8 +66,10 @@ import com.jjoe64.graphview.series.DataPointInterface;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jjoe64.graphview.series.OnDataPointTapListener;
 import com.jjoe64.graphview.series.Series;
+import com.ns.developer.tagview.widget.TagCloudLinkView;
 
 import java.sql.Time;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.io.File;
 import java.io.FileInputStream;
@@ -68,6 +80,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
@@ -78,6 +91,7 @@ import static com.collinbarnwell.bold1.R.color.graph_red;
 
 public class MainActivity extends AppCompatActivity {
     public static final UtilClass utilClass = new UtilClass();
+    private static final NotificationHelper notifHelper = new NotificationHelper();
     // Storage Permissions
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
@@ -89,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
     private LayoutInflater layoutInflater;
     private RelativeLayout relativeLayout;
     private boolean flag;
+    private DatabaseHelper mDbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,6 +134,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTabReselected(TabLayout.Tab tab) {}
         });
+
+        getAverageBP();
     }
 
     @Override
@@ -127,218 +144,8 @@ public class MainActivity extends AppCompatActivity {
         // Whenever we go back to main activity, the name of the user may have changed (very unlikely)
         // No matter whether that happens, refresh welcome message.
 
-        final DatabaseHelper mDbHelper = new DatabaseHelper(getBaseContext());
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        final SQLiteDatabase dbr = mDbHelper.getReadableDatabase();
-        String count = "SELECT count(*) FROM data_point";
-        Cursor mcursor = db.rawQuery(count, null);
-        mcursor.moveToFirst();
-        flag = true;
-        int icount = mcursor.getInt(0);
-        if(icount>0){
-
-            GraphView graph = (GraphView) findViewById(R.id.graph);
-            graph.removeAllSeries();
-
-            graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(MainActivity.this));
-            graph.getGridLabelRenderer().setNumHorizontalLabels(4);
-
-            // Get one day ago
-            Calendar cal = Calendar.getInstance();
-            Date now = cal.getTime();
-            cal.add(Calendar.HOUR_OF_DAY, -8);
-            Date oneDayAgo = cal.getTime();
-
-            graph.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
-                @Override
-                public String formatLabel(double value, boolean isValueX) {
-                    if (isValueX) {
-                        // show normal x values
-                        Date date = new Date((long)value);
-                        SimpleDateFormat format = new SimpleDateFormat("h:mm a\nM/dd");
-                        return format.format(date);
-                    } else {
-                        // show currency for y values
-                        return super.formatLabel(value, isValueX);
-                    }
-                }
-            });
-
-            graph.getViewport().setMinX(oneDayAgo.getTime());
-            graph.getViewport().setMaxX(now.getTime());
-            graph.getViewport().setXAxisBoundsManual(true);
-
-            graph.getGridLabelRenderer().setNumVerticalLabels(9);
-            graph.getViewport().setMinY(0);
-            graph.getViewport().setMaxY(200);
-            graph.getViewport().setYAxisBoundsManual(true);
-
-            graph.getViewport().setScrollable(true);
-            graph.getViewport().setScalable(true);
-
-            // legend
-            graph.getLegendRenderer().setVisible(true);
-            graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
-            graph.getLegendRenderer().setTextSize(50);
-            graph.getLegendRenderer().setSpacing(30);
-            graph.getLegendRenderer().setMargin(20);
-            graph.getLegendRenderer().setPadding(20);
-
-            graph.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    flag = true;
-                    return false;
-                }
-            });
-
-            LineGraphSeries<DataPoint> systolic_series =
-                    new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "systolic_pressure"));
-            graph.addSeries(systolic_series);
-            systolic_series.setTitle("Systolic (mmHg)");
-            systolic_series.setColor(getResources().getColor(R.color.graph_blue));
-            systolic_series.setDrawDataPoints(true);
-            systolic_series.setDataPointsRadius(30);
-            systolic_series.setThickness(20);
-            relativeLayout = (RelativeLayout) findViewById(R.id.relative);
-            systolic_series.setOnDataPointTapListener(new OnDataPointTapListener() {
-                @Override
-                public void onTap(Series series, DataPointInterface dataPoint) {
-                    if (!flag) {
-                        return;
-                    }
-                    flag = false;
-
-//                    Toast.makeText(MainActivity.this, "Series: On Data Point clicked: " + dataPoint, Toast.LENGTH_SHORT).show();
-                    Date date = new Date((long)dataPoint.getX());
-                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    SimpleDateFormat displayformat = new SimpleDateFormat("h:mm a 'on' EEE, MMM d");
-                    Object[] data = mDbHelper.getDataForPopup(dbr, format.format(date));
-                    layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(LAYOUT_INFLATER_SERVICE);
-                    ViewGroup container = (ViewGroup) layoutInflater.inflate(R.layout.data, null);
-                    TextView x = (TextView) container.findViewById(R.id.Timetext);
-                    x.setText(displayformat.format(date));
-                    x = (TextView) container.findViewById(R.id.Systolic_Pressuretext);
-                    x.setText((String)((Pair)data[0]).second);
-                    x = (TextView) container.findViewById(R.id.Diastolic_Pressuretext);
-                    x.setText((String)((Pair)data[1]).second);
-                    x = (TextView) container.findViewById(R.id.Pulsetext);
-                    x.setText((String)((Pair)data[2]).second);
-//                    x = (TextView) container.findViewById(R.id.Tag);
-//                    x.setText("Tag: " + format.format(data));
-                    x = (TextView) container.findViewById(R.id.Moodtext);
-                    x.setText((String)((Pair)data[4]).second);
-                    popupWindow = new PopupWindow(container, 800, 1200, true);
-                    popupWindow.showAtLocation(relativeLayout, Gravity.NO_GRAVITY, 150, 400);
-
-                    container.setOnTouchListener(new View.OnTouchListener() {
-
-                        @Override
-                        public boolean onTouch(View view, MotionEvent motionEvent) {
-                            popupWindow.dismiss();
-                            return true;
-                        }
-                    });
-                }
-            });
-
-            LineGraphSeries<DataPoint> diastolic_series =
-                    new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "diastolic_pressure"));
-            graph.addSeries(diastolic_series);
-            diastolic_series.setColor(Color.GREEN);
-            diastolic_series.setTitle("Diastolic (mmHg)");
-            diastolic_series.setColor(getResources().getColor(R.color.graph_orange));
-            diastolic_series.setDrawDataPoints(true);
-            diastolic_series.setDataPointsRadius(30);
-            diastolic_series.setThickness(20);
-            diastolic_series.setOnDataPointTapListener(new OnDataPointTapListener() {
-                @Override
-                public void onTap(Series series, DataPointInterface dataPoint) {
-                    if (!flag) {
-                        return;
-                    }
-                    flag = false;
-//                    Toast.makeText(MainActivity.this, "Series: On Data Point clicked: " + dataPoint, Toast.LENGTH_SHORT).show();
-                    Date date = new Date((long)dataPoint.getX());
-                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    Object[] data = mDbHelper.getDataForPopup(dbr, format.format(date));
-                    layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(LAYOUT_INFLATER_SERVICE);
-                    ViewGroup container = (ViewGroup) layoutInflater.inflate(R.layout.data, null);
-                    TextView x = (TextView) container.findViewById(R.id.Timetext);
-                    x.setText(format.format(date));
-                    x = (TextView) container.findViewById(R.id.Systolic_Pressuretext);
-                    x.setText((String)((Pair)data[0]).second);
-                    x = (TextView) container.findViewById(R.id.Diastolic_Pressuretext);
-                    x.setText((String)((Pair)data[1]).second);
-                    x = (TextView) container.findViewById(R.id.Pulsetext);
-                    x.setText((String)((Pair)data[2]).second);
-//                    x = (TextView) container.findViewById(R.id.Tag);
-//                    x.setText("Tag: " + format.format(data));
-                    x = (TextView) container.findViewById(R.id.Moodtext);
-                    x.setText((String)((Pair)data[4]).second);
-                    popupWindow = new PopupWindow(container, 800, 1200, true);
-                    popupWindow.showAtLocation(relativeLayout, Gravity.NO_GRAVITY, 150, 400);
-
-                    container.setOnTouchListener(new View.OnTouchListener() {
-                        @Override
-                        public boolean onTouch(View view, MotionEvent motionEvent) {
-                            popupWindow.dismiss();
-                            return true;
-                        }
-                    });
-                }
-            });
-
-            LineGraphSeries<DataPoint> heart_rate_series =
-                    new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "heart_rate"));
-            graph.addSeries(heart_rate_series);
-            heart_rate_series.setColor(Color.RED);
-            heart_rate_series.setTitle("Pulse (bpm)");
-            heart_rate_series.setColor(getResources().getColor(R.color.graph_red));
-            heart_rate_series.setDrawDataPoints(true);
-            heart_rate_series.setDataPointsRadius(30);
-            heart_rate_series.setThickness(20);
-            heart_rate_series.setOnDataPointTapListener(new OnDataPointTapListener() {
-                @Override
-                public void onTap(Series series, DataPointInterface dataPoint) {
-                    if (!flag) {
-                        return;
-                    }
-                    flag = false;
-//                    Toast.makeText(MainActivity.this, "Series: On Data Point clicked: " + dataPoint, Toast.LENGTH_SHORT).show();
-                    Date date = new Date((long)dataPoint.getX());
-                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    Object[] data = mDbHelper.getDataForPopup(dbr, format.format(date));
-                    layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(LAYOUT_INFLATER_SERVICE);
-                    ViewGroup container = (ViewGroup) layoutInflater.inflate(R.layout.data, null);
-                    TextView x = (TextView) container.findViewById(R.id.Timetext);
-                    x.setText(format.format(date));
-                    x = (TextView) container.findViewById(R.id.Systolic_Pressuretext);
-                    x.setText((String)((Pair)data[0]).second);
-                    x = (TextView) container.findViewById(R.id.Diastolic_Pressuretext);
-                    x.setText((String)((Pair)data[1]).second);
-                    x = (TextView) container.findViewById(R.id.Pulsetext);
-                    x.setText((String)((Pair)data[2]).second);
-//                    x = (TextView) container.findViewById(R.id.Tag);
-//                    x.setText("Tag: " + format.format(data));
-                    x = (TextView) container.findViewById(R.id.Moodtext);
-                    x.setText((String)((Pair)data[4]).second);
-                    popupWindow = new PopupWindow(container, 800, 1200, true);
-                    popupWindow.showAtLocation(relativeLayout, Gravity.NO_GRAVITY, 150, 400);
-
-                    container.setOnTouchListener(new View.OnTouchListener() {
-                        @Override
-                        public boolean onTouch(View view, MotionEvent motionEvent) {
-                            popupWindow.dismiss();
-                            return true;
-                        }
-                    });
-                }
-            });
-
-
-
-        }
+        setupGraph();
+        setupPieCharts();
     }
 
 
@@ -361,6 +168,12 @@ public class MainActivity extends AppCompatActivity {
                 generatePdfReport();
                 return true;
 
+            case R.id.notification_menu:
+                notifHelper.alarmMethod(this);
+                return true;
+            case R.id.notification_cancel_menu:
+                notifHelper.cancelAlarmMethod(this);
+                return true;
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
@@ -483,4 +296,280 @@ public class MainActivity extends AppCompatActivity {
             Log.i("didn't work", "damn");
         }
     }
+
+    private void setupPieCharts () {
+
+        class MyValueFormatter implements ValueFormatter {
+            private DecimalFormat mFormat;
+            public MyValueFormatter() {
+                mFormat = new DecimalFormat("###,###");
+            }
+            @Override
+            public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
+                return mFormat.format(value);
+            }
+        }
+
+        DatabaseHelper mDbHelper = new DatabaseHelper(getBaseContext());
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        int[] counts = mDbHelper.getHypertensionRiskLevelCounts(db);
+
+        PieChart allTimePieChart = (PieChart) findViewById(R.id.all_time_pie_chart);
+        ArrayList<Entry> entries = new ArrayList<>();
+        ArrayList<String> labels = new ArrayList<String>();
+
+        if (counts[0] > 0) {
+            entries.add(new Entry(counts[0], 0));
+            labels.add("Hypertension Stage II");
+        }
+        if (counts[1] > 0) {
+            entries.add(new Entry(counts[1], 1));
+            labels.add("Hypertension Stage I");
+        }
+        if (counts[2] > 0) {
+            entries.add(new Entry(counts[2], 2));
+            labels.add("Pre-hypertension");
+        }
+        if (counts[3] > 0) {
+            entries.add(new Entry(counts[3], 3));
+            labels.add("Normal");
+        }
+        PieDataSet dataset = new PieDataSet(entries, "");
+        dataset.setColors(ColorTemplate.COLORFUL_COLORS);
+        dataset.setValueFormatter(new MyValueFormatter());
+        dataset.setValueTextSize(15);
+        PieData data = new PieData(labels, dataset);
+        allTimePieChart.setData(data);
+        allTimePieChart.setDrawSliceText(true);
+        allTimePieChart.getLegend().setEnabled(false);
+        allTimePieChart.setDescription("");
+        allTimePieChart.setHoleRadius(0);
+        allTimePieChart.setTransparentCircleRadius(0);
+    }
+
+    public void setupGraph() {
+        mDbHelper = new DatabaseHelper(getBaseContext());
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        flag = true;
+
+        String count = "SELECT count(*) FROM data_point";
+        Cursor mcursor = db.rawQuery(count, null);
+        mcursor.moveToFirst();
+        int icount = mcursor.getInt(0);
+        if(icount>0){
+
+            GraphView graph = (GraphView) findViewById(R.id.graph);
+            graph.removeAllSeries();
+
+            graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(MainActivity.this));
+            graph.getGridLabelRenderer().setNumHorizontalLabels(4);
+
+            // Get one day ago
+            Calendar cal = Calendar.getInstance();
+            Date now = cal.getTime();
+            cal.add(Calendar.HOUR_OF_DAY, -24);
+            Date oneDayAgo = cal.getTime();
+
+            graph.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
+                @Override
+                public String formatLabel(double value, boolean isValueX) {
+                    if (isValueX) {
+                        // show normal x values
+                        Date date = new Date((long)value);
+                        SimpleDateFormat format = new SimpleDateFormat("h:mm a\nM/d");
+                        // SimpleDateFormat format = new SimpleDateFormat("M/d");
+                        return format.format(date);
+                    } else {
+                        // show currency for y values
+                        return super.formatLabel(value, isValueX);
+                    }
+                }
+            });
+
+            graph.getViewport().setMinX(oneDayAgo.getTime());
+            graph.getViewport().setMaxX(now.getTime());
+            graph.getViewport().setXAxisBoundsManual(true);
+
+            graph.getGridLabelRenderer().setNumVerticalLabels(9);
+            graph.getViewport().setMinY(0);
+            graph.getViewport().setMaxY(200);
+            graph.getViewport().setYAxisBoundsManual(true);
+
+            graph.getViewport().setScrollable(true);
+            graph.getViewport().setScalable(true);
+
+            // legend
+            graph.getLegendRenderer().setVisible(true);
+            graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
+            graph.getLegendRenderer().setTextSize(50);
+            graph.getLegendRenderer().setSpacing(30);
+            graph.getLegendRenderer().setMargin(20);
+            graph.getLegendRenderer().setPadding(20);
+
+            graph.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    flag = true;
+                    return false;
+                }
+            });
+
+            LineGraphSeries<DataPoint> systolic_series =
+                    new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "systolic_pressure"));
+            graph.addSeries(systolic_series);
+            systolic_series.setTitle("Systolic (mmHg)");
+            systolic_series.setColor(getResources().getColor(R.color.graph_blue));
+            systolic_series.setDrawDataPoints(true);
+            systolic_series.setDataPointsRadius(30);
+            systolic_series.setThickness(20);
+            relativeLayout = (RelativeLayout) findViewById(R.id.relative);
+            systolic_series.setOnDataPointTapListener(new OnDataPointTapListener() {
+                @Override
+                public void onTap(Series series, DataPointInterface dataPoint) {
+                    if (!flag) {
+                        return;
+                    }
+                    flag = false;
+                    showWindow(dataPoint);
+                }
+            });
+
+            LineGraphSeries<DataPoint> diastolic_series =
+                    new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "diastolic_pressure"));
+            graph.addSeries(diastolic_series);
+            diastolic_series.setColor(Color.GREEN);
+            diastolic_series.setTitle("Diastolic (mmHg)");
+            diastolic_series.setColor(getResources().getColor(R.color.graph_orange));
+            diastolic_series.setDrawDataPoints(true);
+            diastolic_series.setDataPointsRadius(30);
+            diastolic_series.setThickness(20);
+            diastolic_series.setOnDataPointTapListener(new OnDataPointTapListener() {
+                @Override
+                public void onTap(Series series, DataPointInterface dataPoint) {
+                    if (!flag) {
+                        return;
+                    }
+                    flag = false;
+                    showWindow(dataPoint);
+//                    Toast.makeText(MainActivity.this, "Series: On Data Point clicked: " + dataPoint, Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            LineGraphSeries<DataPoint> heart_rate_series =
+                    new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "heart_rate"));
+            graph.addSeries(heart_rate_series);
+            heart_rate_series.setColor(Color.RED);
+            heart_rate_series.setTitle("Pulse (bpm)");
+            heart_rate_series.setColor(getResources().getColor(R.color.graph_red));
+            heart_rate_series.setDrawDataPoints(true);
+            heart_rate_series.setDataPointsRadius(30);
+            heart_rate_series.setThickness(20);
+            heart_rate_series.setOnDataPointTapListener(new OnDataPointTapListener() {
+                @Override
+                public void onTap(Series series, DataPointInterface dataPoint) {
+                    if (!flag) {
+                        return;
+                    }
+                    flag = false;
+                    showWindow(dataPoint);
+//                    Toast.makeText(MainActivity.this, "Series: On Data Point clicked: " + dataPoint, Toast.LENGTH_SHORT).show();
+
+                }
+            });
+        }
+    }
+
+    private void showWindow(DataPointInterface dataPoint) {
+        final SQLiteDatabase dbr = mDbHelper.getReadableDatabase();
+        Date date = new Date((long)dataPoint.getX());
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Object[] data = mDbHelper.getDataForPopup(dbr, format.format(date));
+        layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(LAYOUT_INFLATER_SERVICE);
+        ViewGroup container = (ViewGroup) layoutInflater.inflate(R.layout.data, null);
+        TextView x = (TextView) container.findViewById(R.id.Timetext);
+        x.setText(format.format(date));
+        x = (TextView) container.findViewById(R.id.bp);
+        ImageView circle = (ImageView) findViewById(R.id.circle);
+        double systolic = (double)((Pair)data[0]).second;
+        double diastolic = (double)((Pair)data[1]).second;
+        x.setText(systolic + "\n" + diastolic);
+        x = (TextView) container.findViewById(R.id.Pulsetext);
+
+        if(systolic < 120 && diastolic < 80){
+            circle.setImageResource(R.drawable.green_circle);
+            x.setTextColor(Color.parseColor("#33ff33"));
+        }
+        else if((systolic > 120 && diastolic < 139) || (systolic < 89 && diastolic > 80)){
+            circle.setImageResource(R.drawable.yellow_circle);
+            x.setTextColor(Color.parseColor("#ffff00"));
+        }
+        else{
+            circle.setImageResource(R.drawable.red_circle);
+            x.setTextColor(Color.parseColor("#ff0000"));
+        }
+        double pulse = (double)((Pair)data[2]).second;
+        x.setText(pulse + "");
+        x.setTextColor(Color.parseColor("#f01515"));
+        TagCloudLinkView view = (TagCloudLinkView) container.findViewById(R.id.Tags);
+        view.add(new com.ns.developer.tagview.entity.Tag(1,"TAG TEXT 1"));
+//        view.add(new com.ns.developer.tagview.entity.Tag(1,"TAG TEXT 2"));
+//        view.add(new com.ns.developer.tagview.entity.Tag(1,"TAG TEXT 3"));
+        view.drawTags();
+        String mood = (String)((Pair)data[4]).second;
+        ImageView moodcon = (ImageView) container.findViewById(R.id.moodIamge);
+        if (mood == "good") {
+            moodcon.setImageResource(R.drawable.happy);
+        } else if (mood == "average") {
+            moodcon.setImageResource(R.drawable.normal);
+        } else {
+            moodcon.setImageResource(R.drawable.sad);
+        }
+//        x.setText((String)((Pair)data[4]).second);
+        popupWindow = new PopupWindow(container, 800, 1200, true);
+        popupWindow.showAtLocation(relativeLayout, Gravity.NO_GRAVITY, 150, 400);
+
+        container.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                popupWindow.dismiss();
+                return true;
+            }
+        });
+    }
+
+    public void getAverageBP(){
+
+
+        DatabaseHelper mDbHelper = new DatabaseHelper(getBaseContext());
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+
+        double avg_systolic;
+        avg_systolic = mDbHelper.getAverageOverPastWeek(db, "systolic_pressure");
+
+        double avg_diastolic;
+        avg_diastolic = mDbHelper.getAverageOverPastWeek(db, "diastolic_pressure");
+
+        //double avg_systolic = 140.0;
+        //double avg_diastolic = 80.0;
+
+        TextView bp_textview = (TextView) findViewById(R.id.avg_bp);
+        ImageView circle = (ImageView) findViewById(R.id.circle);
+        bp_textview.setText(avg_systolic + "\n" + avg_diastolic);
+
+        if(avg_systolic < 120 && avg_diastolic < 80){
+            circle.setImageResource(R.drawable.green_circle);
+            bp_textview.setTextColor(Color.parseColor("#33ff33"));
+        }
+        else if((avg_systolic > 120 && avg_systolic < 139) || (avg_diastolic < 89 && avg_diastolic > 80)){
+            circle.setImageResource(R.drawable.yellow_circle);
+            bp_textview.setTextColor(Color.parseColor("#ffff00"));
+        }
+        else{
+            circle.setImageResource(R.drawable.red_circle);
+            bp_textview.setTextColor(Color.parseColor("#ff0000"));
+        }
+    }
+
 }
