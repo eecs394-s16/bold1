@@ -262,26 +262,27 @@
 
                 <RadioButton
                     android:id="@+id/radioButtonGoodMood"
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginLeft="30dp"
                     android:checked="false"
-                    android:button="@drawable/happy"/>
+                    android:button="@drawable/happy_face"/>
 
                 <RadioButton
                     android:id="@+id/radioButtonAverageMood"
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
                     android:layout_marginLeft="30dp"
                     android:checked="false"
-                    android:button="@drawable/normal"/>
+                    android:button="@drawable/normal_face"/>
 
                 <RadioButton
                     android:id="@+id/radioButtonBadMood"
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
                     android:layout_marginLeft="30dp"
                     android:checked="false"
-                    android:button="@drawable/sad"/>
+                    android:button="@drawable/sad_face"/>
             </RadioGroup>
 
             <EditText
