@@ -46,7 +46,7 @@ public class Notifications extends AppCompatActivity {
         super.onCreate(savedInstance);
 
         //setContentView(R.layout.activity_notifications);
-        
+
 
     }
 
