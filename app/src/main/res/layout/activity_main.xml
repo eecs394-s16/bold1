@@ -110,7 +110,6 @@
                             android:gravity="center"
                             android:layout_marginBottom="10dp"
                             android:layout_marginTop="15dp"/>
-
                         <RelativeLayout
                             android:id="@+id/pretty_average"
                             android:layout_width="150dp"
@@ -137,7 +136,40 @@
                                 android:textColor="@color/fontColor"
                                 android:textSize= "22dp"
                                 />
+                        </RelativeLayout>
 
+                        <TextView
+                            android:id="@+id/dayNightAvgTextView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Day time and Night time\n Average Blood Pressure:\n Last 7 days"
+                            android:textSize="22dp"
+                            android:textColor="@color/fontColor"
+                            android:gravity="center"
+                            android:layout_below="@id/pretty_average"/>
+                        <RelativeLayout
+                            android:id="@+id/dayNightAvgSection"
+                            android:layout_width="150dp"
+                            android:layout_height="150dp"
+                            android:layout_below="@id/dayNightAvgTextView"
+                            android:layout_centerHorizontal="true">
+
+                            <ImageView
+                                android:id="@+id/dayNightCircleIcon"
+                                android:layout_width="wrap_content"
+                                android:layout_height="150dp"
+                                android:src="@drawable/green_circle"
+                                />
+                            <TextView
+                                android:id="@+id/dayNightAvgBP"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerInParent="true"
+                                android:layout_centerVertical="true"
+                                android:gravity="center_horizontal"
+                                android:textColor="@color/fontColor"
+                                android:textSize= "22dp"
+                                />
                         </RelativeLayout>
 
                         <TextView
@@ -149,7 +181,7 @@
                             android:layout_centerHorizontal="true"
                             android:layout_margin="20dp"
                             android:textColor="@color/fontColor"
-                            android:layout_below="@id/pretty_average"
+                            android:layout_below="@id/dayNightAvgSection"
                             android:gravity="center"/>
                         <com.github.mikephil.charting.charts.PieChart
                             android:id="@+id/all_time_pie_chart"

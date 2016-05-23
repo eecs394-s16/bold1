@@ -116,8 +116,10 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+        setupGraph();
         setupPieCharts();
         getAverageBP();
+        getDayNightBP();
     }
 
     @Override
@@ -128,6 +130,8 @@ public class MainActivity extends AppCompatActivity {
 
         setupGraph();
         setupPieCharts();
+        getAverageBP();
+        getDayNightBP();
     }
 
 
@@ -482,14 +486,48 @@ public class MainActivity extends AppCompatActivity {
             circle.setImageResource(R.drawable.red_circle);
             // bp_textview.setTextColor(Color.parseColor("#ff0000"));
         }
-
-
-
-
     }
 
 
 
+    public void getDayNightBP(){
 
 
+        DatabaseHelper mDbHelper = new DatabaseHelper(getBaseContext());
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+
+        double avg_day_systolic;
+        avg_day_systolic = mDbHelper.getAverageOverPastWeek(db, "systolic_pressure",8,20);
+        double avg_day_diastolic;
+        avg_day_diastolic = mDbHelper.getAverageOverPastWeek(db, "diastolic_pressure",8,20)
+        ;
+        double avg_night_systolic;
+        avg_night_systolic = mDbHelper.getAverageOverPastWeek(db, "systolic_pressure",20,8);
+        double avg_night_diastolic;
+        avg_night_diastolic = mDbHelper.getAverageOverPastWeek(db, "diastolic_pressure",20,8);
+
+        avg_day_diastolic = Math.round(avg_day_diastolic);
+        avg_day_systolic = Math.round(avg_day_systolic);
+        avg_night_diastolic = Math.round(avg_night_diastolic);
+        avg_night_systolic = Math.round(avg_night_systolic);
+
+
+        TextView bp_textview = (TextView) findViewById(R.id.dayNightAvgBP);
+        ImageView circle = (ImageView) findViewById(R.id.dayNightCircleIcon);
+        bp_textview.setText( avg_day_diastolic+ "/" + avg_day_systolic + "\n" + avg_night_diastolic+ "/" + avg_night_systolic);
+
+        if(avg_day_systolic < 120 && avg_day_diastolic < 80){
+            circle.setImageResource(R.drawable.day_night_circle);
+            // bp_textview.setTextColor(Color.parseColor("#33ff33"));
+        }
+        else if((avg_day_systolic > 120 && avg_day_systolic < 139) || (avg_day_diastolic < 89 && avg_day_diastolic > 80)){
+            circle.setImageResource(R.drawable.day_night_circle);
+            // bp_textview.setTextColor(Color.parseColor("#ffff00"));
+        }
+        else{
+            circle.setImageResource(R.drawable.day_night_circle);
+            // bp_textview.setTextColor(Color.parseColor("#ff0000"));
+        }
+    }
 }

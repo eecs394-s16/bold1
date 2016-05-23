@@ -113,9 +113,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return getColumnArrayListFromTillDateTime(db,column,null,null,-1,-1);
     }
     // return an array list of data points between the from and till date and start and end time (0-24 int).
-    // By default this will be ordered by time. Set startTime or endTime to -1 if you don't want to
+    // By default this will be ordered by time. Set startHour or endHour to -1 if you don't want to
     // have a specific range.
-    private ArrayList<DataPoint> getColumnArrayListFromTillDateTime(SQLiteDatabase db, String column,Date from,Date till,int startTime,int endTime ) {
+    private ArrayList<DataPoint> getColumnArrayListFromTillDateTime(SQLiteDatabase db, String column,Date from,Date till,int startHour,int endHour ) {
         // First get all entries between start and end date. Don't worry about start end time in sql
         // Because it's hard to deal with hours in sql.
 //        String query = "SELECT " + column +
@@ -151,7 +151,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
                 //Now check whether the timestamp is within the hour range. If it is, add to data.
                 int hour=getHourFromDate(date);
-                if (startTime<0 || endTime<0 || (startTime<=hour && hour<=endTime)){
+                if (startHour<0 || endHour<0
+                        || (startHour<=endHour && startHour<=hour && hour<=endHour)
+                        || (startHour>endHour && (startHour<=hour || hour<=endHour))){
                     data.add(new DataPoint(date, val));
                 }
 
@@ -173,13 +175,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return dataArray;
     }
 
-    // Set startTime or endTime to -1 if you don't want to have a specific range.
-    public double getAverageOverPastWeek(SQLiteDatabase db, String column,int startTime,int endTime ) {
+    // Set startHour or endHour to -1 if you don't want to have a specific range.
+    public double getAverageOverPastWeek(SQLiteDatabase db, String column,int startHour,int endHour ) {
         Calendar cal = Calendar.getInstance();
         Date now = cal.getTime();
         cal.add(Calendar.DAY_OF_YEAR, -7);
         Date oneWeekAgo = cal.getTime();
-        ArrayList<DataPoint> data = getColumnArrayListFromTillDateTime(db,column,oneWeekAgo,now,startTime,endTime);
+        ArrayList<DataPoint> data = getColumnArrayListFromTillDateTime(db,column,oneWeekAgo,now,startHour,endHour);
 
         // Now iterate through the list and combine the data into one.
         double ret=0.0;
@@ -189,17 +191,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             ret+=data.get(i).getY();
             currDataPointCount++;
         }
-        // Now take the average
-        return ret/currDataPointCount;
+        if (currDataPointCount==0){
+            return 0.0;
+        }else{
+            // Now take the average
+            return ret/currDataPointCount;
+        }
     }
 
-    // Set startTime or endTime to -1 if you don't want to have a specific range.
-    public double getAverageOverPastMonth(SQLiteDatabase db, String column,int startTime,int endTime ) {
+    // Set startHour or endHour to -1 if you don't want to have a specific range.
+    public double getAverageOverPastMonth(SQLiteDatabase db, String column,int startHour,int endHour ) {
         Calendar cal = Calendar.getInstance();
         Date now = cal.getTime();
         cal.add(Calendar.MONTH, -1);
         Date oneMonthAgo = cal.getTime();
-        ArrayList<DataPoint> data = getColumnArrayListFromTillDateTime(db,column,oneMonthAgo,now,startTime,endTime);
+        ArrayList<DataPoint> data = getColumnArrayListFromTillDateTime(db,column,oneMonthAgo,now,startHour,endHour);
 
         // Now iterate through the list and combine the data into one.
         double ret=0.0;
@@ -209,8 +215,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             ret+=data.get(i).getY();
             currDataPointCount++;
         }
-        // Now take the average
-        return ret/currDataPointCount;
+        if (currDataPointCount==0){
+            return 0.0;
+        }else{
+            // Now take the average
+            return ret/currDataPointCount;
+        }
     }
 
     public DataPoint[] getDailyAverageDataPoints(SQLiteDatabase db, String column) {
