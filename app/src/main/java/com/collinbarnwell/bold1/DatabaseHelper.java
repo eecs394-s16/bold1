@@ -17,6 +17,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     public DatabaseHelper(Context context) {
@@ -64,6 +65,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static String getFormattedStringFromDate(Date date){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
         return simpleDateFormat.format(date);
     }
 
@@ -114,7 +116,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return data;
     }
 
-    // FUNCTIONS USED IN MAIN ACTIVITY
+    ////////////////////////////////////// FUNCTIONS USED IN MAIN ACTIVITY
 
     public DataPoint[] getColumnDataPoints(SQLiteDatabase db, String column) {
 
@@ -207,6 +209,37 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         DataPoint[] dataArray = new DataPoint[dailyData.size()];
         dataArray = dailyData.toArray(dataArray);
         return dataArray;
+    }
+
+    public int[] getHypertensionRiskLevelCounts(SQLiteDatabase db) {
+        String query = "SELECT * FROM data_point";
+        Cursor cursor      = db.rawQuery(query, null);
+        ArrayList<DataPoint> data = new ArrayList<DataPoint>();
+
+        int hypII = 0;
+        int hypI = 0;
+        int preHyp = 0;
+        int normal = 0;
+
+        if(cursor.moveToFirst() && cursor.getCount() >= 1) {
+            do {
+                Double sys = cursor.getDouble(cursor.getColumnIndex("systolic_pressure"));
+                Double dias = cursor.getDouble(cursor.getColumnIndex("systolic_pressure"));
+
+                if (sys > 160 || dias > 100) {
+                    hypII++;
+                } else if (sys > 139 || dias > 89) {
+                    hypI++;
+                } else if (sys > 120 || dias > 80) {
+                    preHyp++;
+                } else {
+                    normal++;
+                }
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+
+        return new int[] {hypII, hypI, preHyp, normal};
     }
 
 

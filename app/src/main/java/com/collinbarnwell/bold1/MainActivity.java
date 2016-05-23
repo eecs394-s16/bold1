@@ -11,6 +11,7 @@ import android.nfc.Tag;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.ContactsContract;
 import android.provider.DocumentsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -28,6 +29,7 @@ import android.view.View.OnClickListener;
 
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -75,6 +77,7 @@ import static com.collinbarnwell.bold1.R.color.graph_red;
 
 public class MainActivity extends AppCompatActivity {
     public static final UtilClass utilClass = new UtilClass();
+    private static final NotificationHelper notifHelper = new NotificationHelper();
     // Storage Permissions
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
@@ -114,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         setupPieCharts();
+        getAverageBP();
     }
 
     @Override
@@ -122,93 +126,8 @@ public class MainActivity extends AppCompatActivity {
         // Whenever we go back to main activity, the name of the user may have changed (very unlikely)
         // No matter whether that happens, refresh welcome message.
 
-        DatabaseHelper mDbHelper = new DatabaseHelper(getBaseContext());
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
-
-        String count = "SELECT count(*) FROM data_point";
-        Cursor mcursor = db.rawQuery(count, null);
-        mcursor.moveToFirst();
-        int icount = mcursor.getInt(0);
-        if(icount>0){
-
-            GraphView graph = (GraphView) findViewById(R.id.graph);
-            graph.removeAllSeries();
-
-            graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(MainActivity.this));
-            graph.getGridLabelRenderer().setNumHorizontalLabels(4);
-
-            // Get one day ago
-            Calendar cal = Calendar.getInstance();
-            Date now = cal.getTime();
-            cal.add(Calendar.HOUR_OF_DAY, -72);
-            Date threeDaysAgo = cal.getTime();
-
-            graph.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
-                @Override
-                public String formatLabel(double value, boolean isValueX) {
-                    if (isValueX) {
-                        // show normal x values
-                        Date date = new Date((long)value);
-                        // SimpleDateFormat format = new SimpleDateFormat("h:mm a\nM/dd");
-                        SimpleDateFormat format = new SimpleDateFormat("M/d");
-                        return format.format(date);
-                    } else {
-                        // show currency for y values
-                        return super.formatLabel(value, isValueX);
-                    }
-                }
-            });
-
-            graph.getViewport().setMinX(threeDaysAgo.getTime());
-            graph.getViewport().setMaxX(now.getTime());
-            graph.getViewport().setXAxisBoundsManual(true);
-
-                        graph.getGridLabelRenderer().setNumVerticalLabels(9);
-            graph.getViewport().setMinY(0);
-            graph.getViewport().setMaxY(200);
-            graph.getViewport().setYAxisBoundsManual(true);
-
-            graph.getViewport().setScrollable(true);
-            graph.getViewport().setScalable(true);
-
-            // legend
-            graph.getLegendRenderer().setVisible(true);
-            graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
-            graph.getLegendRenderer().setTextSize(50);
-            graph.getLegendRenderer().setSpacing(30);
-            graph.getLegendRenderer().setMargin(20);
-            graph.getLegendRenderer().setPadding(20);
-
-            LineGraphSeries<DataPoint> systolic_series =
-                    new LineGraphSeries<DataPoint>(mDbHelper.getDailyAverageDataPoints(db, "systolic_pressure"));
-            graph.addSeries(systolic_series);
-            systolic_series.setTitle("Systolic (mmHg)");
-            systolic_series.setColor(getResources().getColor(R.color.graph_blue));
-            systolic_series.setDrawDataPoints(true);
-            systolic_series.setDataPointsRadius(30);
-            systolic_series.setThickness(20);
-
-            LineGraphSeries<DataPoint> diastolic_series =
-                    new LineGraphSeries<DataPoint>(mDbHelper.getDailyAverageDataPoints(db, "diastolic_pressure"));
-            graph.addSeries(diastolic_series);
-            diastolic_series.setColor(Color.GREEN);
-            diastolic_series.setTitle("Diastolic (mmHg)");
-            diastolic_series.setColor(getResources().getColor(R.color.graph_orange));
-            diastolic_series.setDrawDataPoints(true);
-            diastolic_series.setDataPointsRadius(30);
-            diastolic_series.setThickness(20);
-
-            LineGraphSeries<DataPoint> heart_rate_series =
-                    new LineGraphSeries<DataPoint>(mDbHelper.getDailyAverageDataPoints(db, "heart_rate"));
-            graph.addSeries(heart_rate_series);
-            heart_rate_series.setColor(Color.RED);
-            heart_rate_series.setTitle("Pulse (bpm)");
-            heart_rate_series.setColor(getResources().getColor(R.color.graph_red));
-            heart_rate_series.setDrawDataPoints(true);
-            heart_rate_series.setDataPointsRadius(30);
-            heart_rate_series.setThickness(20);
-
-        }
+        setupGraph();
+        setupPieCharts();
     }
 
 
@@ -231,6 +150,12 @@ public class MainActivity extends AppCompatActivity {
                 generatePdfReport();
                 return true;
 
+            case R.id.notification_menu:
+                notifHelper.alarmMethod(this);
+                return true;
+            case R.id.notification_cancel_menu:
+                notifHelper.cancelAlarmMethod(this);
+                return true;
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
@@ -397,28 +322,174 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        DatabaseHelper mDbHelper = new DatabaseHelper(getBaseContext());
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        int[] counts = mDbHelper.getHypertensionRiskLevelCounts(db);
+
         PieChart allTimePieChart = (PieChart) findViewById(R.id.all_time_pie_chart);
         ArrayList<Entry> entries = new ArrayList<>();
-
-        entries.add(new Entry(4, 0));
-        entries.add(new Entry(8, 1));
-        entries.add(new Entry(6, 2));
-        entries.add(new Entry(12, 3));
-
         ArrayList<String> labels = new ArrayList<String>();
-        labels.add("Hypertensive");
-        labels.add("At Risk");
-        labels.add("Normal");
-        labels.add("Low");
+
+        if (counts[0] > 0) {
+            entries.add(new Entry(counts[0], 0));
+            labels.add("Hypertension Stage II");
+        }
+        if (counts[1] > 0) {
+            entries.add(new Entry(counts[1], 1));
+            labels.add("Hypertension Stage I");
+        }
+        if (counts[2] > 0) {
+            entries.add(new Entry(counts[2], 2));
+            labels.add("Pre-hypertension");
+        }
+        if (counts[3] > 0) {
+            entries.add(new Entry(counts[3], 3));
+            labels.add("Normal");
+        }
 
         PieDataSet dataset = new PieDataSet(entries, "");
-        dataset.setColors(ColorTemplate.COLORFUL_COLORS);
+        dataset.setColors(new int[]{R.color.graph_red, R.color.graph_orange, R.color.insights_yellow, R.color.insights_green}, getBaseContext());
         dataset.setValueFormatter(new MyValueFormatter());
         dataset.setValueTextSize(15);
         PieData data = new PieData(labels, dataset);
         allTimePieChart.setData(data);
+        allTimePieChart.setDrawSliceText(true);
         allTimePieChart.getLegend().setEnabled(false);
         allTimePieChart.setDescription("");
+        allTimePieChart.setHoleRadius(0);
+        allTimePieChart.setTransparentCircleRadius(0);
+    }
+
+    public void setupGraph() {
+        DatabaseHelper mDbHelper = new DatabaseHelper(getBaseContext());
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        String count = "SELECT count(*) FROM data_point";
+        Cursor mcursor = db.rawQuery(count, null);
+        mcursor.moveToFirst();
+        int icount = mcursor.getInt(0);
+        if(icount>0){
+
+            GraphView graph = (GraphView) findViewById(R.id.graph);
+            graph.removeAllSeries();
+
+            graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(MainActivity.this));
+            graph.getGridLabelRenderer().setNumHorizontalLabels(4);
+
+            // Get one day ago
+            Calendar cal = Calendar.getInstance();
+            Date now = cal.getTime();
+            cal.add(Calendar.HOUR_OF_DAY, -24);
+            Date oneDayAgo = cal.getTime();
+
+            graph.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
+                @Override
+                public String formatLabel(double value, boolean isValueX) {
+                    if (isValueX) {
+                        // show normal x values
+                        Date date = new Date((long)value);
+                        SimpleDateFormat format = new SimpleDateFormat("h:mm a\nM/d");
+                        // SimpleDateFormat format = new SimpleDateFormat("M/d");
+                        return format.format(date);
+                    } else {
+                        // show currency for y values
+                        return super.formatLabel(value, isValueX);
+                    }
+                }
+            });
+
+            graph.getViewport().setMinX(oneDayAgo.getTime());
+            graph.getViewport().setMaxX(now.getTime());
+            graph.getViewport().setXAxisBoundsManual(true);
+
+            graph.getGridLabelRenderer().setNumVerticalLabels(9);
+            graph.getViewport().setMinY(0);
+            graph.getViewport().setMaxY(200);
+            graph.getViewport().setYAxisBoundsManual(true);
+
+            graph.getViewport().setScrollable(true);
+            graph.getViewport().setScalable(true);
+
+            // legend
+            graph.getLegendRenderer().setVisible(true);
+            graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
+            graph.getLegendRenderer().setTextSize(50);
+            graph.getLegendRenderer().setSpacing(30);
+            graph.getLegendRenderer().setMargin(20);
+            graph.getLegendRenderer().setPadding(20);
+
+            LineGraphSeries<DataPoint> systolic_series =
+                    new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "systolic_pressure"));
+            graph.addSeries(systolic_series);
+            systolic_series.setTitle("Systolic (mmHg)");
+            systolic_series.setColor(getResources().getColor(R.color.graph_blue));
+            systolic_series.setDrawDataPoints(true);
+            systolic_series.setDataPointsRadius(30);
+            systolic_series.setThickness(20);
+
+            LineGraphSeries<DataPoint> diastolic_series =
+                    new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "diastolic_pressure"));
+            graph.addSeries(diastolic_series);
+            diastolic_series.setColor(Color.GREEN);
+            diastolic_series.setTitle("Diastolic (mmHg)");
+            diastolic_series.setColor(getResources().getColor(R.color.graph_orange));
+            diastolic_series.setDrawDataPoints(true);
+            diastolic_series.setDataPointsRadius(30);
+            diastolic_series.setThickness(20);
+
+            LineGraphSeries<DataPoint> heart_rate_series =
+                    new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "heart_rate"));
+            graph.addSeries(heart_rate_series);
+            heart_rate_series.setColor(Color.RED);
+            heart_rate_series.setTitle("Pulse (bpm)");
+            heart_rate_series.setColor(getResources().getColor(R.color.graph_red));
+            heart_rate_series.setDrawDataPoints(true);
+            heart_rate_series.setDataPointsRadius(30);
+            heart_rate_series.setThickness(20);
+        }
+    }
+
+    public void getAverageBP(){
+
+
+        DatabaseHelper mDbHelper = new DatabaseHelper(getBaseContext());
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+
+        double avg_systolic;
+        avg_systolic = mDbHelper.getAverageOverPastWeek(db, "systolic_pressure");
+
+        double avg_diastolic;
+        avg_diastolic = mDbHelper.getAverageOverPastWeek(db, "diastolic_pressure");
+
+        avg_diastolic = Math.round(avg_diastolic);
+        avg_systolic = Math.round(avg_systolic);
+
+
+        TextView bp_textview = (TextView) findViewById(R.id.avg_bp);
+        ImageView circle = (ImageView) findViewById(R.id.circle);
+        bp_textview.setText(avg_systolic + "\n" + avg_diastolic);
+
+        if(avg_systolic < 120 && avg_diastolic < 80){
+            circle.setImageResource(R.drawable.green_circle);
+            // bp_textview.setTextColor(Color.parseColor("#33ff33"));
+        }
+        else if((avg_systolic > 120 && avg_systolic < 139) || (avg_diastolic < 89 && avg_diastolic > 80)){
+            circle.setImageResource(R.drawable.yellow_circle);
+            // bp_textview.setTextColor(Color.parseColor("#ffff00"));
+        }
+        else{
+            circle.setImageResource(R.drawable.red_circle);
+            // bp_textview.setTextColor(Color.parseColor("#ff0000"));
+        }
+
+
+
 
     }
+
+
+
+
+
 }
