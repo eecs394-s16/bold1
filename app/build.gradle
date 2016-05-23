@@ -32,5 +32,6 @@ dependencies {
     compile 'com.itextpdf:itextpdf:5.2.1'
     compile 'com.github.PhilJay:MPAndroidChart:v2.2.4'
 
+    compile 'com.google.android.gms:play-services-appindexing:8.1.0'
 }
 
