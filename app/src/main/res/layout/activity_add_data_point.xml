@@ -236,40 +236,53 @@
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textSize="28dp" />
 
+            <!--<ImageButton-->
+                <!--android:id="@+id/imageButton1"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:src="@drawable/sad" />-->
+
+            <!--<ImageView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="70dp"-->
+                <!--android:layout_marginTop="30dp"-->
+                <!--android:layout_marginLeft="-30dp"-->
+                <!--android:id="@+id/moodIamge"-->
+                <!--android:src="@drawable/happy"-->
+                <!--/>-->
+
             <RadioGroup
                 android:id="@+id/moodRadioGroup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/moodLabel"
                 android:layout_marginTop="25dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:gravity="center">
 
                 <RadioButton
                     android:id="@+id/radioButtonGoodMood"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="20dp"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginLeft="30dp"
                     android:checked="false"
-                    android:text="Good"
-                    android:textSize="20dp" />
+                    android:button="@drawable/happy_face"/>
 
                 <RadioButton
                     android:id="@+id/radioButtonAverageMood"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="20dp"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginLeft="30dp"
                     android:checked="false"
-                    android:text="Average"
-                    android:textSize="20dp" />
+                    android:button="@drawable/normal_face"/>
 
                 <RadioButton
                     android:id="@+id/radioButtonBadMood"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="20dp"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginLeft="30dp"
                     android:checked="false"
-                    android:text="Bad"
-                    android:textSize="20dp" />
+                    android:button="@drawable/sad_face"/>
             </RadioGroup>
 
             <EditText
