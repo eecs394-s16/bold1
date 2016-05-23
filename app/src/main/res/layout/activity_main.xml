@@ -163,9 +163,10 @@
 
                             <ImageView
                                 android:id="@+id/dayNightCircleIcon"
-                                android:layout_width="wrap_content"
+                                android:layout_width="150dp"
                                 android:layout_height="150dp"
                                 android:src="@drawable/green_circle"
+                                android:scaleType="fitXY"
                                 />
                             <TextView
                                 android:id="@+id/dayNightAvgBP"

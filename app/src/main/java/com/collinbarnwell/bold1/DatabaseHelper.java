@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.util.Pair;
 
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
@@ -155,7 +156,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return data;
     }
 
-    public double getAverageOverPastWeek(SQLiteDatabase db, String column) {
     // Set startHour or endHour to -1 if you don't want to have a specific range.
     public double getAverageOverPastWeek(SQLiteDatabase db, String column,int startHour,int endHour ) {
         Calendar cal = Calendar.getInstance();

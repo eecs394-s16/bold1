@@ -25,6 +25,7 @@ import android.support.v4.view.MotionEventCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Gravity;
@@ -704,18 +705,44 @@ public class MainActivity extends AppCompatActivity {
 
         TextView bp_textview = (TextView) findViewById(R.id.dayNightAvgBP);
         ImageView circle = (ImageView) findViewById(R.id.dayNightCircleIcon);
-        bp_textview.setText( avg_day_diastolic+ "/" + avg_day_systolic + "\n" + avg_night_diastolic+ "/" + avg_night_systolic);
+        String formattedText= "<font color=#000000>"+avg_day_diastolic+ "/" + avg_day_systolic +
+                "\n</font> <font color=#ffffff>" + avg_night_diastolic+ "/" + avg_night_systolic+"</font>";
+        bp_textview.setText(Html.fromHtml(formattedText));
 
         if(avg_day_systolic < 120 && avg_day_diastolic < 80){
-            circle.setImageResource(R.drawable.day_night_circle);
+            if(avg_night_systolic < 120 && avg_night_diastolic < 80){
+                circle.setImageResource(R.drawable.day_night_circle_green_top_green_bottom);
+            }
+            else if((avg_night_systolic > 120 && avg_night_systolic < 139) || (avg_night_diastolic < 89 && avg_night_diastolic > 80)){
+                circle.setImageResource(R.drawable.day_night_circle_green_top_yellow_bottom);
+            }
+            else{
+                circle.setImageResource(R.drawable.day_night_circle_green_top_red_bottom);
+            }
             // bp_textview.setTextColor(Color.parseColor("#33ff33"));
         }
         else if((avg_day_systolic > 120 && avg_day_systolic < 139) || (avg_day_diastolic < 89 && avg_day_diastolic > 80)){
-            circle.setImageResource(R.drawable.day_night_circle);
+            if(avg_night_systolic < 120 && avg_night_diastolic < 80){
+                circle.setImageResource(R.drawable.day_night_circle_yellow_top_green_bottom);
+            }
+            else if((avg_night_systolic > 120 && avg_night_systolic < 139) || (avg_night_diastolic < 89 && avg_night_diastolic > 80)){
+                circle.setImageResource(R.drawable.day_night_circle_yellow_top_yellow_bottom);
+            }
+            else{
+                circle.setImageResource(R.drawable.day_night_circle_yellow_top_red_bottom);
+            }
             // bp_textview.setTextColor(Color.parseColor("#ffff00"));
         }
         else{
-            circle.setImageResource(R.drawable.day_night_circle);
+            if(avg_night_systolic < 120 && avg_night_diastolic < 80){
+                circle.setImageResource(R.drawable.day_night_circle_red_top_green_bottom);
+            }
+            else if((avg_night_systolic > 120 && avg_night_systolic < 139) || (avg_night_diastolic < 89 && avg_night_diastolic > 80)){
+                circle.setImageResource(R.drawable.day_night_circle_red_top_yellow_bottom);
+            }
+            else{
+                circle.setImageResource(R.drawable.day_night_circle_red_top_red_bottom);
+            }
             // bp_textview.setTextColor(Color.parseColor("#ff0000"));
         }
     }
