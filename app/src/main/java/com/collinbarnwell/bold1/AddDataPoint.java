@@ -102,7 +102,7 @@ public class AddDataPoint extends AppCompatActivity {
         Integer heart_rate = bloodPressureData.get("heart_rate");
 
 
-        String other = findViewById(R.id.otherThings).toString();
+        String other = ((EditText) findViewById(R.id.otherThings)).getText().toString();
 
         HashMap<String,Boolean> relatedData = getRelatedData();
         boolean food_intake = relatedData.get("food_intake");
