@@ -17,17 +17,25 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.view.MotionEventCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.content.Intent;
 import android.view.View.OnClickListener;
 
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -54,7 +62,11 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.LegendRenderer;
 import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.DataPointInterface;
 import com.jjoe64.graphview.series.LineGraphSeries;
+import com.jjoe64.graphview.series.OnDataPointTapListener;
+import com.jjoe64.graphview.series.Series;
+import com.ns.developer.tagview.widget.TagCloudLinkView;
 
 import java.sql.Time;
 import java.text.DecimalFormat;
@@ -71,8 +83,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
+import android.util.Pair;
 
 import static com.collinbarnwell.bold1.R.color.graph_red;
+import static com.collinbarnwell.bold1.R.color.yellow;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -84,6 +99,12 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
+
+    private PopupWindow popupWindow;
+    private LayoutInflater layoutInflater;
+    private RelativeLayout relativeLayout;
+    private boolean flag;
+    private DatabaseHelper mDbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,6 +150,7 @@ public class MainActivity extends AppCompatActivity {
         // No matter whether that happens, refresh welcome message.
 
         setupGraph();
+        getAverageBP();
         setupPieCharts();
         getAverageBP();
         getDayNightBP();
@@ -167,7 +189,6 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
-
 
     private  boolean isStoragePermissionGranted() {
         if (Build.VERSION.SDK_INT >= 23) {
@@ -226,7 +247,7 @@ public class MainActivity extends AppCompatActivity {
         Document document = new Document();
 
         // File shit
-        File gpxfile = new File("sdcard/", filename); // Where to save. Currently trying external storage. Save in
+        File gpxfile = new File(Environment.getExternalStorageDirectory(), filename); // Where to save. Currently trying external storage. Save in
         // "/data/data/com.collinbarnwell.bold1" to get it to save in internal storage
 
         // Checking to see if Android Manifest actually gave me permission to save to external storage
@@ -351,6 +372,10 @@ public class MainActivity extends AppCompatActivity {
             labels.add("Normal");
         }
 
+        if (entries.size() > 0) {
+            findViewById(R.id.no_data_pie).setVisibility(View.GONE);
+        }
+
         PieDataSet dataset = new PieDataSet(entries, "");
         dataset.setColors(new int[]{R.color.graph_red, R.color.graph_orange, R.color.insights_yellow, R.color.insights_green}, getBaseContext());
         dataset.setValueFormatter(new MyValueFormatter());
@@ -365,8 +390,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setupGraph() {
-        DatabaseHelper mDbHelper = new DatabaseHelper(getBaseContext());
+        mDbHelper = new DatabaseHelper(getBaseContext());
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        flag = true;
 
         String count = "SELECT count(*) FROM data_point";
         Cursor mcursor = db.rawQuery(count, null);
@@ -422,6 +449,14 @@ public class MainActivity extends AppCompatActivity {
             graph.getLegendRenderer().setMargin(20);
             graph.getLegendRenderer().setPadding(20);
 
+            graph.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    flag = true;
+                    return false;
+                }
+            });
+
             LineGraphSeries<DataPoint> systolic_series =
                     new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "systolic_pressure"));
             graph.addSeries(systolic_series);
@@ -430,6 +465,17 @@ public class MainActivity extends AppCompatActivity {
             systolic_series.setDrawDataPoints(true);
             systolic_series.setDataPointsRadius(30);
             systolic_series.setThickness(20);
+            relativeLayout = (RelativeLayout) findViewById(R.id.relative);
+            systolic_series.setOnDataPointTapListener(new OnDataPointTapListener() {
+                @Override
+                public void onTap(Series series, DataPointInterface dataPoint) {
+                    if (!flag) {
+                        return;
+                    }
+                    flag = false;
+                    showWindow(dataPoint);
+                }
+            });
 
             LineGraphSeries<DataPoint> diastolic_series =
                     new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "diastolic_pressure"));
@@ -440,6 +486,17 @@ public class MainActivity extends AppCompatActivity {
             diastolic_series.setDrawDataPoints(true);
             diastolic_series.setDataPointsRadius(30);
             diastolic_series.setThickness(20);
+            diastolic_series.setOnDataPointTapListener(new OnDataPointTapListener() {
+                @Override
+                public void onTap(Series series, DataPointInterface dataPoint) {
+                    if (!flag) {
+                        return;
+                    }
+                    flag = false;
+                    showWindow(dataPoint);
+//                    Toast.makeText(MainActivity.this, "Series: On Data Point clicked: " + dataPoint, Toast.LENGTH_SHORT).show();
+                }
+            });
 
             LineGraphSeries<DataPoint> heart_rate_series =
                     new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "heart_rate"));
@@ -450,7 +507,83 @@ public class MainActivity extends AppCompatActivity {
             heart_rate_series.setDrawDataPoints(true);
             heart_rate_series.setDataPointsRadius(30);
             heart_rate_series.setThickness(20);
+            heart_rate_series.setOnDataPointTapListener(new OnDataPointTapListener() {
+                @Override
+                public void onTap(Series series, DataPointInterface dataPoint) {
+                    if (!flag) {
+                        return;
+                    }
+                    flag = false;
+                    showWindow(dataPoint);
+//                    Toast.makeText(MainActivity.this, "Series: On Data Point clicked: " + dataPoint, Toast.LENGTH_SHORT).show();
+
+                }
+            });
         }
+    }
+
+    private void showWindow(DataPointInterface dataPoint) {
+        final SQLiteDatabase dbr = mDbHelper.getReadableDatabase();
+        Date date = new Date((long)dataPoint.getX());
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat newformat = new SimpleDateFormat("EEE M/d 'at' h:mm a");
+        Object[] data = mDbHelper.getDataForPopup(dbr, format.format(date));
+        layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(LAYOUT_INFLATER_SERVICE);
+        ViewGroup container = (ViewGroup) layoutInflater.inflate(R.layout.data, null);
+        TextView x = (TextView) container.findViewById(R.id.Timetext);
+        x.setText(newformat.format(date));
+        x = (TextView) container.findViewById(R.id.bp);
+        ImageView circle = (ImageView) findViewById(R.id.circle);
+        double systolic = (double)((Pair)data[0]).second;
+        double diastolic = (double)((Pair)data[1]).second;
+        x.setText(systolic + "\n" + diastolic);
+        x = (TextView) container.findViewById(R.id.Pulsetext);
+
+        if(systolic < 120 && diastolic < 80){
+            circle.setImageResource(R.drawable.green_circle);
+            x.setTextColor(Color.parseColor("#33ff33"));
+        }
+        else if((systolic > 120 && diastolic < 139) || (systolic < 89 && diastolic > 80)){
+            circle.setImageResource(R.drawable.yellow_circle);
+            x.setTextColor(Color.parseColor("#ffff00"));
+        }
+        else{
+            circle.setImageResource(R.drawable.red_circle);
+            x.setTextColor(Color.parseColor("#ff0000"));
+        }
+        double pulse = (double)((Pair)data[2]).second;
+        x.setText(pulse + "");
+        x.setTextColor(Color.parseColor("#f01515"));
+        TagCloudLinkView view = (TagCloudLinkView) container.findViewById(R.id.Tags);
+        for (int i = 5; i <= 12; i++) {
+            String tag = (String)((Pair)data[i]).second;
+            if (tag.equals("1"))
+                view.add(new com.ns.developer.tagview.entity.Tag(1, (String)((Pair)data[i]).first));
+        }
+        view.drawTags();
+        String mood = (String)((Pair)data[4]).second;
+        ImageView moodcon = (ImageView) container.findViewById(R.id.moodIamge);
+        if (mood.equals("good")) {
+            moodcon.setImageResource(R.drawable.happy);
+        } else if (mood.equals("normal")) {
+            moodcon.setImageResource(R.drawable.normal);
+        } else {
+            moodcon.setImageResource(R.drawable.sad);
+        }
+
+        x = (TextView) container.findViewById(R.id.Msg);
+        x.setText((String)((Pair)data[13]).second);
+
+        popupWindow = new PopupWindow(container, 900, 1400, true);
+        popupWindow.showAtLocation(relativeLayout, Gravity.NO_GRAVITY, 100, 200);
+
+        container.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                popupWindow.dismiss();
+                return true;
+            }
+        });
     }
 
     public void getAverageBP(){
@@ -472,19 +605,25 @@ public class MainActivity extends AppCompatActivity {
 
         TextView bp_textview = (TextView) findViewById(R.id.avg_bp);
         ImageView circle = (ImageView) findViewById(R.id.circle);
-        bp_textview.setText(avg_systolic + "\n" + avg_diastolic);
+
+        if (Double.isNaN(avg_systolic) || Double.isNaN(avg_diastolic)) {
+            bp_textview.setText("No\ndata");
+        } else {
+            bp_textview.setText(avg_systolic + "\n" + avg_diastolic);
+        }
 
         if(avg_systolic < 120 && avg_diastolic < 80){
             circle.setImageResource(R.drawable.green_circle);
-            // bp_textview.setTextColor(Color.parseColor("#33ff33"));
+            bp_textview.setTextColor(getResources().getColor(R.color.insights_green));
         }
-        else if((avg_systolic > 120 && avg_systolic < 139) || (avg_diastolic < 89 && avg_diastolic > 80)){
+        else if((avg_systolic > 120 && avg_systolic
+                < 139) || (avg_diastolic < 89 && avg_diastolic > 80)){
             circle.setImageResource(R.drawable.yellow_circle);
-            // bp_textview.setTextColor(Color.parseColor("#ffff00"));
+            bp_textview.setTextColor(getResources().getColor(R.color.insights_yellow));
         }
         else{
             circle.setImageResource(R.drawable.red_circle);
-            // bp_textview.setTextColor(Color.parseColor("#ff0000"));
+            bp_textview.setTextColor(getResources().getColor(R.color.graph_red));
         }
     }
 
