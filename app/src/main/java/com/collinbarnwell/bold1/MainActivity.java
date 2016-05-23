@@ -291,8 +291,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-
-
         // Getting the BOLD logo -- This will be set to the logo variable below
         Drawable d = ResourcesCompat.getDrawable(getResources(), R.drawable.bold_white_transparent_background, null);
         Bitmap bitmap = ((BitmapDrawable)d).getBitmap();
