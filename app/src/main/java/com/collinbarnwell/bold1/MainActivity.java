@@ -283,6 +283,7 @@ public class MainActivity extends AppCompatActivity {
         try{
             JSONObject user_profile_info = utilClass.loadJSONFromFile(this,utilClass.UserInfoFile);
             paragraph.add("Name: " + user_profile_info.getString(utilClass.UserInfoStrings[4]) + " " + user_profile_info.getString(utilClass.UserInfoStrings[5]) + "\n");
+            paragraph.add("ID: " + user_profile_info.getString(utilClass.UserInfoStrings[0]) + "\n");
             paragraph.add("DOB: " + user_profile_info.getString(utilClass.UserInfoStrings[7]) + "\n");
             paragraph.add("Affiliated Medical Institution: " + user_profile_info.getString(utilClass.UserInfoStrings[2]) + "\n");
             paragraph.add("\n");
