@@ -88,7 +88,7 @@
                     android:layout_gravity="bottom|end"
                     android:layout_margin="@dimen/fab_margin"
                     android:src="@android:drawable/ic_input_add"
-                    app2:backgroundTint="#000000"
+                    app2:backgroundTint="@color/colorPrimary"
                     android:tint="@android:color/white"/>
             </FrameLayout>
 
@@ -113,6 +113,7 @@
                             android:layout_height="wrap_content"
                             android:text="Average Blood Pressure:\n Last 7 days"
                             android:textSize="22dp"
+                            android:textColor="@color/fontColor"
                             android:gravity="center"
                             android:layout_marginBottom="10dp"
                             android:layout_marginTop="15dp"/>
@@ -140,7 +141,7 @@
                                 android:layout_centerInParent="true"
                                 android:layout_centerVertical="true"
                                 android:gravity="center_horizontal"
-                                android:textColor="@color/neonGreen"
+                                android:textColor="@color/fontColor"
                                 android:textSize= "22dp"
                                 />
 
@@ -149,11 +150,12 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="All Time # of Readings by Hypertension Risk Level"
+                            android:text="Hypertension Risk Level"
                             android:textSize="25sp"
                             android:id="@+id/all_time_label"
                             android:layout_centerHorizontal="true"
                             android:layout_margin="20dp"
+                            android:textColor="@color/fontColor"
                             android:layout_below="@id/pretty_average"
                             android:gravity="center"/>
                         <com.github.mikephil.charting.charts.PieChart
@@ -163,6 +165,14 @@
                             android:layout_marginTop="5dp"
                             android:layout_centerHorizontal="true"
                             android:layout_below="@+id/all_time_label"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:layout_below="@+id/all_time_label"
+                            android:layout_marginTop="10dp"
+                            android:text="No data"
+                            android:id="@+id/no_data_pie"/>
 
                     </RelativeLayout>
 

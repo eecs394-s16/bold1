@@ -87,6 +87,7 @@ import java.util.Objects;
 import android.util.Pair;
 
 import static com.collinbarnwell.bold1.R.color.graph_red;
+import static com.collinbarnwell.bold1.R.color.yellow;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -134,8 +135,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTabReselected(TabLayout.Tab tab) {}
         });
-
-        getAverageBP();
     }
 
     @Override
@@ -145,6 +144,7 @@ public class MainActivity extends AppCompatActivity {
         // No matter whether that happens, refresh welcome message.
 
         setupGraph();
+        getAverageBP();
         setupPieCharts();
     }
 
@@ -204,12 +204,41 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void generatePdfReport() {
-
+        String filename = "";
+        // First get the first/last name
+        // Now automatically get the info from local storage and fill in the text fields.
+        try{
+            String firstLastName;
+            // This is where we stored the user info
+            JSONObject saved_user_info = utilClass.loadJSONFromFile(this,utilClass.UserInfoFile);
+            if (saved_user_info.has(utilClass.UserInfoStrings[4]) && saved_user_info.has(utilClass.UserInfoStrings[5])){
+                firstLastName=saved_user_info.getString(utilClass.UserInfoStrings[4])+" "+saved_user_info.getString(utilClass.UserInfoStrings[5]);
+            }else{
+                firstLastName="";
+            }
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.SECOND, calendar.get(Calendar.SECOND)+10);
+            calendar.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE));
+            calendar.set(Calendar.HOUR, calendar.get(Calendar.HOUR));
+            String timeString=  calendar.get(Calendar.HOUR)+":"
+                    + calendar.get(Calendar.MINUTE)+":"+ calendar.get(Calendar.SECOND);
+            if (+calendar.get(Calendar.AM_PM)==Calendar.AM){
+                timeString=timeString+"AM";
+            }
+            else{
+                timeString=timeString+"PM";
+            }
+            filename=firstLastName+" "+timeString+" Blood Pressure Report.pdf";
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            Toast.makeText(getBaseContext(),"Something went wrong while fetching user info.",Toast.LENGTH_LONG).show();
+            filename="Blood Pressure Report.pdf";
+        }
         // Opening document
         Document document = new Document();
 
         // File shit
-        String filename = "doctor.pdf";
         File gpxfile = new File("sdcard/", filename); // Where to save. Currently trying external storage. Save in
         // "/data/data/com.collinbarnwell.bold1" to get it to save in internal storage
 
@@ -334,8 +363,13 @@ public class MainActivity extends AppCompatActivity {
             entries.add(new Entry(counts[3], 3));
             labels.add("Normal");
         }
+
+        if (entries.size() > 0) {
+            findViewById(R.id.no_data_pie).setVisibility(View.GONE);
+        }
+
         PieDataSet dataset = new PieDataSet(entries, "");
-        dataset.setColors(ColorTemplate.COLORFUL_COLORS);
+        dataset.setColors(new int[]{R.color.graph_red, R.color.graph_orange, R.color.insights_yellow, R.color.insights_green}, getBaseContext());
         dataset.setValueFormatter(new MyValueFormatter());
         dataset.setValueTextSize(15);
         PieData data = new PieData(labels, dataset);
@@ -512,22 +546,27 @@ public class MainActivity extends AppCompatActivity {
         x.setText(pulse + "");
         x.setTextColor(Color.parseColor("#f01515"));
         TagCloudLinkView view = (TagCloudLinkView) container.findViewById(R.id.Tags);
-        view.add(new com.ns.developer.tagview.entity.Tag(1,"TAG TEXT 1"));
-//        view.add(new com.ns.developer.tagview.entity.Tag(1,"TAG TEXT 2"));
-//        view.add(new com.ns.developer.tagview.entity.Tag(1,"TAG TEXT 3"));
+        for (int i = 5; i <= 12; i++) {
+            String tag = (String)((Pair)data[i]).second;
+            if (tag.equals("1"))
+                view.add(new com.ns.developer.tagview.entity.Tag(1, (String)((Pair)data[i]).first));
+        }
         view.drawTags();
         String mood = (String)((Pair)data[4]).second;
         ImageView moodcon = (ImageView) container.findViewById(R.id.moodIamge);
-        if (mood == "good") {
+        if (mood.equals("good")) {
             moodcon.setImageResource(R.drawable.happy);
-        } else if (mood == "average") {
+        } else if (mood.equals("normal")) {
             moodcon.setImageResource(R.drawable.normal);
         } else {
             moodcon.setImageResource(R.drawable.sad);
         }
-//        x.setText((String)((Pair)data[4]).second);
-        popupWindow = new PopupWindow(container, 800, 1200, true);
-        popupWindow.showAtLocation(relativeLayout, Gravity.NO_GRAVITY, 150, 400);
+
+        x = (TextView) container.findViewById(R.id.Msg);
+        x.setText((String)((Pair)data[13]).second);
+
+        popupWindow = new PopupWindow(container, 900, 1400, true);
+        popupWindow.showAtLocation(relativeLayout, Gravity.NO_GRAVITY, 100, 200);
 
         container.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -551,24 +590,31 @@ public class MainActivity extends AppCompatActivity {
         double avg_diastolic;
         avg_diastolic = mDbHelper.getAverageOverPastWeek(db, "diastolic_pressure");
 
-        //double avg_systolic = 140.0;
-        //double avg_diastolic = 80.0;
+        avg_diastolic = Math.round(avg_diastolic);
+        avg_systolic = Math.round(avg_systolic);
+
 
         TextView bp_textview = (TextView) findViewById(R.id.avg_bp);
         ImageView circle = (ImageView) findViewById(R.id.circle);
-        bp_textview.setText(avg_systolic + "\n" + avg_diastolic);
+
+        if (Double.isNaN(avg_systolic) || Double.isNaN(avg_diastolic)) {
+            bp_textview.setText("No\ndata");
+        } else {
+            bp_textview.setText(avg_systolic + "\n" + avg_diastolic);
+        }
 
         if(avg_systolic < 120 && avg_diastolic < 80){
             circle.setImageResource(R.drawable.green_circle);
-            bp_textview.setTextColor(Color.parseColor("#33ff33"));
+            bp_textview.setTextColor(getResources().getColor(R.color.insights_green));
         }
-        else if((avg_systolic > 120 && avg_systolic < 139) || (avg_diastolic < 89 && avg_diastolic > 80)){
+        else if((avg_systolic > 120 && avg_systolic
+                < 139) || (avg_diastolic < 89 && avg_diastolic > 80)){
             circle.setImageResource(R.drawable.yellow_circle);
-            bp_textview.setTextColor(Color.parseColor("#ffff00"));
+            bp_textview.setTextColor(getResources().getColor(R.color.insights_yellow));
         }
         else{
             circle.setImageResource(R.drawable.red_circle);
-            bp_textview.setTextColor(Color.parseColor("#ff0000"));
+            bp_textview.setTextColor(getResources().getColor(R.color.graph_red));
         }
     }
 

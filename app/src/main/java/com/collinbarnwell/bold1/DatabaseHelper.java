@@ -18,6 +18,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     public DatabaseHelper(Context context) {
@@ -65,6 +66,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static String getFormattedStringFromDate(Date date){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
         return simpleDateFormat.format(date);
     }
 
@@ -131,7 +133,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "mood, exercise, tobacco, wake_up, food_intake, non_caffeine_fluid_intake, caffeine, " +
                 "about_to_sleep, daily_activity, other FROM data_point WHERE timestamp = " + "'" + timestamp + "'" + ";";
         Cursor cursor = db.rawQuery(query, null);
-        Object[] data = new Object[13];
+        Object[] data = new Object[14];
         if(cursor.moveToFirst() && cursor.getCount() >= 1) {
             do {
 
@@ -144,10 +146,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 data[6] = new Pair<String, String>("tobacco", cursor.getString(cursor.getColumnIndex("tobacco")));
                 data[7] = new Pair<String, String>("wake_up", cursor.getString(cursor.getColumnIndex("wake_up")));
                 data[8] = new Pair<String, String>("food_intake", cursor.getString(cursor.getColumnIndex("food_intake")));
-                data[9] = new Pair<String, String>("non_caffeine_fluid_intake", cursor.getString(cursor.getColumnIndex("non_caffeine_fluid_intake")));
-                data[10] = new Pair<String, String>("caffeine", cursor.getString(cursor.getColumnIndex("caffeine")));
+                data[9] = new Pair<String, String>("caffeine", cursor.getString(cursor.getColumnIndex("caffeine")));
+                data[10] = new Pair<String, String>("non_caffeine_fluid_intake", cursor.getString(cursor.getColumnIndex("non_caffeine_fluid_intake")));
                 data[11] = new Pair<String, String>("about_to_sleep", cursor.getString(cursor.getColumnIndex("about_to_sleep")));
                 data[12] = new Pair<String, String>("daily_activity", cursor.getString(cursor.getColumnIndex("daily_activity")));
+                data[13] = new Pair<String, String>("other", cursor.getString(cursor.getColumnIndex("other")));
             } while (cursor.moveToNext());
         }
         return data;
