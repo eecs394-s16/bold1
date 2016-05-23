@@ -568,11 +568,18 @@ public class MainActivity extends AppCompatActivity {
 
         popupWindow = new PopupWindow(container, 900, 1400, true);
         popupWindow.showAtLocation(relativeLayout, Gravity.NO_GRAVITY, 100, 200);
-
+        ImageView close = (ImageView) container.findViewById(R.id.close);
+        close.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                popupWindow.dismiss();
+                return false;
+            }
+        });
         container.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                popupWindow.dismiss();
+//                popupWindow.dismiss();
                 return true;
             }
         });
