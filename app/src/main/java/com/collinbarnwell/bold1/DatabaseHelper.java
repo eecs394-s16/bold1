@@ -156,7 +156,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return data;
     }
 
-    public double getAverageOverPastWeek(SQLiteDatabase db, String column) {
+    // Set startHour or endHour to -1 if you don't want to have a specific range.
+    public double getAverageOverPastWeek(SQLiteDatabase db, String column,int startHour,int endHour ) {
         Calendar cal = Calendar.getInstance();
         Date now = cal.getTime();
         cal.add(Calendar.DAY_OF_YEAR, -7);
@@ -270,5 +271,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         return new int[] {hypII, hypI, preHyp, normal};
     }
+
 
 }
