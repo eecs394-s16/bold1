@@ -111,7 +111,7 @@
                             android:id="@+id/welcome"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Average Blood Pressure:\n Last 7 days"
+                            android:text="Average Blood Pressure,\n Last 7 days"
                             android:textSize="22dp"
                             android:textColor="@color/fontColor"
                             android:gravity="center"
@@ -150,14 +150,25 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Hypertension Risk Level"
+                            android:padding="10dp"
+                            android:layout_below="@id/pretty_average"
+                            android:layout_marginTop="10dp"
+                            android:id="@+id/aha_info"
+                            android:text="@string/hypertension_levels"/>
+
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Your Hypertension Risk Level"
                             android:textSize="25sp"
                             android:id="@+id/all_time_label"
                             android:layout_centerHorizontal="true"
                             android:layout_margin="20dp"
                             android:textColor="@color/fontColor"
-                            android:layout_below="@id/pretty_average"
+                            android:layout_below="@id/aha_info"
                             android:gravity="center"/>
+
                         <com.github.mikephil.charting.charts.PieChart
                             android:id="@+id/all_time_pie_chart"
                             android:layout_width="300dp"
@@ -173,6 +184,7 @@
                             android:layout_marginTop="10dp"
                             android:text="No data"
                             android:id="@+id/no_data_pie"/>
+
 
                     </RelativeLayout>
 
