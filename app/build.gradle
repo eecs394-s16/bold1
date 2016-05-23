@@ -31,6 +31,8 @@ dependencies {
     compile 'com.jjoe64:graphview:4.0.1'
     compile 'com.itextpdf:itextpdf:5.2.1'
     compile 'com.github.PhilJay:MPAndroidChart:v2.2.4'
+    compile 'com.google.android.gms:play-services-appindexing:8.1.0'
     compile 'com.ns-developer:tagcloudview:0.1.0'
+
 }
 
