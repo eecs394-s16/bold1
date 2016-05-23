@@ -53,6 +53,7 @@ import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.ViewPortHandler;
@@ -94,6 +95,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import android.util.Pair;
 
@@ -386,18 +388,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupPieCharts () {
-
-        class MyValueFormatter implements ValueFormatter {
-            private DecimalFormat mFormat;
-            public MyValueFormatter() {
-                mFormat = new DecimalFormat("###,###");
-            }
-            @Override
-            public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
-                return mFormat.format(value);
-            }
-        }
-
         DatabaseHelper mDbHelper = new DatabaseHelper(getBaseContext());
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         int[] counts = mDbHelper.getHypertensionRiskLevelCounts(db);
@@ -405,22 +395,28 @@ public class MainActivity extends AppCompatActivity {
         PieChart allTimePieChart = (PieChart) findViewById(R.id.all_time_pie_chart);
         ArrayList<Entry> entries = new ArrayList<>();
         ArrayList<String> labels = new ArrayList<String>();
+        int[] palette = new int[]{R.color.graph_red, R.color.graph_orange, R.color.insights_yellow, R.color.insights_green};
+        List<Integer> myColors = new ArrayList<Integer>();
 
         if (counts[0] > 0) {
-            entries.add(new Entry(counts[0], 0));
             labels.add("Hypertension Stage II");
+            entries.add(new Entry(counts[0], 0));
+            myColors.add(palette[0]);
         }
         if (counts[1] > 0) {
             entries.add(new Entry(counts[1], 1));
             labels.add("Hypertension Stage I");
+            myColors.add(palette[1]);
         }
         if (counts[2] > 0) {
             entries.add(new Entry(counts[2], 2));
             labels.add("Pre-hypertension");
+            myColors.add(palette[2]);
         }
         if (counts[3] > 0) {
             entries.add(new Entry(counts[3], 3));
             labels.add("Normal");
+            myColors.add(palette[3]);
         }
 
         if (entries.size() > 0) {
@@ -428,8 +424,14 @@ public class MainActivity extends AppCompatActivity {
         }
 
         PieDataSet dataset = new PieDataSet(entries, "");
-        dataset.setColors(new int[]{R.color.graph_red, R.color.graph_orange, R.color.insights_yellow, R.color.insights_green}, getBaseContext());
-        dataset.setValueFormatter(new MyValueFormatter());
+
+        int[] myColorsArray = new int[entries.size()];
+        for (int i = 0; i < myColors.size(); i++) {
+            myColorsArray[i] = myColors.get(i);
+        }
+
+        dataset.setColors(myColorsArray, getBaseContext());
+        dataset.setValueFormatter(new PercentFormatter());
         dataset.setValueTextSize(15);
         PieData data = new PieData(labels, dataset);
         allTimePieChart.setData(data);
@@ -438,6 +440,7 @@ public class MainActivity extends AppCompatActivity {
         allTimePieChart.setDescription("");
         allTimePieChart.setHoleRadius(0);
         allTimePieChart.setTransparentCircleRadius(0);
+        allTimePieChart.setUsePercentValues(true);
     }
 
     public void setupGraph() {
@@ -627,11 +630,18 @@ public class MainActivity extends AppCompatActivity {
 
         popupWindow = new PopupWindow(container, 900, 1400, true);
         popupWindow.showAtLocation(relativeLayout, Gravity.NO_GRAVITY, 100, 200);
-
+        ImageView close = (ImageView) container.findViewById(R.id.close);
+        close.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                popupWindow.dismiss();
+                return false;
+            }
+        });
         container.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                popupWindow.dismiss();
+//                popupWindow.dismiss();
                 return true;
             }
         });
