@@ -184,7 +184,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:padding="10dp"
-                            android:layout_below="@id/pretty_average"
+                            android:layout_below="@id/dayNightAvgSection"
                             android:layout_marginTop="10dp"
                             android:id="@+id/aha_info"
                             android:text="@string/hypertension_levels"/>
@@ -199,7 +199,6 @@
                             android:layout_centerHorizontal="true"
                             android:layout_margin="20dp"
                             android:textColor="@color/fontColor"
-                            android:layout_below="@id/dayNightAvgSection"
                             android:layout_below="@id/aha_info"
                             android:gravity="center"/>
 
