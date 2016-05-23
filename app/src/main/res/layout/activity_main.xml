@@ -158,6 +158,14 @@
                             android:layout_marginTop="5dp"
                             android:layout_centerHorizontal="true"
                             android:layout_below="@+id/all_time_label"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:layout_below="@+id/all_time_label"
+                            android:layout_marginTop="10dp"
+                            android:text="No data"
+                            android:id="@+id/no_data_pie"/>
 
                     </RelativeLayout>
 

@@ -73,6 +73,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import static com.collinbarnwell.bold1.R.color.graph_red;
+import static com.collinbarnwell.bold1.R.color.yellow;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -114,9 +115,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTabReselected(TabLayout.Tab tab) {}
         });
-
-        setupPieCharts();
-        getAverageBP();
     }
 
     @Override
@@ -126,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
         // No matter whether that happens, refresh welcome message.
 
         setupGraph();
+        getAverageBP();
         setupPieCharts();
     }
 
@@ -330,6 +329,10 @@ public class MainActivity extends AppCompatActivity {
             labels.add("Normal");
         }
 
+        if (entries.size() > 0) {
+            findViewById(R.id.no_data_pie).setVisibility(View.GONE);
+        }
+
         PieDataSet dataset = new PieDataSet(entries, "");
         dataset.setColors(new int[]{R.color.graph_red, R.color.graph_orange, R.color.insights_yellow, R.color.insights_green}, getBaseContext());
         dataset.setValueFormatter(new MyValueFormatter());
@@ -450,19 +453,25 @@ public class MainActivity extends AppCompatActivity {
 
         TextView bp_textview = (TextView) findViewById(R.id.avg_bp);
         ImageView circle = (ImageView) findViewById(R.id.circle);
-        bp_textview.setText(avg_systolic + "\n" + avg_diastolic);
+
+        if (Double.isNaN(avg_systolic) || Double.isNaN(avg_diastolic)) {
+            bp_textview.setText("No\ndata");
+        } else {
+            bp_textview.setText(avg_systolic + "\n" + avg_diastolic);
+        }
 
         if(avg_systolic < 120 && avg_diastolic < 80){
             circle.setImageResource(R.drawable.green_circle);
-            // bp_textview.setTextColor(Color.parseColor("#33ff33"));
+            bp_textview.setTextColor(getResources().getColor(R.color.insights_green));
         }
-        else if((avg_systolic > 120 && avg_systolic < 139) || (avg_diastolic < 89 && avg_diastolic > 80)){
+        else if((avg_systolic > 120 && avg_systolic
+                < 139) || (avg_diastolic < 89 && avg_diastolic > 80)){
             circle.setImageResource(R.drawable.yellow_circle);
-            // bp_textview.setTextColor(Color.parseColor("#ffff00"));
+            bp_textview.setTextColor(getResources().getColor(R.color.insights_yellow));
         }
         else{
             circle.setImageResource(R.drawable.red_circle);
-            // bp_textview.setTextColor(Color.parseColor("#ff0000"));
+            bp_textview.setTextColor(getResources().getColor(R.color.graph_red));
         }
 
 
