@@ -23,4 +23,10 @@
     <string name="notification_menu">Add daily notification</string>
     <string name="notification_cancel_menu">Cancel notification</string>
 
+    <string name="hypertension_levels">
+        A normal blood pressure: systolic pressure (top number) below 120 and diastolic pressure (bottom number) below 80.\n
+        Prehypertension: systolic 120-139 or diastolic 80-89\n
+        Stage I hypertension: systolic 140-159 or diastolic 90-99\n
+        Stage II hypertension: systolic 160 or higher or diastolic 100 or higher
+    </string>
 </resources>

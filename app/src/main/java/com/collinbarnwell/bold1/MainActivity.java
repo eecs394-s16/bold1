@@ -40,6 +40,7 @@ import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.ViewPortHandler;
@@ -308,18 +309,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupPieCharts () {
-
-        class MyValueFormatter implements ValueFormatter {
-            private DecimalFormat mFormat;
-            public MyValueFormatter() {
-                mFormat = new DecimalFormat("###,###");
-            }
-            @Override
-            public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
-                return mFormat.format(value);
-            }
-        }
-
         DatabaseHelper mDbHelper = new DatabaseHelper(getBaseContext());
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         int[] counts = mDbHelper.getHypertensionRiskLevelCounts(db);
@@ -327,7 +316,7 @@ public class MainActivity extends AppCompatActivity {
         PieChart allTimePieChart = (PieChart) findViewById(R.id.all_time_pie_chart);
         ArrayList<Entry> entries = new ArrayList<>();
         ArrayList<String> labels = new ArrayList<String>();
-
+        
         if (counts[0] > 0) {
             entries.add(new Entry(counts[0], 0));
             labels.add("Hypertension Stage II");
@@ -351,7 +340,7 @@ public class MainActivity extends AppCompatActivity {
 
         PieDataSet dataset = new PieDataSet(entries, "");
         dataset.setColors(new int[]{R.color.graph_red, R.color.graph_orange, R.color.insights_yellow, R.color.insights_green}, getBaseContext());
-        dataset.setValueFormatter(new MyValueFormatter());
+        dataset.setValueFormatter(new PercentFormatter());
         dataset.setValueTextSize(15);
         PieData data = new PieData(labels, dataset);
         allTimePieChart.setData(data);
@@ -360,6 +349,7 @@ public class MainActivity extends AppCompatActivity {
         allTimePieChart.setDescription("");
         allTimePieChart.setHoleRadius(0);
         allTimePieChart.setTransparentCircleRadius(0);
+        allTimePieChart.setUsePercentValues(true);
     }
 
     public void setupGraph() {
