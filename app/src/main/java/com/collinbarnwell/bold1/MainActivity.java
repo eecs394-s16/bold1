@@ -239,7 +239,7 @@ public class MainActivity extends AppCompatActivity {
         Document document = new Document();
 
         // File shit
-        File gpxfile = new File("sdcard/", filename); // Where to save. Currently trying external storage. Save in
+        File gpxfile = new File(Environment.getExternalStorageDirectory(), filename); // Where to save. Currently trying external storage. Save in
         // "/data/data/com.collinbarnwell.bold1" to get it to save in internal storage
 
         // Checking to see if Android Manifest actually gave me permission to save to external storage
