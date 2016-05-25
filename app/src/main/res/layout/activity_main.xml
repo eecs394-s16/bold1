@@ -5,8 +5,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/main"
     android:fitsSystemWindows="true"
-    tools:context="com.collinbarnwell.bold1.MainActivity">
+    tools:context="com.collinbarnwell.bold1.MainActivity"
+    android:clickable="false"
+    android:nestedScrollingEnabled="false"
+    android:touchscreenBlocksFocus="false">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
@@ -14,7 +18,9 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:background="@color/white"
         android:layout_height="match_parent"
-        tools:context=".MainActivity">
+        tools:context=".MainActivity"
+        android:id="@+id/relative"
+        android:clickable="false">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/main_toolbar"
@@ -59,7 +65,8 @@
             android:id="@+id/tab_flipper"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/graph_table_tabber">
+            android:layout_below="@+id/graph_table_tabber"
+            android:clickable="false">
 
 
             <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -104,13 +111,12 @@
                             android:id="@+id/welcome"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Average Blood Pressure:\n Last 7 days"
+                            android:text="Average Blood Pressure,\n Last 7 days"
                             android:textSize="22dp"
                             android:textColor="@color/fontColor"
                             android:gravity="center"
                             android:layout_marginBottom="10dp"
                             android:layout_marginTop="15dp"/>
-
                         <RelativeLayout
                             android:id="@+id/pretty_average"
                             android:layout_width="150dp"
@@ -137,20 +143,65 @@
                                 android:textColor="@color/fontColor"
                                 android:textSize= "22dp"
                                 />
+                        </RelativeLayout>
 
+                        <TextView
+                            android:id="@+id/dayNightAvgTextView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Day time and Night time\n Average Blood Pressure:\n Last 7 days"
+                            android:textSize="22dp"
+                            android:textColor="@color/fontColor"
+                            android:gravity="center"
+                            android:layout_below="@id/pretty_average"/>
+                        <RelativeLayout
+                            android:id="@+id/dayNightAvgSection"
+                            android:layout_width="150dp"
+                            android:layout_height="150dp"
+                            android:layout_below="@id/dayNightAvgTextView"
+                            android:layout_centerHorizontal="true">
+
+                            <ImageView
+                                android:id="@+id/dayNightCircleIcon"
+                                android:layout_width="150dp"
+                                android:layout_height="150dp"
+                                android:src="@drawable/green_circle"
+                                android:scaleType="fitXY"
+                                />
+                            <TextView
+                                android:id="@+id/dayNightAvgBP"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerInParent="true"
+                                android:layout_centerVertical="true"
+                                android:gravity="center_horizontal"
+                                android:textColor="@color/fontColor"
+                                android:textSize= "22dp"
+                                />
                         </RelativeLayout>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Hypertension Risk Level"
+                            android:padding="10dp"
+                            android:layout_below="@id/dayNightAvgSection"
+                            android:layout_marginTop="10dp"
+                            android:id="@+id/aha_info"
+                            android:text="@string/hypertension_levels"/>
+
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Your Hypertension Risk Level"
                             android:textSize="25sp"
                             android:id="@+id/all_time_label"
                             android:layout_centerHorizontal="true"
                             android:layout_margin="20dp"
                             android:textColor="@color/fontColor"
-                            android:layout_below="@id/pretty_average"
+                            android:layout_below="@id/aha_info"
                             android:gravity="center"/>
+
                         <com.github.mikephil.charting.charts.PieChart
                             android:id="@+id/all_time_pie_chart"
                             android:layout_width="300dp"
@@ -158,6 +209,15 @@
                             android:layout_marginTop="5dp"
                             android:layout_centerHorizontal="true"
                             android:layout_below="@+id/all_time_label"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:layout_below="@+id/all_time_label"
+                            android:layout_marginTop="10dp"
+                            android:text="No data"
+                            android:id="@+id/no_data_pie"/>
+
 
                     </RelativeLayout>
 

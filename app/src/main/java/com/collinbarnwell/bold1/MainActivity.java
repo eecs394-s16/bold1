@@ -5,7 +5,10 @@ import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.nfc.Tag;
 import android.os.Build;
@@ -17,17 +20,27 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.res.ResourcesCompat;
+import android.support.v4.view.MotionEventCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.content.Intent;
 import android.view.View.OnClickListener;
 
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -40,11 +53,17 @@ import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.ViewPortHandler;
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Image;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -54,8 +73,13 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.LegendRenderer;
 import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.DataPointInterface;
 import com.jjoe64.graphview.series.LineGraphSeries;
+import com.jjoe64.graphview.series.OnDataPointTapListener;
+import com.jjoe64.graphview.series.Series;
+import com.ns.developer.tagview.widget.TagCloudLinkView;
 
+import java.io.ByteArrayOutputStream;
 import java.sql.Time;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -71,8 +95,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import android.util.Pair;
 
 import static com.collinbarnwell.bold1.R.color.graph_red;
+import static com.collinbarnwell.bold1.R.color.yellow;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -84,6 +112,12 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
+
+    private PopupWindow popupWindow;
+    private LayoutInflater layoutInflater;
+    private RelativeLayout relativeLayout;
+    private boolean flag;
+    private DatabaseHelper mDbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,8 +150,11 @@ public class MainActivity extends AppCompatActivity {
             public void onTabReselected(TabLayout.Tab tab) {}
         });
 
+
+        setupGraph();
         setupPieCharts();
         getAverageBP();
+        getDayNightBP();
     }
 
     @Override
@@ -127,7 +164,10 @@ public class MainActivity extends AppCompatActivity {
         // No matter whether that happens, refresh welcome message.
 
         setupGraph();
+        getAverageBP();
         setupPieCharts();
+        getAverageBP();
+        getDayNightBP();
     }
 
 
@@ -176,7 +216,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     private  boolean isStoragePermissionGranted() {
         if (Build.VERSION.SDK_INT >= 23) {
             if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -199,35 +238,54 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void generatePdfReport() {
-        // First get the first/last name
-        // Now automatically get the info from local storage and fill in the text fields.
+
+        // Initilizaing stuff
+        String filename = "";
+
         try{
+            String firstLastName;
             // This is where we stored the user info
             JSONObject saved_user_info = utilClass.loadJSONFromFile(this,utilClass.UserInfoFile);
             if (saved_user_info.has(utilClass.UserInfoStrings[4]) && saved_user_info.has(utilClass.UserInfoStrings[5])){
-                String firstLastName=saved_user_info.getString(utilClass.UserInfoStrings[4])+" "+saved_user_info.getString(utilClass.UserInfoStrings[5]);
+                firstLastName=saved_user_info.getString(utilClass.UserInfoStrings[4])+" "+saved_user_info.getString(utilClass.UserInfoStrings[5]);
+            }else{
+                firstLastName="";
             }
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.SECOND, calendar.get(Calendar.SECOND)+10);
+            calendar.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE));
+            calendar.set(Calendar.HOUR, calendar.get(Calendar.HOUR));
+            String timeString=  calendar.get(Calendar.HOUR)+":"
+                    + calendar.get(Calendar.MINUTE)+":"+ calendar.get(Calendar.SECOND);
+            if (+calendar.get(Calendar.AM_PM)==Calendar.AM){
+                timeString=timeString+"AM";
+            }
+            else{
+                timeString=timeString+"PM";
+            }
+            filename=firstLastName+" "+timeString+" Blood Pressure Report.pdf";
+
         }
         catch(Exception e){
             e.printStackTrace();
             Toast.makeText(getBaseContext(),"Something went wrong while fetching user info.",Toast.LENGTH_LONG).show();
+            filename="Blood Pressure Report.pdf";
         }
+
+
+
         // Opening document
+        // Starting new Document instance
         Document document = new Document();
 
         // File shit
-
-        String filename = "doctor.pdf";
-        File gpxfile = new File("sdcard/", filename); // Where to save. Currently trying external storage. Save in
-        // "/data/data/com.collinbarnwell.bold1" to get it to save in internal storage
+        File gpxfile = new File(Environment.getExternalStorageDirectory(), filename);
 
         // Checking to see if Android Manifest actually gave me permission to save to external storage
         // Right now, it's being a bitch.
         isStoragePermissionGranted();
 
-
-
-        // Writing to PDF
+        // Opening PDF Instance
         try{
             PdfWriter.getInstance(document, new FileOutputStream(gpxfile));
         }
@@ -236,15 +294,37 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-
-        Paragraph p3 = new Paragraph();
-        p3.add("Yay");
-
-
+        // Initializing database helper for this function
         DatabaseHelper mDbHelper = new DatabaseHelper(getBaseContext());
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
 
+        // Going to now Populate top of the PDF with Patient info
+        Paragraph paragraph = new Paragraph();
+
+        try{
+            JSONObject user_profile_info = utilClass.loadJSONFromFile(this,utilClass.UserInfoFile);
+            paragraph.add("Name: " + user_profile_info.getString(utilClass.UserInfoStrings[4]) + " " + user_profile_info.getString(utilClass.UserInfoStrings[5]) + "\n");
+            paragraph.add("ID: " + user_profile_info.getString(utilClass.UserInfoStrings[0]) + "\n");
+            paragraph.add("DOB: " + user_profile_info.getString(utilClass.UserInfoStrings[7]) + "\n");
+            paragraph.add("Affiliated Medical Institution: " + user_profile_info.getString(utilClass.UserInfoStrings[2]) + "\n");
+            paragraph.add("\n");
+        }
+        catch(Exception e){
+            Toast.makeText(getBaseContext(),"Something went wrong while fetching user info.",Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
+
+
+        // Getting the BOLD logo -- This will be set to the logo variable below
+        Drawable d = ResourcesCompat.getDrawable(getResources(), R.drawable.bold_white_transparent_background, null);
+        Bitmap bitmap = ((BitmapDrawable)d).getBitmap();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byte[] bitmapData = stream.toByteArray();
+
+
+        // Getting info from the database
         Cursor cursor = db.rawQuery("SELECT SYSTOLIC_PRESSURE, DIASTOLIC_PRESSURE, HEART_RATE, MEAN_ARTERIAL_PRESSURE, TIMESTAMP FROM data_point",null);
 
         PdfPTable table = new PdfPTable(5);
@@ -275,23 +355,37 @@ public class MainActivity extends AppCompatActivity {
 
         try
         {
+//            Image logo = Image.getInstance(bitmapData);
+//            document.add(logo);
+
+            document.add(paragraph);
             document.add(table);
         }
-        catch (DocumentException e)
+        catch (Exception e)
         {
             e.printStackTrace();
         }
 
         document.close();
 
+
+
         try {
+
+            // Getting doctor email to put in TO for email generation
+
+            //JSONObject saved_user_info1 = utilClass.loadJSONFromFile(this,utilClass.UserInfoFile);
+            //String[] TO = {saved_user_info1.getString(utilClass.UserInfoStrings[])};
 
             String[] TO = {"nour.alharithi@gmail.com"};
             Intent emailIntent = new Intent(Intent.ACTION_SEND);
             emailIntent.setData(Uri.parse("mailto:"));
             emailIntent.setType("application/pdf");
 
-            //emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
+            if(TO != null) {
+                emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
+            }
+
             emailIntent.putExtra(Intent.EXTRA_SUBJECT, "BOLD DIAGNOSTICS: Blood Pressure Summary");
             emailIntent.putExtra(Intent.EXTRA_TEXT, "Attached is my blood pressure summary report courtesy of BOLD Diagnostics");
             emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(gpxfile));
@@ -306,18 +400,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupPieCharts () {
-
-        class MyValueFormatter implements ValueFormatter {
-            private DecimalFormat mFormat;
-            public MyValueFormatter() {
-                mFormat = new DecimalFormat("###,###");
-            }
-            @Override
-            public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
-                return mFormat.format(value);
-            }
-        }
-
         DatabaseHelper mDbHelper = new DatabaseHelper(getBaseContext());
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         int[] counts = mDbHelper.getHypertensionRiskLevelCounts(db);
@@ -326,26 +408,43 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<Entry> entries = new ArrayList<>();
         ArrayList<String> labels = new ArrayList<String>();
 
+        int[] palette = new int[]{R.color.graph_red, R.color.graph_orange, R.color.insights_yellow, R.color.insights_green};
+        List<Integer> myColors = new ArrayList<Integer>();
+
         if (counts[0] > 0) {
-            entries.add(new Entry(counts[0], 0));
             labels.add("Hypertension Stage II");
+            entries.add(new Entry(counts[0], 0));
+            myColors.add(palette[0]);
         }
         if (counts[1] > 0) {
             entries.add(new Entry(counts[1], 1));
             labels.add("Hypertension Stage I");
+            myColors.add(palette[1]);
         }
         if (counts[2] > 0) {
             entries.add(new Entry(counts[2], 2));
             labels.add("Pre-hypertension");
+            myColors.add(palette[2]);
         }
         if (counts[3] > 0) {
             entries.add(new Entry(counts[3], 3));
             labels.add("Normal");
+            myColors.add(palette[3]);
+        }
+
+        if (entries.size() > 0) {
+            findViewById(R.id.no_data_pie).setVisibility(View.GONE);
         }
 
         PieDataSet dataset = new PieDataSet(entries, "");
-        dataset.setColors(new int[]{R.color.graph_red, R.color.graph_orange, R.color.insights_yellow, R.color.insights_green}, getBaseContext());
-        dataset.setValueFormatter(new MyValueFormatter());
+
+        int[] myColorsArray = new int[entries.size()];
+        for (int i = 0; i < myColors.size(); i++) {
+            myColorsArray[i] = myColors.get(i);
+        }
+
+        dataset.setColors(myColorsArray, getBaseContext());
+        dataset.setValueFormatter(new PercentFormatter());
         dataset.setValueTextSize(15);
         PieData data = new PieData(labels, dataset);
         allTimePieChart.setData(data);
@@ -354,11 +453,14 @@ public class MainActivity extends AppCompatActivity {
         allTimePieChart.setDescription("");
         allTimePieChart.setHoleRadius(0);
         allTimePieChart.setTransparentCircleRadius(0);
+        allTimePieChart.setUsePercentValues(true);
     }
 
     public void setupGraph() {
-        DatabaseHelper mDbHelper = new DatabaseHelper(getBaseContext());
+        mDbHelper = new DatabaseHelper(getBaseContext());
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        flag = true;
 
         String count = "SELECT count(*) FROM data_point";
         Cursor mcursor = db.rawQuery(count, null);
@@ -414,6 +516,14 @@ public class MainActivity extends AppCompatActivity {
             graph.getLegendRenderer().setMargin(20);
             graph.getLegendRenderer().setPadding(20);
 
+            graph.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    flag = true;
+                    return false;
+                }
+            });
+
             LineGraphSeries<DataPoint> systolic_series =
                     new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "systolic_pressure"));
             graph.addSeries(systolic_series);
@@ -422,6 +532,17 @@ public class MainActivity extends AppCompatActivity {
             systolic_series.setDrawDataPoints(true);
             systolic_series.setDataPointsRadius(30);
             systolic_series.setThickness(20);
+            relativeLayout = (RelativeLayout) findViewById(R.id.relative);
+            systolic_series.setOnDataPointTapListener(new OnDataPointTapListener() {
+                @Override
+                public void onTap(Series series, DataPointInterface dataPoint) {
+                    if (!flag) {
+                        return;
+                    }
+                    flag = false;
+                    showWindow(dataPoint);
+                }
+            });
 
             LineGraphSeries<DataPoint> diastolic_series =
                     new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "diastolic_pressure"));
@@ -432,6 +553,17 @@ public class MainActivity extends AppCompatActivity {
             diastolic_series.setDrawDataPoints(true);
             diastolic_series.setDataPointsRadius(30);
             diastolic_series.setThickness(20);
+            diastolic_series.setOnDataPointTapListener(new OnDataPointTapListener() {
+                @Override
+                public void onTap(Series series, DataPointInterface dataPoint) {
+                    if (!flag) {
+                        return;
+                    }
+                    flag = false;
+                    showWindow(dataPoint);
+//                    Toast.makeText(MainActivity.this, "Series: On Data Point clicked: " + dataPoint, Toast.LENGTH_SHORT).show();
+                }
+            });
 
             LineGraphSeries<DataPoint> heart_rate_series =
                     new LineGraphSeries<DataPoint>(mDbHelper.getColumnDataPoints(db, "heart_rate"));
@@ -442,7 +574,90 @@ public class MainActivity extends AppCompatActivity {
             heart_rate_series.setDrawDataPoints(true);
             heart_rate_series.setDataPointsRadius(30);
             heart_rate_series.setThickness(20);
+            heart_rate_series.setOnDataPointTapListener(new OnDataPointTapListener() {
+                @Override
+                public void onTap(Series series, DataPointInterface dataPoint) {
+                    if (!flag) {
+                        return;
+                    }
+                    flag = false;
+                    showWindow(dataPoint);
+//                    Toast.makeText(MainActivity.this, "Series: On Data Point clicked: " + dataPoint, Toast.LENGTH_SHORT).show();
+
+                }
+            });
         }
+    }
+
+    private void showWindow(DataPointInterface dataPoint) {
+        final SQLiteDatabase dbr = mDbHelper.getReadableDatabase();
+        Date date = new Date((long)dataPoint.getX());
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat newformat = new SimpleDateFormat("EEE M/d 'at' h:mm a");
+        Object[] data = mDbHelper.getDataForPopup(dbr, format.format(date));
+        layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(LAYOUT_INFLATER_SERVICE);
+        ViewGroup container = (ViewGroup) layoutInflater.inflate(R.layout.data, null);
+        TextView x = (TextView) container.findViewById(R.id.Timetext);
+        x.setText(newformat.format(date));
+        x = (TextView) container.findViewById(R.id.bp);
+        ImageView circle = (ImageView) findViewById(R.id.circle);
+        double systolic = (double)((Pair)data[0]).second;
+        double diastolic = (double)((Pair)data[1]).second;
+        x.setText(systolic + "\n" + diastolic);
+        x = (TextView) container.findViewById(R.id.Pulsetext);
+
+        if(systolic < 120 && diastolic < 80){
+            circle.setImageResource(R.drawable.green_circle);
+            x.setTextColor(Color.parseColor("#33ff33"));
+        }
+        else if((systolic > 120 && diastolic < 139) || (systolic < 89 && diastolic > 80)){
+            circle.setImageResource(R.drawable.yellow_circle);
+            x.setTextColor(Color.parseColor("#ffff00"));
+        }
+        else{
+            circle.setImageResource(R.drawable.red_circle);
+            x.setTextColor(Color.parseColor("#ff0000"));
+        }
+        double pulse = (double)((Pair)data[2]).second;
+        x.setText(pulse + "");
+        x.setTextColor(Color.parseColor("#f01515"));
+        TagCloudLinkView view = (TagCloudLinkView) container.findViewById(R.id.Tags);
+        for (int i = 5; i <= 12; i++) {
+            String tag = (String)((Pair)data[i]).second;
+            if (tag.equals("1"))
+                view.add(new com.ns.developer.tagview.entity.Tag(1, (String)((Pair)data[i]).first));
+        }
+        view.drawTags();
+        String mood = (String)((Pair)data[4]).second;
+        ImageView moodcon = (ImageView) container.findViewById(R.id.moodIamge);
+        if (mood.equals("good")) {
+            moodcon.setImageResource(R.drawable.happy);
+        } else if (mood.equals("normal")) {
+            moodcon.setImageResource(R.drawable.normal);
+        } else {
+            moodcon.setImageResource(R.drawable.sad);
+        }
+
+        x = (TextView) container.findViewById(R.id.Msg);
+        x.setText((String)((Pair)data[13]).second);
+
+        popupWindow = new PopupWindow(container, 900, 1400, true);
+        popupWindow.showAtLocation(relativeLayout, Gravity.NO_GRAVITY, 100, 200);
+        ImageView close = (ImageView) container.findViewById(R.id.close);
+        close.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                popupWindow.dismiss();
+                return false;
+            }
+        });
+        container.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+//                popupWindow.dismiss();
+                return true;
+            }
+        });
     }
 
     public void getAverageBP(){
@@ -453,10 +668,10 @@ public class MainActivity extends AppCompatActivity {
 
 
         double avg_systolic;
-        avg_systolic = mDbHelper.getAverageOverPastWeek(db, "systolic_pressure");
+        avg_systolic = mDbHelper.getAverageOverPastWeek(db, "systolic_pressure",-1,-1);
 
         double avg_diastolic;
-        avg_diastolic = mDbHelper.getAverageOverPastWeek(db, "diastolic_pressure");
+        avg_diastolic = mDbHelper.getAverageOverPastWeek(db, "diastolic_pressure",-1,-1);
 
         avg_diastolic = Math.round(avg_diastolic);
         avg_systolic = Math.round(avg_systolic);
@@ -464,28 +679,93 @@ public class MainActivity extends AppCompatActivity {
 
         TextView bp_textview = (TextView) findViewById(R.id.avg_bp);
         ImageView circle = (ImageView) findViewById(R.id.circle);
-        bp_textview.setText(avg_systolic + "\n" + avg_diastolic);
+
+        if (Double.isNaN(avg_systolic) || Double.isNaN(avg_diastolic)) {
+            bp_textview.setText("No\ndata");
+        } else {
+            bp_textview.setText(avg_systolic + "\n" + avg_diastolic);
+        }
 
         if(avg_systolic < 120 && avg_diastolic < 80){
             circle.setImageResource(R.drawable.green_circle);
-            // bp_textview.setTextColor(Color.parseColor("#33ff33"));
+            //bp_textview.setTextColor(getResources().getColor(R.color.insights_green));
         }
-        else if((avg_systolic > 120 && avg_systolic < 139) || (avg_diastolic < 89 && avg_diastolic > 80)){
+        else if((avg_systolic > 120 && avg_systolic
+                < 139) || (avg_diastolic < 89 && avg_diastolic > 80)){
             circle.setImageResource(R.drawable.yellow_circle);
-            // bp_textview.setTextColor(Color.parseColor("#ffff00"));
+            //bp_textview.setTextColor(getResources().getColor(R.color.insights_yellow));
         }
         else{
             circle.setImageResource(R.drawable.red_circle);
-            // bp_textview.setTextColor(Color.parseColor("#ff0000"));
+            //bp_textview.setTextColor(getResources().getColor(R.color.graph_red));
         }
-
-
-
-
     }
 
 
 
+    public void getDayNightBP(){
 
 
+        DatabaseHelper mDbHelper = new DatabaseHelper(getBaseContext());
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+
+        double avg_day_systolic;
+        avg_day_systolic = mDbHelper.getAverageOverPastWeek(db, "systolic_pressure",8,20);
+        double avg_day_diastolic;
+        avg_day_diastolic = mDbHelper.getAverageOverPastWeek(db, "diastolic_pressure",8,20)
+        ;
+        double avg_night_systolic;
+        avg_night_systolic = mDbHelper.getAverageOverPastWeek(db, "systolic_pressure",20,8);
+        double avg_night_diastolic;
+        avg_night_diastolic = mDbHelper.getAverageOverPastWeek(db, "diastolic_pressure",20,8);
+
+        avg_day_diastolic = Math.round(avg_day_diastolic);
+        avg_day_systolic = Math.round(avg_day_systolic);
+        avg_night_diastolic = Math.round(avg_night_diastolic);
+        avg_night_systolic = Math.round(avg_night_systolic);
+
+
+        TextView bp_textview = (TextView) findViewById(R.id.dayNightAvgBP);
+        ImageView circle = (ImageView) findViewById(R.id.dayNightCircleIcon);
+        String formattedText= "<font color=#000000>"+avg_day_diastolic+ "/" + avg_day_systolic +
+                "\n</font> <font color=#ffffff>" + avg_night_diastolic+ "/" + avg_night_systolic+"</font>";
+        bp_textview.setText(Html.fromHtml(formattedText));
+
+        if(avg_day_systolic < 120 && avg_day_diastolic < 80){
+            if(avg_night_systolic < 120 && avg_night_diastolic < 80){
+                circle.setImageResource(R.drawable.day_night_circle_green_top_green_bottom);
+            }
+            else if((avg_night_systolic > 120 && avg_night_systolic < 139) || (avg_night_diastolic < 89 && avg_night_diastolic > 80)){
+                circle.setImageResource(R.drawable.day_night_circle_green_top_yellow_bottom);
+            }
+            else{
+                circle.setImageResource(R.drawable.day_night_circle_green_top_red_bottom);
+            }
+            // bp_textview.setTextColor(Color.parseColor("#33ff33"));
+        }
+        else if((avg_day_systolic > 120 && avg_day_systolic < 139) || (avg_day_diastolic < 89 && avg_day_diastolic > 80)){
+            if(avg_night_systolic < 120 && avg_night_diastolic < 80){
+                circle.setImageResource(R.drawable.day_night_circle_yellow_top_green_bottom);
+            }
+            else if((avg_night_systolic > 120 && avg_night_systolic < 139) || (avg_night_diastolic < 89 && avg_night_diastolic > 80)){
+                circle.setImageResource(R.drawable.day_night_circle_yellow_top_yellow_bottom);
+            }
+            else{
+                circle.setImageResource(R.drawable.day_night_circle_yellow_top_red_bottom);
+            }
+        }
+        else{
+            if(avg_night_systolic < 120 && avg_night_diastolic < 80){
+                circle.setImageResource(R.drawable.day_night_circle_red_top_green_bottom);
+            }
+            else if((avg_night_systolic > 120 && avg_night_systolic < 139) || (avg_night_diastolic < 89 && avg_night_diastolic > 80)){
+                circle.setImageResource(R.drawable.day_night_circle_red_top_yellow_bottom);
+            }
+            else{
+                circle.setImageResource(R.drawable.day_night_circle_red_top_red_bottom);
+            }
+            // bp_textview.setTextColor(Color.parseColor("#ff0000"));
+        }
+    }
 }

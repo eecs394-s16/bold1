@@ -179,14 +179,14 @@ public class AddDataPoint extends AppCompatActivity {
 
     public HashMap<String,Boolean> getRelatedData(){
         HashMap<String,Boolean> data = new HashMap<String,Boolean>();
-        boolean food_intake = findViewById(R.id.food_intake).isPressed();
-        boolean caffeine = findViewById(R.id.caffeine).isPressed();
-        boolean non_caffeine = findViewById(R.id.non_caffeine).isPressed();
-        boolean tobacco = findViewById(R.id.tobacco).isPressed();
-        boolean exercise = findViewById(R.id.exercise).isPressed();
-        boolean daily_activity = findViewById(R.id.light_physical_activity).isPressed();
-        boolean wake_up = findViewById(R.id.woke_up).isPressed();
-        boolean about_to_sleep = findViewById(R.id.going_to_bed).isPressed();
+        boolean food_intake = ((CheckBox) findViewById(R.id.food_intake)).isChecked();
+        boolean caffeine = ((CheckBox) findViewById(R.id.caffeine)).isChecked();
+        boolean non_caffeine = ((CheckBox) findViewById(R.id.non_caffeine)).isChecked();
+        boolean tobacco = ((CheckBox) findViewById(R.id.tobacco)).isChecked();
+        boolean exercise = ((CheckBox) findViewById(R.id.exercise)).isChecked();
+        boolean daily_activity = ((CheckBox) findViewById(R.id.light_physical_activity)).isChecked();
+        boolean wake_up = ((CheckBox) findViewById(R.id.woke_up)).isChecked();
+        boolean about_to_sleep = ((CheckBox) findViewById(R.id.going_to_bed)).isChecked();
 
         data.put("food_intake",food_intake);
         data.put("caffeine",caffeine);

@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.util.Pair;
 
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
@@ -127,7 +128,36 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return dataArray;
     }
 
-    public double getAverageOverPastWeek(SQLiteDatabase db, String column) {
+    public Object[] getDataForPopup(SQLiteDatabase db, String timestamp) {
+        String query = "SELECT systolic_pressure, diastolic_pressure, heart_rate, mean_arterial_pressure, " +
+                "mood, exercise, tobacco, wake_up, food_intake, non_caffeine_fluid_intake, caffeine, " +
+                "about_to_sleep, daily_activity, other FROM data_point WHERE timestamp = " + "'" + timestamp + "'" + ";";
+        Cursor cursor = db.rawQuery(query, null);
+        Object[] data = new Object[14];
+        if(cursor.moveToFirst() && cursor.getCount() >= 1) {
+            do {
+
+                data[0] = new Pair<String, Double>("systolic_pressure", cursor.getDouble(cursor.getColumnIndex("systolic_pressure")));
+                data[1] = new Pair<String, Double>("diastolic_pressure", cursor.getDouble(cursor.getColumnIndex("diastolic_pressure")));
+                data[2] = new Pair<String, Double>("heart_rate", cursor.getDouble(cursor.getColumnIndex("heart_rate")));
+                data[3] = new Pair<String, Double>("mean_arterial_pressure", cursor.getDouble(cursor.getColumnIndex("mean_arterial_pressure")));
+                data[4] = new Pair<String, String>("mood", cursor.getString(cursor.getColumnIndex("mood")));
+                data[5] = new Pair<String, String>("exercise", cursor.getString(cursor.getColumnIndex("exercise")));
+                data[6] = new Pair<String, String>("tobacco", cursor.getString(cursor.getColumnIndex("tobacco")));
+                data[7] = new Pair<String, String>("wake_up", cursor.getString(cursor.getColumnIndex("wake_up")));
+                data[8] = new Pair<String, String>("food_intake", cursor.getString(cursor.getColumnIndex("food_intake")));
+                data[9] = new Pair<String, String>("caffeine", cursor.getString(cursor.getColumnIndex("caffeine")));
+                data[10] = new Pair<String, String>("non_caffeine_fluid_intake", cursor.getString(cursor.getColumnIndex("non_caffeine_fluid_intake")));
+                data[11] = new Pair<String, String>("about_to_sleep", cursor.getString(cursor.getColumnIndex("about_to_sleep")));
+                data[12] = new Pair<String, String>("daily_activity", cursor.getString(cursor.getColumnIndex("daily_activity")));
+                data[13] = new Pair<String, String>("other", cursor.getString(cursor.getColumnIndex("other")));
+            } while (cursor.moveToNext());
+        }
+        return data;
+    }
+
+    // Set startHour or endHour to -1 if you don't want to have a specific range.
+    public double getAverageOverPastWeek(SQLiteDatabase db, String column,int startHour,int endHour ) {
         Calendar cal = Calendar.getInstance();
         Date now = cal.getTime();
         cal.add(Calendar.DAY_OF_YEAR, -7);
@@ -224,7 +254,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if(cursor.moveToFirst() && cursor.getCount() >= 1) {
             do {
                 Double sys = cursor.getDouble(cursor.getColumnIndex("systolic_pressure"));
-                Double dias = cursor.getDouble(cursor.getColumnIndex("systolic_pressure"));
+                Double dias = cursor.getDouble(cursor.getColumnIndex("diastolic_pressure"));
 
                 if (sys > 160 || dias > 100) {
                     hypII++;
