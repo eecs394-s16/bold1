@@ -45,6 +45,20 @@
                 android:value=".MainActivity" />
         </activity>
 
+
+        <activity
+            android:name=".Notifications"
+            android:parentActivityName=".MainActivity">
+
+
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+
+        </activity>
+
+
         <service android:name=".NotificationService"
         android:enabled="true" />
         <!--Has to add the receiver line-->

@@ -22,5 +22,6 @@
     <string name="gen_pdf">Email PDF report</string>
     <string name="notification_menu">Add daily notification</string>
     <string name="notification_cancel_menu">Cancel notification</string>
+    <string name="edit_notifications">Edit notifications</string>
 
 </resources>

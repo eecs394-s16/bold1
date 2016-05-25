@@ -13,7 +13,19 @@
         android:id="@+id/gen_pdf"
         android:title="@string/gen_pdf"
         app:showAsAction="never"/>
+
+
+
+    <item
+        android:id="@+id/edit_notif"
+        android:title="@string/edit_notifications"
+        app:showAsAction="never" />
+
+
+
     <!-- this is the notification button for debugging -->
+
+    <!--
     <item
         android:id="@+id/notification_menu"
         android:title="@string/notification_menu"
@@ -22,5 +34,9 @@
         android:id="@+id/notification_cancel_menu"
         android:title="@string/notification_cancel_menu"
         app:showAsAction="never"/>
+
+        -->
+
+
 </menu>
 

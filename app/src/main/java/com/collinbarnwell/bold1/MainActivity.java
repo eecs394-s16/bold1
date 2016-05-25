@@ -95,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
         fab.setOnClickListener(new OnClickListener(){
             public void onClick(View v){
                 startActivity(new Intent(MainActivity.this, AddDataPoint.class));
@@ -149,12 +150,24 @@ public class MainActivity extends AppCompatActivity {
                 generatePdfReport();
                 return true;
 
-            case R.id.notification_menu:
+
+
+            case R.id.edit_notif:
+                startActivity(new Intent(MainActivity.this, Notifications.class));
+                return true;
+
+
+
+
+            /*case R.id.notification_menu:
                 notifHelper.alarmMethod(this);
                 return true;
             case R.id.notification_cancel_menu:
                 notifHelper.cancelAlarmMethod(this);
                 return true;
+            */
+
+
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
