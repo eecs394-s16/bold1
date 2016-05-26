@@ -734,8 +734,8 @@ public class MainActivity extends AppCompatActivity {
 
         TextView bp_textview = (TextView) findViewById(R.id.dayNightAvgBP);
         ImageView circle = (ImageView) findViewById(R.id.dayNightCircleIcon);
-        String formattedText= "<font color=#000000>"+avg_day_diastolic+ "/" + avg_day_systolic +
-                "\n</font> <font color=#ffffff>" + avg_night_diastolic+ "/" + avg_night_systolic+"</font>";
+        String formattedText= "<font color=#000000>"+avg_day_systolic+ "/" + avg_day_diastolic +
+                "\n</font> <font color=#ffffff>" + avg_night_systolic+ "/" + avg_night_diastolic+"</font>";
         bp_textview.setText(Html.fromHtml(formattedText));
 
         if(avg_day_systolic < 120 && avg_day_diastolic < 80){
