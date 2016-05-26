@@ -291,7 +291,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/moodRadioGroup"
                 android:layout_marginTop="35dp"
-                android:hint="Please enter any other recent activities that might affect blood pressure"
+                android:hint="Other recent activities that might affect blood pressure"
                 android:inputType="textMultiLine"
                 android:lines="2" />
 

@@ -291,10 +291,29 @@ public class MainActivity extends AppCompatActivity {
 
         try{
             JSONObject user_profile_info = utilClass.loadJSONFromFile(this,utilClass.UserInfoFile);
-            paragraph.add("Name: " + user_profile_info.getString(utilClass.UserInfoStrings[4]) + " " + user_profile_info.getString(utilClass.UserInfoStrings[5]) + "\n");
+            paragraph.add("Patient Last Name: " + user_profile_info.getString(utilClass.UserInfoStrings[5]) + "\n");
+            paragraph.add("Patient First Name: " + user_profile_info.getString(utilClass.UserInfoStrings[4]) + "\n");
+            paragraph.add("Patient Email: " + user_profile_info.getString(utilClass.UserInfoStrings[1]) + "\n");
+            paragraph.add("Patient Age: " + user_profile_info.getString(utilClass.UserInfoStrings[6]) + "\n");
             paragraph.add("ID: " + user_profile_info.getString(utilClass.UserInfoStrings[0]) + "\n");
             paragraph.add("DOB: " + user_profile_info.getString(utilClass.UserInfoStrings[7]) + "\n");
             paragraph.add("Affiliated Medical Institution: " + user_profile_info.getString(utilClass.UserInfoStrings[2]) + "\n");
+            paragraph.add("Physician: " + user_profile_info.getString(utilClass.UserInfoStrings[3]) + "\n");
+            paragraph.add("\n");
+
+            double avg_day_systolic = mDbHelper.getAverageOverPastWeek(db, "systolic_pressure",8,20);
+            double avg_day_diastolic = mDbHelper.getAverageOverPastWeek(db, "diastolic_pressure",8,20);
+            double avg_night_systolic = mDbHelper.getAverageOverPastWeek(db, "systolic_pressure",20,8);
+            double avg_night_diastolic = mDbHelper.getAverageOverPastWeek(db, "diastolic_pressure",20,8);
+
+            avg_day_diastolic = Math.round(avg_day_diastolic);
+            avg_day_systolic = Math.round(avg_day_systolic);
+            avg_night_diastolic = Math.round(avg_night_diastolic);
+            avg_night_systolic = Math.round(avg_night_systolic);
+
+            paragraph.add("Daily average (last 7 days): " + String.valueOf(avg_day_systolic) + " / " + String.valueOf(avg_day_diastolic));
+            paragraph.add("Night time average (last 7 days): " + String.valueOf(avg_night_systolic) + " / " + String.valueOf(avg_night_diastolic));
+
             paragraph.add("\n");
         }
         catch(Exception e){
@@ -700,8 +719,8 @@ public class MainActivity extends AppCompatActivity {
         double avg_day_systolic;
         avg_day_systolic = mDbHelper.getAverageOverPastWeek(db, "systolic_pressure",8,20);
         double avg_day_diastolic;
-        avg_day_diastolic = mDbHelper.getAverageOverPastWeek(db, "diastolic_pressure",8,20)
-        ;
+        avg_day_diastolic = mDbHelper.getAverageOverPastWeek(db, "diastolic_pressure",8,20);
+
         double avg_night_systolic;
         avg_night_systolic = mDbHelper.getAverageOverPastWeek(db, "systolic_pressure",20,8);
         double avg_night_diastolic;
