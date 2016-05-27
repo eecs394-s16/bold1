@@ -2,9 +2,11 @@ package com.collinbarnwell.bold1;
 
 import com.collinbarnwell.bold1.DatabaseHelper;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -90,14 +92,16 @@ public class Notifications extends AppCompatActivity {
             int hour = c.get(Calendar.HOUR_OF_DAY);
             int minute = c.get(Calendar.MINUTE);
 
-            return new TimePickerDialog(getActivity(), this, hour, minute, DateFormat.is24HourFormat(getActivity()));
+            return new TimePickerDialog(getActivity(), android.R.style.Theme_Holo_Dialog_NoActionBar, this, hour, minute, DateFormat.is24HourFormat(getActivity()));
 
         }
 
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 
             //Sets notification on the phone
-            //Creates fragment for the listview in notifications inte
+            //Creates fragment for the listview in notifications interface
+            //Saves information to databases
+
 
         }
 
@@ -107,6 +111,40 @@ public class Notifications extends AppCompatActivity {
         DialogFragment dialogFragment = new TimePickerFragment();
         dialogFragment.show(getFragmentManager(), "timePicker");
     }
+
+
+
+
+    public void setAlarm(AppCompatActivity context, int hourOfDay, int minute){
+        AlarmManager alarmManager = (AlarmManager)context.getSystemService(context.ALARM_SERVICE);
+        Intent myIntent = new Intent(context, Notifications.class);
+        PendingIntent pendingIntent = PendingIntent.getService(context, 0, myIntent, 0);
+
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MINUTE, minute);
+        cal.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
+
+        String notifString=  "Daily notification enabled at "+ cal.get(Calendar.HOUR)+":"
+                + cal.get(Calendar.MINUTE)+":"+ cal.get(Calendar.SECOND);
+        if (+cal.get(Calendar.AM_PM)==Calendar.AM){
+            notifString=notifString+"AM";
+        }
+        else{
+            notifString=notifString+"PM";
+        }
+        Toast.makeText(context, notifString, Toast.LENGTH_LONG).show();
+
+
+
+    }
+
+    public void writeAlarmtoDatabase(int id, int hourOfDay, int minute){
+
+    }
+
+
 
 
 

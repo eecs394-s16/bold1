@@ -28,11 +28,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Method is called during creation of the database
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(DatabaseContract.DataPoint.CREATE_TABLE);
+        //db.execSQL(DatabaseContract.Alarms.CREATE_TABLE);
     }
 
     // Method is called during an upgrade of the database
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL(DatabaseContract.DataPoint.DELETE_TABLE);
+        //db.execSQL(DatabaseContract.Alarms.DELETE_TABLE);
         onCreate(db);
     }
 

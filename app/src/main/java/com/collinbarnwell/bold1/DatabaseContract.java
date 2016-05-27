@@ -81,5 +81,39 @@ public final class DatabaseContract {
 
         public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
     }
+
+    /*
+    public static abstract class AlarmEntries implements BaseColumns {
+        public static final String ID = "id";
+        public static final String HOUR = "hour";
+        public static final String MINUTE = "minute";
+
+    }
+
+
+    public static final class Alarms implements BaseColumns {
+
+        private Alarms() {}
+
+        public static final String TABLE_NAME = "alarms";
+
+        public static final String CREATE_TABLE =
+                "CREATE TABLE " + TABLE_NAME +
+                        "(" +
+                        AlarmEntries.ID + "INTEGER PRIMARY KEY," +
+                        AlarmEntries.HOUR + INTEGER_TYPE + COMMA_SEP +
+                        AlarmEntries.MINUTE + INTEGER_TYPE +
+                        ");";
+
+        public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
+
+
+    }
+
+    */
+
+
+
+
 }
 
