@@ -20,7 +20,7 @@ public final class DatabaseContract {
     public static final String SCHEME = "content://";
     public static final String SLASH = "/";
     public static final String DATABASE_NAME = "bold1.db";
-    public static final int DATABASE_VERSION = 12;
+    public static final int DATABASE_VERSION = 15;
     private static final String TEXT_TYPE          = " TEXT";
     private static final String INTEGER_TYPE       = " INTEGER";
     private static final String NUMERIC_TYPE       = " NUMERIC";
@@ -82,7 +82,7 @@ public final class DatabaseContract {
         public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
     }
 
-    /*
+
     public static abstract class AlarmEntries implements BaseColumns {
         public static final String ID = "id";
         public static final String HOUR = "hour";
@@ -99,18 +99,16 @@ public final class DatabaseContract {
 
         public static final String CREATE_TABLE =
                 "CREATE TABLE " + TABLE_NAME +
-                        "(" +
-                        AlarmEntries.ID + "INTEGER PRIMARY KEY," +
+                        " ( " +
+                        AlarmEntries.ID + " INTEGER PRIMARY KEY," +
                         AlarmEntries.HOUR + INTEGER_TYPE + COMMA_SEP +
                         AlarmEntries.MINUTE + INTEGER_TYPE +
-                        ");";
+                        " );";
 
         public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
 
 
     }
-
-    */
 
 
 

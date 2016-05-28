@@ -10,7 +10,9 @@ import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -98,6 +100,10 @@ public class Notifications extends AppCompatActivity {
 
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 
+            ((Notifications)getActivity()).saveAlarm(hourOfDay, minute);
+
+
+
             //Sets notification on the phone
             //Creates fragment for the listview in notifications interface
             //Saves information to databases
@@ -112,13 +118,18 @@ public class Notifications extends AppCompatActivity {
         dialogFragment.show(getFragmentManager(), "timePicker");
     }
 
+    public void saveAlarm(int hourOfDay, int minute){
+        int id = writeAlarmtoDatabase(hourOfDay, minute);
+        setAlarm(id, hourOfDay, minute);
+    }
 
 
 
-    public void setAlarm(AppCompatActivity context, int hourOfDay, int minute){
-        AlarmManager alarmManager = (AlarmManager)context.getSystemService(context.ALARM_SERVICE);
-        Intent myIntent = new Intent(context, Notifications.class);
-        PendingIntent pendingIntent = PendingIntent.getService(context, 0, myIntent, 0);
+
+    public void setAlarm(int id, int hourOfDay, int minute){
+        AlarmManager alarmManager = (AlarmManager)this.getSystemService(this.ALARM_SERVICE);
+        Intent myIntent = new Intent(this, Notifications.class);
+        PendingIntent pendingIntent = PendingIntent.getService(this, id, myIntent, 0);
 
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.SECOND, 0);
@@ -134,13 +145,40 @@ public class Notifications extends AppCompatActivity {
         else{
             notifString=notifString+"PM";
         }
-        Toast.makeText(context, notifString, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, notifString, Toast.LENGTH_LONG).show();
 
 
 
     }
 
-    public void writeAlarmtoDatabase(int id, int hourOfDay, int minute){
+    public int writeAlarmtoDatabase(int hourOfDay, int minute){
+        DatabaseHelper dbHelper = new DatabaseHelper(getBaseContext());
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(DatabaseContract.AlarmEntries.HOUR, hourOfDay);
+        contentValues.put(DatabaseContract.AlarmEntries.MINUTE, minute);
+
+        long id = db.insert(DatabaseContract.Alarms.TABLE_NAME, null, contentValues);
+        return (int)id;
+
+    }
+
+    public void removeAlarmfromDatabase(int id){
+
+        DatabaseHelper dbHelper = new DatabaseHelper(getBaseContext());
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.delete(DatabaseContract.Alarms.TABLE_NAME, DatabaseContract.AlarmEntries.ID + " = " + id, null);
+
+    }
+
+    public void unsetAlarm(int id){
+
+        Intent myIntent = new Intent(this, Notifications.class);
+        AlarmManager alarmManager = (AlarmManager)this.getSystemService(this.ALARM_SERVICE);
+        PendingIntent pendingIntent = PendingIntent.getService(this, id, myIntent, 0);
+        alarmManager.cancel(pendingIntent);
+        Toast.makeText(this, "Daily notification disabled.", Toast.LENGTH_LONG).show();
 
     }
 
