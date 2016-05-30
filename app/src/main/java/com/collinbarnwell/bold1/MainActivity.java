@@ -3,6 +3,7 @@ package com.collinbarnwell.bold1;
 import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -807,24 +808,28 @@ public class MainActivity extends AppCompatActivity {
         TextView x = (TextView) container.findViewById(R.id.Timetext);
         x.setText(newformat.format(date));
         x = (TextView) container.findViewById(R.id.bp);
-        ImageView circle = (ImageView) findViewById(R.id.circle);
         double systolic = (double)((Pair)data[0]).second;
         double diastolic = (double)((Pair)data[1]).second;
         x.setText(systolic + "\n" + diastolic);
-        x = (TextView) container.findViewById(R.id.Pulsetext);
 
+        ImageView circle = (ImageView) container.findViewById(R.id.circle_X);
         if(systolic < 120 && diastolic < 80){
             circle.setImageResource(R.drawable.green_circle);
             x.setTextColor(Color.parseColor("#33ff33"));
         }
         else if((systolic > 120 && diastolic < 139) || (systolic < 89 && diastolic > 80)){
             circle.setImageResource(R.drawable.yellow_circle);
-            x.setTextColor(Color.parseColor("#ffff00"));
+//            Resources resources = getResources();
+//            circle.setImageDrawable(resources.getDrawable(R.drawable.yellow_circle));
+            x.setTextColor(Color.parseColor("#FF9A00"));
         }
         else{
             circle.setImageResource(R.drawable.red_circle);
             x.setTextColor(Color.parseColor("#ff0000"));
         }
+        x = (TextView) container.findViewById(R.id.Pulsetext);
+
+
         double pulse = (double)((Pair)data[2]).second;
         x.setText(pulse + "");
         x.setTextColor(Color.parseColor("#f01515"));
