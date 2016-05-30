@@ -42,16 +42,15 @@
             </LinearLayout>
 
             <RelativeLayout
-                android:id="@+id/pretty_average"
+                android:id="@+id/data_point_image"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
                 android:layout_marginTop="20dp"
-                android:layout_below="@id/circle"
                 android:gravity="center">
 
 
                 <ImageView
-                    android:id="@+id/circle"
+                    android:id="@+id/circle_X"
                     android:layout_width="wrap_content"
                     android:layout_height="150dp"
                     android:src="@drawable/green_circle"
