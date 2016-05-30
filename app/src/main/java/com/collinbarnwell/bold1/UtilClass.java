@@ -51,11 +51,22 @@ public final class UtilClass{
         try {
             String saved_user_info_string = loadJSONStringFromFile(context, inputFileName);
             JSONObject saved_user_info;
+            // If the file doesn't have anything in the file, create a new JSON object with empty
+            // strings in it, so that there will be no exception thrown when we read the data.
             if (saved_user_info_string.isEmpty()) {
-                saved_user_info = new JSONObject();
+                JSONObject user_info = new JSONObject();
+                try {
+                    for (int i=0; i<UserInfoStrings.length;i++) {
+                        user_info.put(UserInfoStrings[i], "");
+                    }
+                    saved_user_info_string = user_info.toString();
+                } catch (Exception e) {
+                    Toast.makeText(context,"Some error occurred when loading JSON from file.",Toast.LENGTH_LONG).show();
+                }
+                saved_user_info = new JSONObject(saved_user_info_string);
             } else {
                 saved_user_info = new JSONObject(saved_user_info_string);
-            }
+        }
             return saved_user_info;
         }
         catch(Exception e){

@@ -36,6 +36,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+
     // HELPER FUNCTIONS SECTION
 
     public Date doubleToDate(double dateDouble){
