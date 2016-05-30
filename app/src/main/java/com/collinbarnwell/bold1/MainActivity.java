@@ -748,8 +748,8 @@ public class MainActivity extends AppCompatActivity {
             else{
                 circle.setImageResource(R.drawable.day_night_circle_green_top_red_bottom);
             }
-            // bp_textview.setTextColor(Color.parseColor("#33ff33"));
         }
+
         else if((avg_day_systolic > 120 && avg_day_systolic < 139) || (avg_day_diastolic < 89 && avg_day_diastolic > 80)){
             if(avg_night_systolic < 120 && avg_night_diastolic < 80){
                 circle.setImageResource(R.drawable.day_night_circle_yellow_top_green_bottom);
