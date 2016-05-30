@@ -20,9 +20,9 @@ public final class UtilClass{
 
     public static final String UserInfoFile = "User_Info_File";
     public static final String[] UserInfoStrings= {"user_ID","user_email","user_institution_affiliation","user_respective_physician","user_first_name"
-            ,"user_last_name","user_age","user_dob"};
+            ,"user_last_name","user_age","user_dob","physician_email"};
     public static final int[] UserInfoIds={R.id.user_id,R.id.user_email,R.id.user_institution_affiliation,R.id.user_respective_physician,
-            R.id.user_first_name,R.id.user_last_name,R.id.user_age,R.id.user_dob};
+            R.id.user_first_name,R.id.user_last_name,R.id.user_age,R.id.user_dob,R.id.physician_email};
 
     // Must have a context. otherwise just openFileInput does not work
     public String loadJSONStringFromFile(Context context, String inputFileName) {
@@ -51,11 +51,22 @@ public final class UtilClass{
         try {
             String saved_user_info_string = loadJSONStringFromFile(context, inputFileName);
             JSONObject saved_user_info;
+            // If the file doesn't have anything in the file, create a new JSON object with empty
+            // strings in it, so that there will be no exception thrown when we read the data.
             if (saved_user_info_string.isEmpty()) {
-                saved_user_info = new JSONObject();
+                JSONObject user_info = new JSONObject();
+                try {
+                    for (int i=0; i<UserInfoStrings.length;i++) {
+                        user_info.put(UserInfoStrings[i], "");
+                    }
+                    saved_user_info_string = user_info.toString();
+                } catch (Exception e) {
+                    Toast.makeText(context,"Some error occurred when loading JSON from file.",Toast.LENGTH_LONG).show();
+                }
+                saved_user_info = new JSONObject(saved_user_info_string);
             } else {
                 saved_user_info = new JSONObject(saved_user_info_string);
-            }
+        }
             return saved_user_info;
         }
         catch(Exception e){
