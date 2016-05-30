@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="First Name"
+            android:text="@string/user_first_name"
             android:id="@+id/textView4" />
 
         <EditText
@@ -60,7 +60,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Last Name"
+            android:text="@string/user_last_name"
             android:id="@+id/textView2" />
 
         <EditText
@@ -84,7 +84,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="87dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Age"
+            android:text="@string/user_age"
             android:id="@+id/textView5" />
 
         <EditText
@@ -108,7 +108,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Date of Birth"
+            android:text="@string/user_dob"
             android:id="@+id/textView6" />
 
         <EditText
@@ -146,7 +146,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="61dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="User ID"
+            android:text="@string/user_ID"
             android:id="@+id/textView8" />
 
         <EditText
@@ -169,7 +169,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="75dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Email"
+            android:text="@string/user_email"
             android:id="@+id/textView7" />
 
         <EditText
@@ -192,7 +192,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Institution Affiliation"
+            android:text="@string/user_institution_affiliation"
             android:id="@+id/textView9" />
 
         <EditText
@@ -217,7 +217,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Respective Physician"
+            android:text="@string/user_respective_physician"
             android:id="@+id/textView10" />
 
         <EditText
@@ -226,6 +226,29 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:id="@+id/user_respective_physician"
+            android:inputType="text"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/physician_email"
+            android:id="@+id/physician_email_title" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:id="@+id/physician_email"
             android:inputType="text"/>
     </LinearLayout>
 

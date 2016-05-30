@@ -14,6 +14,7 @@
     <string name="user_last_name">Last Name</string>
     <string name="user_age">Age</string>
     <string name="user_dob">Date of Birth</string>
+    <string name="physician_email">Physician Email</string>
 
 
     <string name="update_user_info">Update</string>
