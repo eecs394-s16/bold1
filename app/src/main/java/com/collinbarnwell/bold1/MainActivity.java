@@ -191,6 +191,10 @@ public class MainActivity extends AppCompatActivity {
                 generatePdfReport();
                 return true;
 
+            case R.id.download:
+                downloadPDF();
+                return true;
+
             case R.id.notification_menu:
                 notifHelper.alarmMethod(this);
                 return true;
@@ -378,8 +382,9 @@ public class MainActivity extends AppCompatActivity {
 
 
         // Copying file to downloads folder
-        String download = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Download";
-        copyFile(Environment.getExternalStorageDirectory().getAbsolutePath(), filename, download);
+        //String download = "/sdcard/Download/";
+        //copyFile(Environment.getExternalStorageDirectory().getAbsolutePath() +"/", filename, download);
+        //Log.i(download, Environment.getExternalStorageDirectory().getAbsolutePath());
 
 
         try {
@@ -409,6 +414,157 @@ public class MainActivity extends AppCompatActivity {
         catch(Exception e){
             Log.i("didn't work", "damn");
         }
+    }
+
+    private void downloadPDF(){
+        // Initilizaing stuff
+        String filename = "";
+
+        try{
+            String firstLastName;
+            // This is where we stored the user info
+            JSONObject saved_user_info = utilClass.loadJSONFromFile(this,utilClass.UserInfoFile);
+            if (saved_user_info.has(utilClass.UserInfoStrings[4]) && saved_user_info.has(utilClass.UserInfoStrings[5])){
+                firstLastName=saved_user_info.getString(utilClass.UserInfoStrings[4])+" "+saved_user_info.getString(utilClass.UserInfoStrings[5]);
+            }else{
+                firstLastName="";
+            }
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.SECOND, calendar.get(Calendar.SECOND)+10);
+            calendar.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE));
+            calendar.set(Calendar.HOUR, calendar.get(Calendar.HOUR));
+            String timeString=  calendar.get(Calendar.HOUR)+":"
+                    + calendar.get(Calendar.MINUTE)+":"+ calendar.get(Calendar.SECOND);
+            if (+calendar.get(Calendar.AM_PM)==Calendar.AM){
+                timeString=timeString+"AM";
+            }
+            else{
+                timeString=timeString+"PM";
+            }
+            filename=firstLastName+" "+timeString+" Blood Pressure Report.pdf";
+
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            Toast.makeText(getBaseContext(),"Something went wrong while fetching user info.",Toast.LENGTH_LONG).show();
+            filename="Blood Pressure Report.pdf";
+        }
+
+
+
+        // Opening document
+        // Starting new Document instance
+        Document document = new Document();
+
+        // File shit
+        File gpxfile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), filename);
+
+        // Checking to see if Android Manifest actually gave me permission to save to external storage
+        // Right now, it's being a bitch.
+        isStoragePermissionGranted();
+
+        // Opening PDF Instance
+        try{
+            PdfWriter.getInstance(document, new FileOutputStream(gpxfile));
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        // Initializing database helper for this function
+        DatabaseHelper mDbHelper = new DatabaseHelper(getBaseContext());
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+
+        // Going to now Populate top of the PDF with Patient info
+        Paragraph paragraph = new Paragraph();
+
+        try{
+            JSONObject user_profile_info = utilClass.loadJSONFromFile(this,utilClass.UserInfoFile);
+            paragraph.add("Patient Last Name: " + user_profile_info.getString(utilClass.UserInfoStrings[5]) + "\n");
+            paragraph.add("Patient First Name: " + user_profile_info.getString(utilClass.UserInfoStrings[4]) + "\n");
+            paragraph.add("Patient Email: " + user_profile_info.getString(utilClass.UserInfoStrings[1]) + "\n");
+            paragraph.add("Patient Age: " + user_profile_info.getString(utilClass.UserInfoStrings[6]) + "\n");
+            paragraph.add("ID: " + user_profile_info.getString(utilClass.UserInfoStrings[0]) + "\n");
+            paragraph.add("DOB: " + user_profile_info.getString(utilClass.UserInfoStrings[7]) + "\n");
+            paragraph.add("Affiliated Medical Institution: " + user_profile_info.getString(utilClass.UserInfoStrings[2]) + "\n");
+            paragraph.add("Physician: " + user_profile_info.getString(utilClass.UserInfoStrings[3]) + "\n");
+            paragraph.add("\n");
+
+            double avg_day_systolic = mDbHelper.getAverageOverPastWeek(db, "systolic_pressure",8,20);
+            double avg_day_diastolic = mDbHelper.getAverageOverPastWeek(db, "diastolic_pressure",8,20);
+            double avg_night_systolic = mDbHelper.getAverageOverPastWeek(db, "systolic_pressure",20,8);
+            double avg_night_diastolic = mDbHelper.getAverageOverPastWeek(db, "diastolic_pressure",20,8);
+
+            avg_day_diastolic = Math.round(avg_day_diastolic);
+            avg_day_systolic = Math.round(avg_day_systolic);
+            avg_night_diastolic = Math.round(avg_night_diastolic);
+            avg_night_systolic = Math.round(avg_night_systolic);
+
+            paragraph.add("Daily average (last 7 days): " + String.valueOf(avg_day_systolic) + " / " + String.valueOf(avg_day_diastolic));
+            paragraph.add("Night time average (last 7 days): " + String.valueOf(avg_night_systolic) + " / " + String.valueOf(avg_night_diastolic));
+
+            paragraph.add("\n");
+        }
+        catch(Exception e){
+            Toast.makeText(getBaseContext(),"Something went wrong while fetching user info.",Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
+
+
+        // Getting the BOLD logo -- This will be set to the logo variable below
+        Drawable d = ResourcesCompat.getDrawable(getResources(), R.drawable.bold_white_transparent_background, null);
+        Bitmap bitmap = ((BitmapDrawable)d).getBitmap();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byte[] bitmapData = stream.toByteArray();
+
+
+        // Getting info from the database
+        Cursor cursor = db.rawQuery("SELECT SYSTOLIC_PRESSURE, DIASTOLIC_PRESSURE, HEART_RATE, MEAN_ARTERIAL_PRESSURE, TIMESTAMP FROM data_point",null);
+
+        PdfPTable table = new PdfPTable(5);
+
+
+        table.addCell("Systolic Pressure");
+        table.addCell("Diastolic Pressure");
+        table.addCell("Heart Rate");
+        table.addCell("Mean Arterial Pressure");
+        table.addCell("Timestamp");
+
+        cursor.moveToFirst();
+        int count = cursor.getCount();
+
+        for (int j = 0; j < count; j++)
+        {
+            table.addCell(cursor.getString(cursor.getColumnIndex("systolic_pressure")));
+            table.addCell(cursor.getString(cursor.getColumnIndex("diastolic_pressure")));
+            table.addCell(cursor.getString(cursor.getColumnIndex("heart_rate")));
+            table.addCell(cursor.getString(cursor.getColumnIndex("mean_arterial_pressure")));
+            table.addCell(cursor.getString(cursor.getColumnIndex("timestamp")));
+
+            cursor.moveToNext();
+        }
+
+
+        document.open();
+
+        try
+        {
+//            Image logo = Image.getInstance(bitmapData);
+//            document.add(logo);
+
+            document.add(paragraph);
+            document.add(table);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        document.close();
+        Log.i("yes", "success");
     }
 
     private void copyFile(String inputPath, String inputFile, String outputPath) {
@@ -760,8 +916,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-
     public void getDayNightBP(){
 
 
@@ -827,6 +981,7 @@ public class MainActivity extends AppCompatActivity {
             // bp_textview.setTextColor(Color.parseColor("#ff0000"));
         }
     }
+
 }
 
 

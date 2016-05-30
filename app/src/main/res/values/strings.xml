@@ -23,6 +23,8 @@
     <string name="gen_pdf">Email PDF report</string>
     <string name="notification_menu">Add daily notification</string>
     <string name="notification_cancel_menu">Cancel notification</string>
+    <string name="download_pdf">Download PDF Report</string>
+
 
     <string name="hypertension_levels">
         Normal blood pressure: systolic pressure (top number) below 120 and diastolic pressure (bottom number) below 80.\n
