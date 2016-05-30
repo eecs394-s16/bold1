@@ -95,7 +95,7 @@ public class Profile extends AppCompatActivity {
                 e.printStackTrace();
             }
         } catch (Exception e) {
-
+            Toast.makeText(getBaseContext(),"Some error occurred when saving user info.",Toast.LENGTH_LONG).show();
         }
     }
 
