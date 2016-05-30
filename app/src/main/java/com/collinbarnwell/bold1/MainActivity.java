@@ -28,6 +28,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -68,6 +69,7 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.codec.Base64;
+import com.itextpdf.text.pdf.codec.wmf.Point;
 import com.jjoe64.graphview.DefaultLabelFormatter;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.LegendRenderer;
@@ -647,8 +649,16 @@ public class MainActivity extends AppCompatActivity {
         x = (TextView) container.findViewById(R.id.Msg);
         x.setText((String)((Pair)data[13]).second);
 
-        popupWindow = new PopupWindow(container, 900, 1400, true);
-        popupWindow.showAtLocation(relativeLayout, Gravity.NO_GRAVITY, 100, 200);
+        Display display = getWindowManager().getDefaultDisplay();
+        android.graphics.Point size = new android.graphics.Point();
+        display.getSize(size);
+
+        int width = (int)(size.x * 0.8);
+        int height = (int)(size.y * 0.8);
+        int px = (int)(size.x * 0.1);
+        int py = (int)(size.y * 0.1);
+        popupWindow = new PopupWindow(container, width, height, true);
+        popupWindow.showAtLocation(relativeLayout, Gravity.NO_GRAVITY, px, py);
         ImageView close = (ImageView) container.findViewById(R.id.close);
         close.setOnTouchListener(new View.OnTouchListener() {
             @Override
