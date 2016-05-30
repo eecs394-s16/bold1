@@ -386,10 +386,10 @@ public class MainActivity extends AppCompatActivity {
 
             // Getting doctor email to put in TO for email generation
 
-            //JSONObject saved_user_info1 = utilClass.loadJSONFromFile(this,utilClass.UserInfoFile);
-            //String[] TO = {saved_user_info1.getString(utilClass.UserInfoStrings[])};
+            JSONObject saved_user_info1 = utilClass.loadJSONFromFile(this,utilClass.UserInfoFile);
+            String[] TO = {saved_user_info1.getString(utilClass.UserInfoStrings[8])};
 
-            String[] TO = {"nour.alharithi@gmail.com"};
+            //String[] TO = {"nour.alharithi@gmail.com"};
             Intent emailIntent = new Intent(Intent.ACTION_SEND);
             emailIntent.setData(Uri.parse("mailto:"));
             emailIntent.setType("application/pdf");
