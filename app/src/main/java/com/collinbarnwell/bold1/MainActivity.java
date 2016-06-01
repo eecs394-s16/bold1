@@ -835,7 +835,7 @@ public class MainActivity extends AppCompatActivity {
         ImageView moodcon = (ImageView) container.findViewById(R.id.moodIamge);
         if (mood.equals("good")) {
             moodcon.setImageResource(R.drawable.happy);
-        } else if (mood.equals("normal")) {
+        } else if (mood.equals("average")) {
             moodcon.setImageResource(R.drawable.normal);
         } else {
             moodcon.setImageResource(R.drawable.sad);
