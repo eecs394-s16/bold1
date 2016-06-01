@@ -16,13 +16,12 @@
     <string name="user_dob">Date of Birth</string>
     <string name="physician_email">Physician Email</string>
 
-
     <string name="update_user_info">Update</string>
     <string name="user_profile_menu">Update patient info</string>
     <string name="add_datapoint">Record your data</string>
     <string name="gen_pdf">Email PDF report</string>
-    <string name="notification_menu">Add daily notification</string>
-    <string name="notification_cancel_menu">Cancel notification</string>
+    <string name="notification_menu">Remind me every day at this time</string>
+    <string name="notification_cancel_menu">Remove all reminders</string>
     <string name="download_pdf">Download PDF Report</string>
 
 
