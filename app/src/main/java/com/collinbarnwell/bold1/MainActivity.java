@@ -184,9 +184,9 @@ public class MainActivity extends AppCompatActivity {
                 generatePdfReport();
                 return true;
 
-            case R.id.download:
-                downloadPDF();
-                return true;
+            // case R.id.download:
+            //    downloadPDF();
+            //    return true;
 
             case R.id.notification_menu:
                 notifHelper.alarmMethod(this);
@@ -804,11 +804,11 @@ public class MainActivity extends AppCompatActivity {
         x.setText(systolic + "\n" + diastolic);
 
         ImageView circle = (ImageView) container.findViewById(R.id.circle_X);
-        if(systolic < 120 && diastolic < 80){
+        if(systolic <= 120 && diastolic <= 80){
             circle.setImageResource(R.drawable.green_circle);
             x.setTextColor(Color.parseColor("#33ff33"));
         }
-        else if((systolic > 120 && diastolic < 139) || (systolic < 89 && diastolic > 80)){
+        else if((systolic > 120 && diastolic <= 139) || (systolic <= 89 && diastolic > 80)){
             circle.setImageResource(R.drawable.yellow_circle);
 //            Resources resources = getResources();
 //            circle.setImageDrawable(resources.getDrawable(R.drawable.yellow_circle));
@@ -897,14 +897,14 @@ public class MainActivity extends AppCompatActivity {
         TextView bp_textview = (TextView) findViewById(R.id.dayNightAvgBP);
         ImageView circle = (ImageView) findViewById(R.id.dayNightCircleIcon);
         String formattedText= "<font color=#000000>"+avg_day_systolic+ "/" + avg_day_diastolic +
-                "\n</font> <font color=#ffffff>" + avg_night_systolic+ "/" + avg_night_diastolic+"</font>";
+                "</font><br/><font color=#ffffff>" + avg_night_systolic+ "/" + avg_night_diastolic+"</font>";
         bp_textview.setText(Html.fromHtml(formattedText));
 
-        if(avg_day_systolic < 120 && avg_day_diastolic < 80){
-            if(avg_night_systolic < 120 && avg_night_diastolic < 80){
+        if(avg_day_systolic <= 120 && avg_day_diastolic <= 80){
+            if(avg_night_systolic <= 120 && avg_night_diastolic <= 80){
                 circle.setImageResource(R.drawable.day_night_circle_green_top_green_bottom);
             }
-            else if((avg_night_systolic > 120 && avg_night_systolic < 139) || (avg_night_diastolic < 89 && avg_night_diastolic > 80)){
+            else if((avg_night_systolic > 120 && avg_night_systolic <= 139) || (avg_night_diastolic <= 89 && avg_night_diastolic > 80)){
                 circle.setImageResource(R.drawable.day_night_circle_green_top_yellow_bottom);
             }
             else{
@@ -912,11 +912,11 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        else if((avg_day_systolic > 120 && avg_day_systolic < 139) || (avg_day_diastolic < 89 && avg_day_diastolic > 80)){
-            if(avg_night_systolic < 120 && avg_night_diastolic < 80){
+        else if((avg_day_systolic > 120 && avg_day_systolic <= 139) || (avg_day_diastolic <= 89 && avg_day_diastolic > 80)){
+            if(avg_night_systolic <= 120 && avg_night_diastolic <= 80){
                 circle.setImageResource(R.drawable.day_night_circle_yellow_top_green_bottom);
             }
-            else if((avg_night_systolic > 120 && avg_night_systolic < 139) || (avg_night_diastolic < 89 && avg_night_diastolic > 80)){
+            else if((avg_night_systolic > 120 && avg_night_systolic <= 139) || (avg_night_diastolic <= 89 && avg_night_diastolic > 80)){
                 circle.setImageResource(R.drawable.day_night_circle_yellow_top_yellow_bottom);
             }
             else{
@@ -924,10 +924,10 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         else{
-            if(avg_night_systolic < 120 && avg_night_diastolic < 80){
+            if(avg_night_systolic <= 120 && avg_night_diastolic <= 80){
                 circle.setImageResource(R.drawable.day_night_circle_red_top_green_bottom);
             }
-            else if((avg_night_systolic > 120 && avg_night_systolic < 139) || (avg_night_diastolic < 89 && avg_night_diastolic > 80)){
+            else if((avg_night_systolic > 120 && avg_night_systolic <= 139) || (avg_night_diastolic <= 89 && avg_night_diastolic > 80)){
                 circle.setImageResource(R.drawable.day_night_circle_red_top_yellow_bottom);
             }
             else{
