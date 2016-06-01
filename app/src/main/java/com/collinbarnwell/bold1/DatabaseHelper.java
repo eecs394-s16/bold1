@@ -77,7 +77,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String query = "SELECT " + column + ", timestamp FROM data_point ORDER BY timestamp";
         Cursor cursor      = db.rawQuery(query, null);
         ArrayList<DataPoint> data = new ArrayList<DataPoint>();
-
+        int flag = 0;
         if(cursor.moveToFirst() && cursor.getCount() >= 1) {
             do {
 
@@ -85,7 +85,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String timestamp_string = cursor.getString(cursor.getColumnIndex("timestamp"));
 
                 Timestamp dt = Timestamp.valueOf(timestamp_string);
-                data.add(new DataPoint(dt, val));
+                if (flag == 0) {
+                    data.add(new DataPoint(dt, val));
+                    data.add(new DataPoint(dt, val));
+                    flag++;
+                } else {
+                    data.add(new DataPoint(dt, val));
+                }
 
             } while (cursor.moveToNext());
         }
@@ -101,7 +107,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 " AND timestamp < strftime('"+getFormattedStringFromDate(till)+"') ORDER BY timestamp";
         Cursor cursor      = db.rawQuery(query, null);
         ArrayList<DataPoint> data = new ArrayList<DataPoint>();
-
         if(cursor.moveToFirst() && cursor.getCount() >= 1) {
             do {
 
@@ -126,6 +131,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         DataPoint[] dataArray = new DataPoint[data.size()];
         dataArray = data.toArray(dataArray);
+
+
         return dataArray;
     }
 
