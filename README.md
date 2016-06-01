@@ -58,6 +58,7 @@ We have a few different classes in our code. A list and description of them can 
 - The app is not compatible with APIs < 23
 - The app does not show a warning when the user enter their blood pressure without entering their user information first.
 - The app does not support an alarm manager. The alarm manager is still in work in "notifications" branch.
+- We've commented out the code to download the pdf report to the phone. It's not fully functiona yet.
 
 ## FEATURES TO ADD IN FUTURE
 
