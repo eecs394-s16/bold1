@@ -108,54 +108,16 @@
                         android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/welcome"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Average Blood Pressure,\n Last 7 days"
-                            android:textSize="22dp"
-                            android:textColor="@color/fontColor"
-                            android:gravity="center"
-                            android:layout_marginBottom="10dp"
-                            android:layout_marginTop="15dp"/>
-                        <RelativeLayout
-                            android:id="@+id/pretty_average"
-                            android:layout_width="150dp"
-                            android:layout_height="150dp"
-                            android:layout_below="@id/welcome"
-                            android:layout_centerHorizontal="true"
-                            android:layout_marginBottom="20dp">
-
-
-                            <ImageView
-                                android:id="@+id/circle"
-                                android:layout_width="wrap_content"
-                                android:layout_height="150dp"
-                                android:src="@drawable/green_circle"
-                                />
-
-
-                            <TextView
-                                android:id="@+id/avg_bp"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_centerInParent="true"
-                                android:layout_centerVertical="true"
-                                android:gravity="center_horizontal"
-                                android:textColor="@color/fontColor"
-                                android:textSize= "22dp"
-                                />
-                        </RelativeLayout>
-
-                        <TextView
                             android:id="@+id/dayNightAvgTextView"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Day time and Night time\n Average Blood Pressure:\n Last 7 days"
+                            android:text="Day/Night Average Blood Pressure, Last 7 days"
                             android:textSize="22dp"
                             android:textColor="@color/fontColor"
                             android:gravity="center"
-                            android:layout_below="@id/pretty_average"
+                            android:layout_marginTop="15dp"
                             android:layout_marginBottom="20dp"/>
+
                         <RelativeLayout
                             android:id="@+id/dayNightAvgSection"
                             android:layout_width="150dp"
@@ -185,23 +147,13 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:padding="10dp"
-                            android:layout_below="@id/dayNightAvgSection"
-                            android:layout_marginTop="10dp"
-                            android:id="@+id/aha_info"
-                            android:text="@string/hypertension_levels"/>
-
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
                             android:text="Your Hypertension Risk Level"
                             android:textSize="25sp"
                             android:id="@+id/all_time_label"
                             android:layout_centerHorizontal="true"
                             android:layout_margin="20dp"
                             android:textColor="@color/fontColor"
-                            android:layout_below="@id/aha_info"
+                            android:layout_below="@id/dayNightAvgSection"
                             android:gravity="center"/>
 
                         <com.github.mikephil.charting.charts.PieChart
