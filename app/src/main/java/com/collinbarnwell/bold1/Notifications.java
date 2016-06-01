@@ -118,7 +118,8 @@ public class Notifications extends AppCompatActivity {
 
 
             notifications.saveAlarm(hourOfDay, minute);
-            notifications.alarms.add("Alarm set at " + hourOfDay + ":" + minute + am_or_pm);
+            ListView listView = (ListView) notifications.findViewById(R.id.list_notifs);
+            ((ArrayAdapter<String>)listView.getAdapter()).add("Alarm set at " + hourOfDay + ":" + minute + am_or_pm);
 
 
             //Sets notification on the phone
@@ -253,7 +254,6 @@ public class Notifications extends AppCompatActivity {
 
         ListView listView = (ListView) findViewById(R.id.list_notifs);
         listView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, alarms));
-        this.alarms = alarms;
 
     }
 
