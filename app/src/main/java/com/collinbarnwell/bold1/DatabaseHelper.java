@@ -131,6 +131,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         DataPoint[] dataArray = new DataPoint[data.size()];
         dataArray = data.toArray(dataArray);
+
+
         return dataArray;
     }
 

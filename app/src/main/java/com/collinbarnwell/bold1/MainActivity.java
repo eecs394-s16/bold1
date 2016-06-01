@@ -151,12 +151,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTabReselected(TabLayout.Tab tab) {}
         });
-
-
-        setupGraph();
-        setupPieCharts();
-        getAverageBP();
-        getDayNightBP();
     }
 
     @Override
@@ -166,9 +160,7 @@ public class MainActivity extends AppCompatActivity {
         // No matter whether that happens, refresh welcome message.
 
         setupGraph();
-        getAverageBP();
         setupPieCharts();
-        getAverageBP();
         getDayNightBP();
     }
 
@@ -265,7 +257,6 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getBaseContext(),"Something went wrong while fetching user info.",Toast.LENGTH_LONG).show();
             filename="Blood Pressure Report.pdf";
         }
-
 
 
         // Opening document
@@ -878,47 +869,6 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
-    }
-
-    public void getAverageBP(){
-
-
-        DatabaseHelper mDbHelper = new DatabaseHelper(getBaseContext());
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
-
-
-        double avg_systolic;
-        avg_systolic = mDbHelper.getAverageOverPastWeek(db, "systolic_pressure",-1,-1);
-
-        double avg_diastolic;
-        avg_diastolic = mDbHelper.getAverageOverPastWeek(db, "diastolic_pressure",-1,-1);
-
-        avg_diastolic = Math.round(avg_diastolic);
-        avg_systolic = Math.round(avg_systolic);
-
-
-        TextView bp_textview = (TextView) findViewById(R.id.avg_bp);
-        ImageView circle = (ImageView) findViewById(R.id.circle);
-
-        if (Double.isNaN(avg_systolic) || Double.isNaN(avg_diastolic)) {
-            bp_textview.setText("No\ndata");
-        } else {
-            bp_textview.setText(avg_systolic + "\n" + avg_diastolic);
-        }
-
-        if(avg_systolic < 120 && avg_diastolic < 80){
-            circle.setImageResource(R.drawable.green_circle);
-            //bp_textview.setTextColor(getResources().getColor(R.color.insights_green));
-        }
-        else if((avg_systolic > 120 && avg_systolic
-                < 139) || (avg_diastolic < 89 && avg_diastolic > 80)){
-            circle.setImageResource(R.drawable.yellow_circle);
-            //bp_textview.setTextColor(getResources().getColor(R.color.insights_yellow));
-        }
-        else{
-            circle.setImageResource(R.drawable.red_circle);
-            //bp_textview.setTextColor(getResources().getColor(R.color.graph_red));
-        }
     }
 
     public void getDayNightBP(){
