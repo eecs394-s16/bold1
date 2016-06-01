@@ -52,6 +52,6 @@ public class NotificationHelper{
         AlarmManager alarmManager = (AlarmManager)activity.getSystemService(activity.ALARM_SERVICE);
         pendingIntent = PendingIntent.getService(activity, 0, myIntent,0);
         alarmManager.cancel(pendingIntent);
-        Toast.makeText(activity, "Daily notification disabled.", Toast.LENGTH_LONG).show();
+        Toast.makeText(activity, "All daily notifications have been removed.", Toast.LENGTH_LONG).show();
     }
 }

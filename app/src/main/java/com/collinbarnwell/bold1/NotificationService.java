@@ -34,7 +34,7 @@ public class NotificationService extends Service {
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.graph_icon)
                         .setContentTitle("Bold")
-                        .setContentText("Please record your blood pressure.")
+                        .setContentText("Don't forget to record your blood pressure!")
                         .setSound(sound)
                         .setWhen(System.currentTimeMillis());
         Intent resultIntent = new Intent(this, MainActivity.class);
