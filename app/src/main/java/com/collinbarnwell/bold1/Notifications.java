@@ -6,6 +6,7 @@ import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.ContentValues;
@@ -48,12 +49,15 @@ import java.io.InputStream;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Vector;
 
 
 /**
  * Created by Z-Henry on 5/23/2016.
  */
 public class Notifications extends AppCompatActivity {
+    Vector<String> alarms = new Vector<String>();
+
 
     @Override
     protected void onCreate(Bundle savedInstance){
@@ -77,6 +81,9 @@ public class Notifications extends AppCompatActivity {
         });
 
 
+        restartAlarms();
+        displayAlarmsOnPage();
+
         /*
         String[] test_items = {"red", "blue", "green"};
         ListView listView = (ListView) findViewById(R.id.list_notifs);
@@ -99,9 +106,19 @@ public class Notifications extends AppCompatActivity {
         }
 
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            String am_or_pm;
+            Notifications notifications = (Notifications)getActivity();
 
-            ((Notifications)getActivity()).saveAlarm(hourOfDay, minute);
+            if (hourOfDay > 12){
+                hourOfDay -= 12;
+                am_or_pm = " PM";
+            } else {
+                am_or_pm = " AM";
+            }
 
+
+            notifications.saveAlarm(hourOfDay, minute);
+            notifications.alarms.add("Alarm set at " + hourOfDay + ":" + minute + am_or_pm);
 
 
             //Sets notification on the phone
@@ -179,6 +196,64 @@ public class Notifications extends AppCompatActivity {
         PendingIntent pendingIntent = PendingIntent.getService(this, id, myIntent, 0);
         alarmManager.cancel(pendingIntent);
         Toast.makeText(this, "Daily notification disabled.", Toast.LENGTH_LONG).show();
+
+    }
+
+    public void restartAlarms(){
+        int id, hourofDay, minute;
+
+        DatabaseHelper dbHelper = new DatabaseHelper(getBaseContext());
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseContract.Alarms.TABLE_NAME + ";", null);
+
+        boolean keep_going = cursor.moveToFirst();
+
+        while (keep_going){
+
+            id = (int)cursor.getLong(cursor.getColumnIndex(DatabaseContract.AlarmEntries.ID));
+            hourofDay = cursor.getInt(cursor.getColumnIndex(DatabaseContract.AlarmEntries.HOUR));
+            minute = cursor.getInt(cursor.getColumnIndex(DatabaseContract.AlarmEntries.MINUTE));
+            setAlarm(id, hourofDay, minute);
+            keep_going = cursor.moveToNext();
+
+
+        }
+
+    }
+
+    public void displayAlarmsOnPage(){
+        int id, hourofDay, minute;
+        Vector<String> alarms = new Vector<String>();
+        String build_title, am_or_pm;
+
+
+        SQLiteDatabase db = new DatabaseHelper(getBaseContext()).getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DatabaseContract.Alarms.TABLE_NAME + ";", null);
+
+        boolean keep_going = cursor.moveToFirst();
+
+        while (keep_going){
+
+            id = (int)cursor.getLong(cursor.getColumnIndex(DatabaseContract.AlarmEntries.ID));
+            hourofDay = cursor.getInt(cursor.getColumnIndex(DatabaseContract.AlarmEntries.HOUR));
+
+            if (hourofDay > 12){
+                hourofDay -= 12;
+                am_or_pm = " PM";
+            } else {
+                am_or_pm = " AM";
+            }
+
+            minute = cursor.getInt(cursor.getColumnIndex(DatabaseContract.AlarmEntries.MINUTE));
+            build_title = "Alarm set at " + hourofDay + ":" + minute + am_or_pm;
+            alarms.add(build_title);
+            keep_going = cursor.moveToNext();
+
+        }
+
+        ListView listView = (ListView) findViewById(R.id.list_notifs);
+        listView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, alarms));
+        this.alarms = alarms;
 
     }
 
