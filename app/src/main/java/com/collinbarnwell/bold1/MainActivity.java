@@ -188,12 +188,12 @@ public class MainActivity extends AppCompatActivity {
             //    downloadPDF();
             //    return true;
 
-            case R.id.notification_menu:
-                notifHelper.alarmMethod(this);
-                return true;
-            case R.id.notification_cancel_menu:
-                notifHelper.cancelAlarmMethod(this);
-                return true;
+//            case R.id.notification_menu:
+//                notifHelper.alarmMethod(this);
+//                return true;
+//            case R.id.notification_cancel_menu:
+//                notifHelper.cancelAlarmMethod(this);
+//                return true;
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.

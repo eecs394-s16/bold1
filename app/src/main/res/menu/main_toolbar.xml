@@ -18,14 +18,14 @@
         <!--android:title="@string/download_pdf"-->
         <!--app:showAsAction="never"/>-->
     <!-- this is the notification button for debugging -->
-    <item
-        android:id="@+id/notification_menu"
-        android:title="@string/notification_menu"
-        app:showAsAction="never"/>
-    <item
-        android:id="@+id/notification_cancel_menu"
-        android:title="@string/notification_cancel_menu"
-        app:showAsAction="never"/>
+    <!--<item-->
+        <!--android:id="@+id/notification_menu"-->
+        <!--android:title="@string/notification_menu"-->
+        <!--app:showAsAction="never"/>-->
+    <!--<item-->
+        <!--android:id="@+id/notification_cancel_menu"-->
+        <!--android:title="@string/notification_cancel_menu"-->
+        <!--app:showAsAction="never"/>-->
 
 </menu>
 
