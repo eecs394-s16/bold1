@@ -20,7 +20,7 @@ public final class DatabaseContract {
     public static final String SCHEME = "content://";
     public static final String SLASH = "/";
     public static final String DATABASE_NAME = "bold1.db";
-    public static final int DATABASE_VERSION = 17;
+    public static final int DATABASE_VERSION = 18;
     private static final String TEXT_TYPE          = " TEXT";
     private static final String INTEGER_TYPE       = " INTEGER";
     private static final String NUMERIC_TYPE       = " NUMERIC";
