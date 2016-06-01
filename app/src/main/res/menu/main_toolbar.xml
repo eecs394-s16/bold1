@@ -13,6 +13,10 @@
         android:id="@+id/gen_pdf"
         android:title="@string/gen_pdf"
         app:showAsAction="never"/>
+    <item
+        android:id="@+id/gen_data"
+        android:title="Generate data for debugging"
+        app:showAsAction="never"/>
     <!--<item-->
         <!--android:id="@+id/download"-->
         <!--android:title="@string/download_pdf"-->

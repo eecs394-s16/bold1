@@ -31,4 +31,39 @@
         Stage I hypertension: systolic 140-159 or diastolic 90-99\n
         Stage II hypertension: systolic 160 or higher or diastolic 100 or higher.
     </string>
+
+    <string name="sql_query_for_debug">
+        DELETE FROM data_point;
+        INSERT INTO data_point (systolic_pressure,diastolic_pressure,heart_rate,mean_arterial_pressure,timestamp,mood,exercise,tobacco,wake_up,food_intake,non_caffeine_fluid_intake,caffeine,about_to_sleep,daily_activity) VALUES (145,90,72,75,datetime(\'2016-06-01 13:12:33\'),\'good\',0,0,1,0,1,1,0,0);
+INSERT INTO data_point (systolic_pressure,diastolic_pressure,heart_rate,mean_arterial_pressure,timestamp,mood,exercise,tobacco,wake_up,food_intake,non_caffeine_fluid_intake,caffeine,about_to_sleep,daily_activity
+ ) VALUES (145,74,60,83,datetime(\'2016-06-01 16:42:33\'),\'average\',1,0,1,1,0,0,0,0);
+INSERT INTO data_point (systolic_pressure,diastolic_pressure,heart_rate,mean_arterial_pressure,timestamp,mood,exercise,tobacco,wake_up,food_intake,non_caffeine_fluid_intake,caffeine,about_to_sleep,daily_activity
+ ) VALUES (143,73,69,93,datetime(\'2016-06-01 19:12:33\'),\'average\',0,0,0,0,0,0,0,1);
+INSERT INTO data_point (systolic_pressure,diastolic_pressure,heart_rate,mean_arterial_pressure,timestamp,mood,exercise,tobacco,wake_up,food_intake,non_caffeine_fluid_intake,caffeine,about_to_sleep,daily_activity
+ ) VALUES (149,65,66,73,datetime(\'2016-06-01 21:42:33\'),\'bad\',0,0,0,0,1,1,1,0);
+INSERT INTO data_point (systolic_pressure,diastolic_pressure,heart_rate,mean_arterial_pressure,timestamp,mood,exercise,tobacco,wake_up,food_intake,non_caffeine_fluid_intake,caffeine,about_to_sleep,daily_activity
+ ) VALUES (123,71,67,72,datetime(\'2016-05-31 13:12:33\'),\'average\',0,1,0,1,0,0,0,1);
+INSERT INTO data_point (systolic_pressure,diastolic_pressure,heart_rate,mean_arterial_pressure,timestamp,mood,exercise,tobacco,wake_up,food_intake,non_caffeine_fluid_intake,caffeine,about_to_sleep,daily_activity
+ ) VALUES (140,61,59,81,datetime(\'2016-05-31 18:42:33\'),\'good\',1,1,1,0,0,0,0,0);
+INSERT INTO data_point (systolic_pressure,diastolic_pressure,heart_rate,mean_arterial_pressure,timestamp,mood,exercise,tobacco,wake_up,food_intake,non_caffeine_fluid_intake,caffeine,about_to_sleep,daily_activity
+ ) VALUES (141,59,78,88,datetime(\'2016-05-31 20:12:33\'),\'average\',0,0,0,1,1,0,0,0);
+INSERT INTO data_point (systolic_pressure,diastolic_pressure,heart_rate,mean_arterial_pressure,timestamp,mood,exercise,tobacco,wake_up,food_intake,non_caffeine_fluid_intake,caffeine,about_to_sleep,daily_activity
+ ) VALUES (141,79,80,92,datetime(\'2016-05-31 23:42:33\'),\'good\',1,1,0,0,0,0,0,0);
+INSERT INTO data_point (systolic_pressure,diastolic_pressure,heart_rate,mean_arterial_pressure,timestamp,mood,exercise,tobacco,wake_up,food_intake,non_caffeine_fluid_intake,caffeine,about_to_sleep,daily_activity
+ ) VALUES (142,85,77,77,datetime(\'2016-05-30 12:12:33\'),\'bad\',0,0,0,0,0,1,1,0);
+INSERT INTO data_point (systolic_pressure,diastolic_pressure,heart_rate,mean_arterial_pressure,timestamp,mood,exercise,tobacco,wake_up,food_intake,non_caffeine_fluid_intake,caffeine,about_to_sleep,daily_activity
+ ) VALUES (147,69,74,73,datetime(\'2016-05-30 15:42:33\'),\'bad\',0,0,1,1,1,0,0,0);
+INSERT INTO data_point (systolic_pressure,diastolic_pressure,heart_rate,mean_arterial_pressure,timestamp,mood,exercise,tobacco,wake_up,food_intake,non_caffeine_fluid_intake,caffeine,about_to_sleep,daily_activity
+ ) VALUES (149,70,74,71,datetime(\'2016-05-30 18:12:33\'),\'good\',1,1,0,0,0,1,0,0);
+INSERT INTO data_point (systolic_pressure,diastolic_pressure,heart_rate,mean_arterial_pressure,timestamp,mood,exercise,tobacco,wake_up,food_intake,non_caffeine_fluid_intake,caffeine,about_to_sleep,daily_activity
+ ) VALUES (145,77,66,69,datetime(\'2016-05-30 22:42:33\'),\'average\',1,0,1,0,0,0,0,0);
+INSERT INTO data_point (systolic_pressure,diastolic_pressure,heart_rate,mean_arterial_pressure,timestamp,mood,exercise,tobacco,wake_up,food_intake,non_caffeine_fluid_intake,caffeine,about_to_sleep,daily_activity
+ ) VALUES (124,72,82,87,datetime(\'2016-05-29 13:12:33\'),\'average\',0,1,0,0,0,0,0,1);
+INSERT INTO data_point (systolic_pressure,diastolic_pressure,heart_rate,mean_arterial_pressure,timestamp,mood,exercise,tobacco,wake_up,food_intake,non_caffeine_fluid_intake,caffeine,about_to_sleep,daily_activity
+ ) VALUES (139,65,61,85,datetime(\'2016-05-29 19:42:33\'),\'good\',0,0,0,1,0,0,1,0);
+INSERT INTO data_point (systolic_pressure,diastolic_pressure,heart_rate,mean_arterial_pressure,timestamp,mood,exercise,tobacco,wake_up,food_intake,non_caffeine_fluid_intake,caffeine,about_to_sleep,daily_activity
+ ) VALUES (189,125,61,85,datetime(\'2016-05-29 23:42:33\'),\'good\',0,0,0,1,0,0,1,0);
+INSERT INTO data_point (systolic_pressure,diastolic_pressure,heart_rate,mean_arterial_pressure,timestamp,mood,exercise,tobacco,wake_up,food_intake,non_caffeine_fluid_intake,caffeine,about_to_sleep,daily_activity
+ ) VALUES (120,78,61,85,datetime(\'2016-05-28 19:42:33\'),\'good\',0,0,0,1,0,0,1,0);
+    </string>
 </resources>
