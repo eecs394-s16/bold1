@@ -4,6 +4,7 @@ import com.collinbarnwell.bold1.DatabaseHelper;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -138,7 +139,7 @@ public class AddDataPoint extends AppCompatActivity {
 
         long newRowId;
         newRowId = db.insert(DatabaseContract.DataPoint.TABLE_NAME, null, values);
-
+        
         finish();
     }
 
