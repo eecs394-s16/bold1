@@ -808,7 +808,7 @@ public class MainActivity extends AppCompatActivity {
             circle.setImageResource(R.drawable.green_circle);
             x.setTextColor(Color.parseColor("#33ff33"));
         }
-        else if((systolic > 120 && diastolic <= 139) || (systolic <= 89 && diastolic > 80)){
+        else if((systolic > 120 && systolic <= 139) || (diastolic <= 89 && diastolic > 80)){
             circle.setImageResource(R.drawable.yellow_circle);
 //            Resources resources = getResources();
 //            circle.setImageDrawable(resources.getDrawable(R.drawable.yellow_circle));
