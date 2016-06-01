@@ -196,17 +196,17 @@ public class MainActivity extends AppCompatActivity {
 //            case R.id.notification_cancel_menu:
 //                notifHelper.cancelAlarmMethod(this);
 //                return true;
-//            case R.id.gen_data:
-//                // Generate data for debugging
-//                DatabaseHelper mDbHelper = new DatabaseHelper(getBaseContext());
-//                SQLiteDatabase db = mDbHelper.getWritableDatabase();
-//                String sqlCommands=getString(R.string.sql_query_for_debug);
-//                String[] sqlCommandList=sqlCommands.split(";");
-//                for (int i=0; i<sqlCommandList.length;i++) {
-//                    db.execSQL(sqlCommandList[i] + ";");
-//                }
-//                Toast.makeText(getBaseContext(),"Database command executed",Toast.LENGTH_LONG).show();
-//                return true;
+            case R.id.gen_data:
+                // Generate data for debugging
+                DatabaseHelper mDbHelper = new DatabaseHelper(getBaseContext());
+                SQLiteDatabase db = mDbHelper.getWritableDatabase();
+                String sqlCommands=getString(R.string.sql_query_for_debug);
+                String[] sqlCommandList=sqlCommands.split(";");
+                for (int i=0; i<sqlCommandList.length;i++) {
+                    db.execSQL(sqlCommandList[i] + ";");
+                }
+                Toast.makeText(getBaseContext(),"Database command executed",Toast.LENGTH_LONG).show();
+                return true;
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
