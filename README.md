@@ -21,9 +21,11 @@ Follow us on http://www.bolddiagnostics.com/.
 
 There are a few dependencies used to display data, namely Graphview and AndroidCharts. Itext is used for creating the PDF report. These can be added by just adding the following lines to the Gradle file. 
 
+```
 compile 'com.jjoe64:graphview:4.0.1'
 compile 'com.itextpdf:itextpdf:5.2.1'
 compile 'com.github.PhilJay:MPAndroidChart:v2.2.4'
+```
 
 ## Accessing the code
 
