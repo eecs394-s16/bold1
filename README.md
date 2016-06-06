@@ -17,6 +17,14 @@ Follow us on http://www.bolddiagnostics.com/.
 - Android API 23
 - Android Studio 2.1
 
+## DEPENDENCIES
+
+There are a few dependencies used to display data, namely Graphview and AndroidCharts. Itext is used for creating the PDF report. These can be added by just adding the following lines to the Gradle file. 
+
+compile 'com.jjoe64:graphview:4.0.1'
+compile 'com.itextpdf:itextpdf:5.2.1'
+compile 'com.github.PhilJay:MPAndroidChart:v2.2.4'
+
 ## Accessing the code
 
 Our code can be downloaded from GitHub by cloning our public repository using the following link: 
