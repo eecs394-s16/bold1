@@ -10,6 +10,8 @@ With Bold, you can
 * Email physicians your report without effort.
 * Receive automatic reminders to record your blood pressure.
 
+[Get it on the Play Store!](https://play.google.com/store/apps/details?id=com.collinbarnwell.bold1)
+
 Follow us on http://www.bolddiagnostics.com/.
 
 ## SYSTEM REQUIREMENTS
@@ -80,4 +82,4 @@ We have a few different classes in our code. A list and description of them can 
 
 ## ACKNOWLEDGEMENTS
 
-This app is developed by [Collin Barnwell](https://github.com/collinbarnwell), [Jerry Li](https://github.com/jerryli27), [Nour Alharithi](https://github.com/NourAlharithi), [Shrivant Bhartia](https://github.com/SV1007), [Yicheng Wang](https://github.com/SHvsMK), [Zavier Henry](https://github.com/ZavierHenry). It a project for 2016 Spring EECS 394: Software Project Management at Northwestern University. We received lots of help from [Kyle Miller](info@bolddiagnostics.com) and [Andrew Wu](jungen.wu@northwestern.edu). We also would like to thank [Prof. Riesbeck](http://cs.northwestern.edu/~riesbeck/) for teaching us how to build a good team and how to be agile coders.
+This app was developed by [Collin Barnwell](https://github.com/collinbarnwell), [Jerry Li](https://github.com/jerryli27), [Nour Alharithi](https://github.com/NourAlharithi), [Shrivant Bhartia](https://github.com/SV1007), [Yicheng Wang](https://github.com/SHvsMK), [Zavier Henry](https://github.com/ZavierHenry). It a project for 2016 Spring EECS 394: Software Project Management at Northwestern University. We received lots of help from [Kyle Miller](info@bolddiagnostics.com) and [Andrew Wu](jungen.wu@northwestern.edu). We also would like to thank [Prof. Riesbeck](http://cs.northwestern.edu/~riesbeck/) for teaching us how to build a good team and how to be agile coders.
